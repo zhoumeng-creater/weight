@@ -48,7 +48,7 @@ def fitness(X):
     muscle_loss_rate = max(0.0, (req_protein - protein_g) / req_protein)
 
     # 计算每周能量赤字 (kcal)
-    # 假设基础代谢率 BMR=body_weight*24*1 kcal/h
+    # 先假设基础代谢率 BMR=body_weight*24*1 kcal/h
     BMR = body_weight * 24 * 1.0
     TDEE = BMR * 1.2 + cardio_freq * (cardio_dur * 5)  # 运动消耗约 5kcal/min
     weekly_deficit = max(0.0, (TDEE - X[0]) * 7)
