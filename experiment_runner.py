@@ -8,15 +8,55 @@ import pandas as pd
 from typing import Dict, List
 import logging
 from datetime import datetime
+import os
+import copy
 
-from metabolic_model import PersonProfile
+from metabolic_model import PersonProfile, MetabolicModel, AdvancedMetabolicModel
 from config import ConfigManager, load_preset
 from de_algorithm import DifferentialEvolution
-from visualization import DataTracker, WeightLossVisualizer, OptimizationVisualizer
+from visualization import (
+    DataTracker, 
+    WeightLossVisualizer, 
+    OptimizationVisualizer,
+    ReportGenerator
+)
 from data_loader import ExperimentDataLoader, SimulatedExperiment, ExperimentDesigner
+from solution_generator import Solution
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# 设置中文字体支持（跨平台）
+import matplotlib.pyplot as plt
+import platform
+import matplotlib.font_manager as fm
+
+def setup_chinese_font():
+    """自动设置中文字体（跨平台）"""
+    system = platform.system()
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    if system == 'Windows':
+        fonts = ['Microsoft YaHei', 'SimHei', 'SimSun', 'KaiTi']
+    elif system == 'Darwin':  # macOS
+        fonts = ['PingFang SC', 'Heiti SC', 'Songti SC', 'STHeiti']
+    else:  # Linux
+        fonts = ['WenQuanYi Micro Hei', 'Droid Sans Fallback', 'DejaVu Sans']
+    
+    fonts.extend(['Arial Unicode MS', 'sans-serif'])
+    
+    for font in fonts:
+        if font in available_fonts:
+            plt.rcParams['font.sans-serif'] = [font] + fonts
+            print(f"使用字体: {font}")
+            break
+    else:
+        plt.rcParams['font.sans-serif'] = fonts
+        print("警告: 未找到合适的中文字体，可能显示异常")
+    
+    plt.rcParams['axes.unicode_minus'] = False
+
+setup_chinese_font()
 
 
 class ExperimentRunner:
@@ -25,10 +65,76 @@ class ExperimentRunner:
     def __init__(self):
         self.config = ConfigManager()
         self.results = {}
+        # 初始化可视化器
+        self.weight_viz = WeightLossVisualizer()
+        self.opt_viz = OptimizationVisualizer()
+        
+    def _track_optimization_results(self, person: PersonProfile, optimization_results: Dict) -> DataTracker:
+        """将优化结果转换为DataTracker（复用main.py的逻辑）"""
+        tracker = DataTracker()
+        tracker.metadata['start_date'] = datetime.now()
+        tracker.metadata['person_profile'] = {
+            'age': person.age,
+            'gender': person.gender,
+            'height': person.height,
+            'initial_weight': person.initial_weight,
+            'initial_body_fat': person.body_fat_percentage,
+            'activity_level': person.activity_level
+        }
+        
+        # 模拟每周的数据
+        current_person = PersonProfile(
+            age=person.age,
+            gender=person.gender,
+            height=person.height,
+            weight=person.initial_weight,
+            body_fat_percentage=person.body_fat_percentage,
+            activity_level=person.activity_level,
+            weeks_on_diet=person.weeks_on_diet
+        )
+        
+        metabolic_model = AdvancedMetabolicModel()
+        
+        # 如果有历史方案，使用它们
+        if 'best_solutions_history' in optimization_results:
+            for i, solution in enumerate(optimization_results['best_solutions_history']):
+                # 使用代谢模型模拟一周
+                week_results = metabolic_model.simulate_week(current_person, solution, i)
+                
+                # 记录数据
+                week_data = {
+                    'weight': current_person.weight,
+                    'body_fat_percentage': current_person.body_fat_percentage,
+                    'muscle_mass': current_person.lean_body_mass,
+                    'fat_mass': current_person.fat_mass,
+                    'bmr': metabolic_model.calculate_bmr(current_person),
+                    'tdee': metabolic_model.calculate_tdee(current_person, solution),
+                    'metabolic_adaptation_factor': current_person.metabolic_adaptation_factor,
+                    'calories_consumed': solution.calories,
+                    'protein_grams': solution.calories * solution.protein_ratio / 4,
+                    'carb_grams': solution.calories * solution.carb_ratio / 4,
+                    'fat_grams': solution.calories * solution.fat_ratio / 9,
+                    'cardio_minutes': solution.cardio_freq * solution.cardio_duration,
+                    'strength_minutes': solution.strength_freq * 60,
+                    'sleep_hours': solution.sleep_hours,
+                    'fitness_score': solution.fitness,
+                    'muscle_retention_rate': 1 - week_results['muscle_loss_rate'],
+                    'fat_loss_rate': week_results['fat_loss_rate']
+                }
+                
+                tracker.add_record(i, week_data)
+                
+                # 更新人体状态
+                current_person = metabolic_model.update_person_state(
+                    current_person, solution, i
+                )
+        
+        return tracker
         
     def run_simulation_experiment(self, 
                                  person: PersonProfile,
-                                 experiment_name: str = "simulation_exp"):
+                                 experiment_name: str = "simulation_exp",
+                                 generate_viz: bool = True):
         """运行纯仿真实验"""
         logger.info(f"开始仿真实验: {experiment_name}")
         
@@ -47,11 +153,16 @@ class ExperimentRunner:
             'timestamp': datetime.now()
         }
         
+        # 生成可视化（使用已有的visualization功能）
+        if generate_viz:
+            self._generate_experiment_visualizations(experiment_name)
+        
         return best_solution, results
     
     def run_validation_experiment(self,
                                 real_data_file: str,
-                                experiment_name: str = "validation_exp"):
+                                experiment_name: str = "validation_exp",
+                                generate_viz: bool = True):
         """运行验证实验（使用真实数据验证算法）"""
         logger.info(f"开始验证实验: {experiment_name}")
         
@@ -88,17 +199,24 @@ class ExperimentRunner:
             'mae_weight': mae_weight,
             'rmse_weight': rmse_weight,
             'best_solution': best_solution,
+            'optimization_results': opt_results,
+            'person': person,
             'timestamp': datetime.now()
         }
         
         logger.info(f"验证结果 - MAE: {mae_weight:.2f}kg, RMSE: {rmse_weight:.2f}kg")
+        
+        # 生成可视化
+        if generate_viz:
+            self._generate_experiment_visualizations(experiment_name)
         
         return self.results[experiment_name]
     
     def run_ablation_study(self, 
                           person: PersonProfile,
                           components: List[str],
-                          experiment_name: str = "ablation_study"):
+                          experiment_name: str = "ablation_study",
+                          generate_viz: bool = True):
         """运行消融实验（测试各组件的重要性）"""
         logger.info(f"开始消融实验: {experiment_name}")
         
@@ -110,7 +228,9 @@ class ExperimentRunner:
         full_solution, full_results = full_optimizer.optimize()
         ablation_results['full_model'] = {
             'fitness': full_solution.fitness,
-            'weight_loss': person.weight - full_results['final_person_state'].weight
+            'weight_loss': person.weight - full_results['final_person_state'].weight,
+            'solution': full_solution,
+            'optimization_results': full_results
         }
         
         # 逐个移除组件
@@ -131,27 +251,35 @@ class ExperimentRunner:
                 modified_config.exercise.strength_frequency_range = (0, 0)
             
             # 运行优化
-            ablation_optimizer = DifferentialEvolution(person, modified_config)
-            ablation_solution, ablation_results = ablation_optimizer.optimize()
+            ablation_optimizer = DifferentialEvolution(copy.deepcopy(person), modified_config)
+            ablation_solution, ablation_opt_results = ablation_optimizer.optimize()
             
             ablation_results[f'without_{component}'] = {
                 'fitness': ablation_solution.fitness,
-                'weight_loss': person.weight - ablation_results['final_person_state'].weight,
-                'difference': ablation_solution.fitness - full_solution.fitness
+                'weight_loss': person.weight - ablation_opt_results['final_person_state'].weight,
+                'difference': ablation_solution.fitness - full_solution.fitness,
+                'solution': ablation_solution,
+                'optimization_results': ablation_opt_results
             }
         
         self.results[experiment_name] = {
             'type': 'ablation',
             'results': ablation_results,
+            'person': person,
             'timestamp': datetime.now()
         }
+        
+        # 生成可视化
+        if generate_viz:
+            self._generate_experiment_visualizations(experiment_name)
         
         return ablation_results
     
     def run_parameter_sensitivity_analysis(self,
                                          person: PersonProfile,
                                          parameter_ranges: Dict,
-                                         experiment_name: str = "sensitivity_analysis"):
+                                         experiment_name: str = "sensitivity_analysis",
+                                         generate_viz: bool = True):
         """运行参数敏感性分析"""
         logger.info(f"开始参数敏感性分析: {experiment_name}")
         
@@ -174,13 +302,15 @@ class ExperimentRunner:
                     config.algorithm.crossover_rate = param_value
                 
                 # 运行优化
-                optimizer = DifferentialEvolution(person, config)
+                optimizer = DifferentialEvolution(copy.deepcopy(person), config)
                 solution, results = optimizer.optimize()
                 
                 param_results.append({
                     'value': param_value,
                     'fitness': solution.fitness,
-                    'iterations': results['total_iterations']
+                    'iterations': results['total_iterations'],
+                    'solution': solution,
+                    'optimization_results': results
                 })
             
             sensitivity_results[param_name] = param_results
@@ -188,19 +318,26 @@ class ExperimentRunner:
         self.results[experiment_name] = {
             'type': 'sensitivity',
             'results': sensitivity_results,
+            'person': person,
             'timestamp': datetime.now()
         }
+        
+        # 生成可视化
+        if generate_viz:
+            self._generate_experiment_visualizations(experiment_name)
         
         return sensitivity_results
     
     def run_comparative_experiment(self,
                                  person: PersonProfile,
                                  presets: List[str],
-                                 experiment_name: str = "comparative_exp"):
+                                 experiment_name: str = "comparative_exp",
+                                 generate_viz: bool = True):
         """运行比较实验（比较不同预设配置）"""
         logger.info(f"开始比较实验: {experiment_name}")
         
         comparative_results = {}
+        all_trackers = {}  # 保存所有tracker用于对比
         
         for preset in presets:
             logger.info(f"测试预设: {preset}")
@@ -209,27 +346,239 @@ class ExperimentRunner:
             config = load_preset(preset)
             
             # 运行优化
-            optimizer = DifferentialEvolution(person.copy(), config)
+            optimizer = DifferentialEvolution(copy.deepcopy(person), config)
             solution, results = optimizer.optimize()
+            
+            # 创建tracker
+            tracker = self._track_optimization_results(copy.deepcopy(person), results)
+            all_trackers[preset] = tracker
             
             comparative_results[preset] = {
                 'best_solution': solution,
                 'fitness': solution.fitness,
                 'weight_loss': person.weight - results['final_person_state'].weight,
                 'iterations': results['total_iterations'],
-                'final_state': results['final_person_state']
+                'final_state': results['final_person_state'],
+                'optimization_results': results,
+                'tracker': tracker
             }
         
         self.results[experiment_name] = {
             'type': 'comparative',
             'results': comparative_results,
+            'trackers': all_trackers,
+            'person': person,
             'timestamp': datetime.now()
         }
         
+        # 生成可视化
+        if generate_viz:
+            self._generate_experiment_visualizations(experiment_name)
+        
         return comparative_results
     
+    def _generate_experiment_visualizations(self, experiment_name: str):
+        """为实验生成可视化（使用已有的visualization模块）"""
+        if experiment_name not in self.results:
+            logger.error(f"未找到实验: {experiment_name}")
+            return
+        
+        exp_data = self.results[experiment_name]
+        exp_type = exp_data['type']
+        
+        # 创建输出目录
+        output_dir = os.path.join('./results', experiment_name)
+        os.makedirs(output_dir, exist_ok=True)
+        
+        try:
+            if exp_type == 'simulation' or exp_type == 'validation':
+                # 创建DataTracker
+                tracker = self._track_optimization_results(
+                    exp_data['person'], 
+                    exp_data['optimization_results']
+                )
+                
+                # 1. 生成综合仪表板（使用WeightLossVisualizer）
+                self.weight_viz.create_dashboard(
+                    tracker,
+                    save_path=os.path.join(output_dir, 'dashboard.png'),
+                    show=False
+                )
+                
+                # 2. 生成优化结果图（使用OptimizationVisualizer）
+                self.opt_viz.plot_optimization_results(
+                    exp_data['optimization_results'],
+                    save_path=os.path.join(output_dir, 'optimization_results.png')
+                )
+                
+                # 3. 生成优化进展图
+                if 'population_history' in exp_data['optimization_results']:
+                    self.opt_viz.plot_optimization_progress(
+                        exp_data['optimization_results'].get('population_history', []),
+                        exp_data['optimization_results'].get('fitness_history', []),
+                        exp_data['optimization_results'].get('best_solutions_history', []),
+                        save_path=os.path.join(output_dir, 'optimization_progress.png')
+                    )
+                
+                # 4. 生成解空间分布图
+                if 'best_solutions_history' in exp_data['optimization_results']:
+                    self.opt_viz.plot_solution_space(
+                        exp_data['optimization_results']['best_solutions_history'],
+                        highlight_best=True,
+                        save_path=os.path.join(output_dir, 'solution_space.png')
+                    )
+                
+                # 5. 生成HTML报告（使用ReportGenerator）
+                report_gen = ReportGenerator(self.weight_viz)
+                report_gen.generate_html_report(
+                    tracker,
+                    exp_data['best_solution'],
+                    exp_data['optimization_results'],
+                    save_path=os.path.join(output_dir, 'report.html')
+                )
+                
+                # 6. 保存tracker数据
+                tracker.save_to_file(os.path.join(output_dir, 'tracking_data.json'))
+                
+                logger.info(f"完整可视化已生成: {output_dir}")
+                
+            elif exp_type == 'comparative':
+                # 使用WeightLossVisualizer的比较报告功能
+                trackers = exp_data.get('trackers', {})
+                if trackers:
+                    comparison_fig = self.weight_viz.create_comparison_report(
+                        trackers,
+                        save_path=os.path.join(output_dir, 'comparison_report.png')
+                    )
+                    
+                # 为每个策略生成单独的报告
+                for preset_name, result in exp_data['results'].items():
+                    preset_dir = os.path.join(output_dir, preset_name)
+                    os.makedirs(preset_dir, exist_ok=True)
+                    
+                    if 'tracker' in result:
+                        # 生成仪表板
+                        self.weight_viz.create_dashboard(
+                            result['tracker'],
+                            save_path=os.path.join(preset_dir, 'dashboard.png'),
+                            show=False
+                        )
+                        
+                        # 生成HTML报告
+                        report_gen = ReportGenerator(self.weight_viz)
+                        report_gen.generate_html_report(
+                            result['tracker'],
+                            result['best_solution'],
+                            result['optimization_results'],
+                            save_path=os.path.join(preset_dir, 'report.html')
+                        )
+                
+            elif exp_type == 'ablation':
+                # 为消融实验创建专门的可视化
+                # 创建一个综合的tracker来展示所有结果
+                results = exp_data['results']
+                
+                # 生成对比图表
+                import matplotlib.pyplot as plt
+                fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+                
+                # 1. 适应度对比
+                components = list(results.keys())
+                fitness_values = [results[c]['fitness'] for c in components]
+                
+                ax = axes[0, 0]
+                bars = ax.bar(components, fitness_values, color='#2196f3')
+                ax.set_ylabel('适应度值')
+                ax.set_title('组件消融 - 适应度对比')
+                ax.grid(True, alpha=0.3)
+                for bar in bars:
+                    height = bar.get_height()
+                    ax.text(bar.get_x() + bar.get_width()/2., height,
+                           f'{height:.3f}', ha='center', va='bottom')
+                
+                # 2. 减重效果对比
+                ax = axes[0, 1]
+                weight_losses = [results[c]['weight_loss'] for c in components]
+                bars = ax.bar(components, weight_losses, color='#4caf50')
+                ax.set_ylabel('减重量 (kg)')
+                ax.set_title('组件消融 - 减重效果')
+                ax.grid(True, alpha=0.3)
+                for bar in bars:
+                    height = bar.get_height()
+                    ax.text(bar.get_x() + bar.get_width()/2., height,
+                           f'{height:.2f}', ha='center', va='bottom')
+                
+                # 3. 组件重要性（差异）
+                ax = axes[1, 0]
+                importance = []
+                labels = []
+                for key in results:
+                    if key != 'full_model' and 'difference' in results[key]:
+                        labels.append(key.replace('without_', ''))
+                        importance.append(abs(results[key]['difference']))
+                
+                if importance:
+                    bars = ax.bar(labels, importance, color='#ff9800')
+                    ax.set_ylabel('适应度影响（绝对值）')
+                    ax.set_title('组件重要性排序')
+                    ax.grid(True, alpha=0.3)
+                
+                # 4. 使用full_model的优化曲线
+                ax = axes[1, 1]
+                if 'optimization_results' in results['full_model']:
+                    opt_results = results['full_model']['optimization_results']
+                    if 'best_fitness_history' in opt_results:
+                        iterations = range(1, len(opt_results['best_fitness_history']) + 1)
+                        ax.plot(iterations, opt_results['best_fitness_history'], 'b-', linewidth=2)
+                        ax.set_xlabel('迭代次数')
+                        ax.set_ylabel('适应度值')
+                        ax.set_title('完整模型优化曲线')
+                        ax.grid(True, alpha=0.3)
+                
+                plt.suptitle(f'消融实验结果 - {experiment_name}', fontsize=16)
+                plt.tight_layout()
+                plt.savefig(os.path.join(output_dir, 'ablation_analysis.png'), dpi=150)
+                plt.close()
+                
+            elif exp_type == 'sensitivity':
+                # 为敏感性分析创建图表
+                results = exp_data['results']
+                
+                import matplotlib.pyplot as plt
+                n_params = len(results)
+                fig, axes = plt.subplots(1, n_params, figsize=(6*n_params, 5))
+                if n_params == 1:
+                    axes = [axes]
+                
+                for idx, (param_name, param_results) in enumerate(results.items()):
+                    ax = axes[idx]
+                    values = [r['value'] for r in param_results]
+                    fitness_values = [r['fitness'] for r in param_results]
+                    
+                    ax.plot(values, fitness_values, 'o-', linewidth=2, markersize=8, color='#e91e63')
+                    ax.set_xlabel(param_name)
+                    ax.set_ylabel('适应度值')
+                    ax.set_title(f'参数敏感性: {param_name}')
+                    ax.grid(True, alpha=0.3)
+                    
+                    # 标记最优值
+                    best_idx = np.argmin(fitness_values)
+                    ax.plot(values[best_idx], fitness_values[best_idx], 
+                           'r*', markersize=15, label=f'最优: {values[best_idx]}')
+                    ax.legend()
+                
+                plt.suptitle(f'参数敏感性分析 - {experiment_name}', fontsize=16)
+                plt.tight_layout()
+                plt.savefig(os.path.join(output_dir, 'sensitivity_analysis.png'), dpi=150)
+                plt.close()
+                
+        except Exception as e:
+            logger.error(f"生成可视化时出错: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def generate_experiment_report(self, experiment_name: str, save_path: str = None):
-        """生成实验报告"""
+        """生成实验报告（保持原有功能）"""
         if experiment_name not in self.results:
             logger.error(f"未找到实验: {experiment_name}")
             return
@@ -273,6 +622,7 @@ class ExperimentRunner:
         
         # 保存报告
         if save_path:
+            os.makedirs(os.path.dirname(save_path) or '.', exist_ok=True)
             with open(save_path, 'w', encoding='utf-8') as f:
                 f.write(report)
             logger.info(f"报告已保存到: {save_path}")
@@ -339,9 +689,15 @@ def example_experiments():
     # 生成所有报告
     print("\n=== 生成实验报告 ===")
     for exp_name in runner.results:
-        runner.generate_experiment_report(exp_name, f"report_{exp_name}.md")
+        runner.generate_experiment_report(exp_name, f"./results/{exp_name}/report_{exp_name}.md")
     
     print("\n所有实验完成！")
+    print("查看 ./results/ 目录下各实验文件夹，包含：")
+    print("  - dashboard.png: 综合仪表板")
+    print("  - optimization_*.png: 优化过程图")
+    print("  - report.html: HTML报告")
+    print("  - report_*.md: Markdown报告")
+    print("  - tracking_data.json: 详细数据")
 
 
 def example_real_data_workflow():
@@ -369,7 +725,7 @@ def example_real_data_workflow():
     # 转换为DataTracker
     tracker = loader.convert_to_tracker(experiment_data)
     
-    # 可视化
+    # 可视化（使用已有的WeightLossVisualizer）
     viz = WeightLossVisualizer()
     viz.create_dashboard(tracker, save_path='real_data_dashboard.png', show=False)
     

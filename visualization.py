@@ -19,9 +19,43 @@ from dataclasses import dataclass, field
 import json
 import os
 
-# 设置中文字体支持
-plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
-plt.rcParams['axes.unicode_minus'] = False
+# 设置中文字体支持（跨平台）
+import platform
+import matplotlib.font_manager as fm
+
+def setup_chinese_font():
+    """自动设置中文字体（跨平台）"""
+    system = platform.system()
+    
+    # 获取系统中可用的字体
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    # 根据操作系统选择字体
+    if system == 'Windows':
+        fonts = ['Microsoft YaHei', 'SimHei', 'SimSun', 'KaiTi']
+    elif system == 'Darwin':  # macOS
+        fonts = ['PingFang SC', 'Heiti SC', 'Songti SC', 'STHeiti']
+    else:  # Linux
+        fonts = ['WenQuanYi Micro Hei', 'Droid Sans Fallback', 'DejaVu Sans']
+    
+    # 添加fallback字体
+    fonts.extend(['Arial Unicode MS', 'sans-serif'])
+    
+    # 找到第一个可用的字体
+    for font in fonts:
+        if font in available_fonts:
+            plt.rcParams['font.sans-serif'] = [font] + fonts
+            print(f"使用字体: {font}")
+            break
+    else:
+        # 如果都没找到，尝试使用系统默认
+        plt.rcParams['font.sans-serif'] = fonts
+        print("警告: 未找到合适的中文字体，可能显示异常")
+    
+    plt.rcParams['axes.unicode_minus'] = False
+
+# 调用设置函数
+setup_chinese_font()
 
 # 配置日志
 logger = logging.getLogger(__name__)
@@ -185,7 +219,7 @@ class DataTracker:
             'total_weight_loss': df['weight'].iloc[0] - df['weight'].iloc[-1] if 'weight' in df else 0,
             'avg_weekly_loss': (df['weight'].iloc[0] - df['weight'].iloc[-1]) / len(df) if 'weight' in df and len(df) > 0 else 0,
             'body_fat_change': df['body_fat_percentage'].iloc[0] - df['body_fat_percentage'].iloc[-1] if 'body_fat_percentage' in df else 0,
-            'muscle_change': df['muscle_mass'].iloc[-1] - df['muscle_mass'].iloc[0] if 'muscle_mass' in df else 0,
+            'muscle_change': (df['muscle_mass'].iloc[-1] - df['muscle_mass'].iloc[0]) if ('muscle_mass' in df and not df['muscle_mass'].isna().all()) else 0,
             'best_week': df.loc[df['fitness_score'].idxmin(), 'week'] if 'fitness_score' in df and not df['fitness_score'].isna().all() else None
         }
         
@@ -365,36 +399,45 @@ class WeightLossVisualizer:
         """绘制体重进展"""
         if 'weight' not in df or df['weight'].isna().all():
             ax.text(0.5, 0.5, '暂无体重数据', ha='center', va='center',
-                   transform=ax.transAxes, fontsize=14)
+                transform=ax.transAxes, fontsize=14)
             return
         
         weeks = df['week']
         weights = df['weight']
         
-        # 主线图
-        line = ax.plot(weeks, weights, 'o-', 
-                      color=self.theme.colors['primary'],
-                      linewidth=self.theme.styles['line_width'],
-                      markersize=self.theme.styles['marker_size'],
-                      label='实际体重', zorder=5)[0]
+        # 主线图 - 过滤NaN值
+        valid_mask = ~weights.isna()
+        valid_weeks = weeks[valid_mask]
+        valid_weights = weights[valid_mask]
+        
+        if len(valid_weeks) == 0:
+            ax.text(0.5, 0.5, '暂无有效体重数据', ha='center', va='center',
+                transform=ax.transAxes, fontsize=14)
+            return
+        
+        line = ax.plot(valid_weeks, valid_weights, 'o-', 
+                    color=self.theme.colors['primary'],
+                    linewidth=self.theme.styles['line_width'],
+                    markersize=self.theme.styles['marker_size'],
+                    label='实际体重', zorder=5)[0]
         
         # 添加平滑趋势线
-        if len(weeks) > 3:
-            z = np.polyfit(weeks, weights.dropna(), 2)
+        if len(valid_weeks) > 3:
+            z = np.polyfit(valid_weeks, valid_weights, 2)
             p = np.poly1d(z)
-            trend_weeks = np.linspace(weeks.min(), weeks.max(), 100)
+            trend_weeks = np.linspace(valid_weeks.min(), valid_weeks.max(), 100)
             ax.plot(trend_weeks, p(trend_weeks), '--',
-                   color=self.theme.colors['secondary'],
-                   linewidth=2, alpha=0.8, label='趋势线')
+                color=self.theme.colors['secondary'],
+                linewidth=2, alpha=0.8, label='趋势线')
         
         # 标记平台期
-        self._mark_plateaus(ax, weeks, weights)
+        self._mark_plateaus(ax, valid_weeks, valid_weights)
         
         # 添加目标线（如果有）
-        if 'goals' in df.columns and 'target_weight' in df['goals'].iloc[0]:
+        if 'goals' in df.columns and len(df['goals']) > 0 and 'target_weight' in df['goals'].iloc[0]:
             target = df['goals'].iloc[0]['target_weight']
             ax.axhline(y=target, color=self.theme.colors['success'],
-                      linestyle=':', linewidth=2, label=f'目标: {target}kg')
+                    linestyle=':', linewidth=2, label=f'目标: {target}kg')
         
         # 美化
         ax.set_xlabel('时间（周）', fontsize=self.theme.fonts['label']['size'])
@@ -407,14 +450,13 @@ class WeightLossVisualizer:
         ax.set_axisbelow(True)
         
         # 添加数据标注
-        for i in range(0, len(weeks), max(1, len(weeks)//8)):
-            if not pd.isna(weights.iloc[i]):
-                ax.annotate(f'{weights.iloc[i]:.1f}',
-                           xy=(weeks.iloc[i], weights.iloc[i]),
-                           xytext=(0, 10), textcoords='offset points',
-                           ha='center', fontsize=9,
-                           bbox=dict(boxstyle='round,pad=0.3', 
-                                   facecolor='white', alpha=0.8))
+        for i in range(0, len(valid_weeks), max(1, len(valid_weeks)//8)):
+            ax.annotate(f'{valid_weights.iloc[i]:.1f}',
+                    xy=(valid_weeks.iloc[i], valid_weights.iloc[i]),
+                    xytext=(0, 10), textcoords='offset points',
+                    ha='center', fontsize=9,
+                    bbox=dict(boxstyle='round,pad=0.3', 
+                            facecolor='white', alpha=0.8))
         
         ax.legend(loc='best', frameon=True, fancybox=True, shadow=True)
     
@@ -723,6 +765,16 @@ class WeightLossVisualizer:
         """标记平台期"""
         if len(weights) < 3:
             return
+        
+        # 确保weeks和weights是Series类型
+        if not isinstance(weeks, pd.Series):
+            weeks = pd.Series(weeks.values if hasattr(weeks, 'values') else weeks)
+        if not isinstance(weights, pd.Series):
+            weights = pd.Series(weights.values if hasattr(weights, 'values') else weights)
+        
+        # 重置索引以确保对齐
+        weeks = weeks.reset_index(drop=True)
+        weights = weights.reset_index(drop=True)
         
         # 检测平台期（连续两周体重变化小于0.2kg）
         plateau_threshold = 0.2
