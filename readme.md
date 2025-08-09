@@ -2,7 +2,7 @@
 
 ## 项目结构
 
-重构后的项目结构如下：
+项目结构如下：
 
 ```
 .
@@ -129,9 +129,6 @@ config.nutrition.calorie_deficit_range = (0.20, 0.35)
 - 更精确的NEAT计算
 
 ## 常见问题
-
-**Q: 原来的 de_weight_loss_optimizer.py 去哪了？**
-A: 已重命名为 `de_algorithm.py`，只包含算法实现。使用 `main.py` 运行完整系统。
 
 **Q: 如何只运行算法测试？**
 A: 使用 `python main.py --mode test` 进行快速测试。

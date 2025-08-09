@@ -1,7 +1,7 @@
 """
 差分进化算法在减肥平台期优化中的应用 - 主程序
 Author: Meng Zhou
-Date: 2025-07-19
+Date: 2025-07-23
 """
 
 import logging
