@@ -20,38 +20,11 @@ from visualization import WeightLossVisualizer, DataTracker, OptimizationVisuali
 from fitness_evaluator import AdaptiveFitnessEvaluator
 from metabolic_model import AdvancedMetabolicModel
 
-# 设置中文字体支持（跨平台）
-import matplotlib.pyplot as plt
-import platform
-import matplotlib.font_manager as fm
+# 替换原有的字体设置代码
+from font_manager import setup_chinese_font
 
-def setup_chinese_font():
-    """自动设置中文字体（跨平台）"""
-    system = platform.system()
-    available_fonts = [f.name for f in fm.fontManager.ttflist]
-    
-    if system == 'Windows':
-        fonts = ['Microsoft YaHei', 'SimHei', 'SimSun', 'KaiTi']
-    elif system == 'Darwin':  # macOS
-        fonts = ['PingFang SC', 'Heiti SC', 'Songti SC', 'STHeiti']
-    else:  # Linux
-        fonts = ['WenQuanYi Micro Hei', 'Droid Sans Fallback', 'DejaVu Sans']
-    
-    fonts.extend(['Arial Unicode MS', 'sans-serif'])
-    
-    for font in fonts:
-        if font in available_fonts:
-            plt.rcParams['font.sans-serif'] = [font] + fonts
-            print(f"使用字体: {font}")
-            break
-    else:
-        plt.rcParams['font.sans-serif'] = fonts
-        print("警告: 未找到合适的中文字体，可能显示异常")
-    
-    plt.rcParams['axes.unicode_minus'] = False
-
+# 设置中文字体
 setup_chinese_font()
-
 
 def setup_logging(log_level="INFO", log_file=None):
     """设置日志配置"""

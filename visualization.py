@@ -19,42 +19,8 @@ from dataclasses import dataclass, field
 import json
 import os
 
-# 设置中文字体支持（跨平台）
-import platform
-import matplotlib.font_manager as fm
-
-def setup_chinese_font():
-    """自动设置中文字体（跨平台）"""
-    system = platform.system()
-    
-    # 获取系统中可用的字体
-    available_fonts = [f.name for f in fm.fontManager.ttflist]
-    
-    # 根据操作系统选择字体
-    if system == 'Windows':
-        fonts = ['Microsoft YaHei', 'SimHei', 'SimSun', 'KaiTi']
-    elif system == 'Darwin':  # macOS
-        fonts = ['PingFang SC', 'Heiti SC', 'Songti SC', 'STHeiti']
-    else:  # Linux
-        fonts = ['WenQuanYi Micro Hei', 'Droid Sans Fallback', 'DejaVu Sans']
-    
-    # 添加fallback字体
-    fonts.extend(['Arial Unicode MS', 'sans-serif'])
-    
-    # 找到第一个可用的字体
-    for font in fonts:
-        if font in available_fonts:
-            plt.rcParams['font.sans-serif'] = [font] + fonts
-            print(f"使用字体: {font}")
-            break
-    else:
-        # 如果都没找到，尝试使用系统默认
-        plt.rcParams['font.sans-serif'] = fonts
-        print("警告: 未找到合适的中文字体，可能显示异常")
-    
-    plt.rcParams['axes.unicode_minus'] = False
-
-# 调用设置函数
+from font_manager import setup_chinese_font, get_chinese_font_prop
+# 设置中文字体
 setup_chinese_font()
 
 # 配置日志
@@ -269,9 +235,19 @@ class WeightLossVisualizer:
         
     def _apply_theme(self):
         """应用主题设置"""
+        # 先保存当前的字体设置
+        current_font = plt.rcParams.get('font.sans-serif', [])
+        current_family = plt.rcParams.get('font.family', 'sans-serif')
+        
+        # 应用样式（这会重置字体）
         plt.style.use('seaborn-v0_8-whitegrid')
         
-        # 更新matplotlib参数
+        # 恢复字体设置
+        plt.rcParams['font.sans-serif'] = current_font
+        plt.rcParams['font.family'] = current_family
+        plt.rcParams['axes.unicode_minus'] = False
+        
+        # 更新其他matplotlib参数
         plt.rcParams.update({
             'figure.facecolor': self.theme.styles['figure_facecolor'],
             'axes.facecolor': self.theme.styles['axes_facecolor'],
@@ -284,6 +260,10 @@ class WeightLossVisualizer:
             'axes.titlesize': self.theme.fonts['subtitle']['size'],
             'figure.titlesize': self.theme.fonts['title']['size']
         })
+    
+    # 重新应用中文字体设置
+    from font_manager import setup_chinese_font
+    setup_chinese_font()
     
     def create_dashboard(self, tracker: DataTracker, 
                         save_path: Optional[str] = None,
@@ -560,20 +540,21 @@ class WeightLossVisualizer:
         """绘制运动模式"""
         if 'cardio_minutes' not in df or 'strength_minutes' not in df:
             ax.text(0.5, 0.5, '暂无运动数据', ha='center', va='center',
-                   transform=ax.transAxes, fontsize=14)
+                transform=ax.transAxes, fontsize=14)
             return
         
         weeks = df['week']
-        cardio = df['cardio_minutes'].fillna(0)
-        strength = df['strength_minutes'].fillna(0)
+        # 修复 FutureWarning
+        cardio = pd.to_numeric(df['cardio_minutes'], errors='coerce').fillna(0)
+        strength = pd.to_numeric(df['strength_minutes'], errors='coerce').fillna(0)
         
         # 堆叠面积图
         ax.fill_between(weeks, 0, cardio, 
-                       color=self.theme.colors['info'],
-                       alpha=0.6, label='有氧运动')
+                    color=self.theme.colors['info'],
+                    alpha=0.6, label='有氧运动')
         ax.fill_between(weeks, cardio, cardio + strength,
-                       color=self.theme.colors['secondary'],
-                       alpha=0.6, label='力量训练')
+                    color=self.theme.colors['secondary'],
+                    alpha=0.6, label='力量训练')
         
         # 添加总运动时间线
         total = cardio + strength
@@ -699,54 +680,68 @@ class WeightLossVisualizer:
         """绘制预测和趋势"""
         if 'weight' not in df or df['weight'].isna().all():
             ax.text(0.5, 0.5, '暂无预测数据', ha='center', va='center',
-                   transform=ax.transAxes, fontsize=14)
+                transform=ax.transAxes, fontsize=14)
             return
         
         weeks = df['week']
         weights = df['weight']
         
+        # 过滤掉 NaN 值（同时过滤 weeks 和 weights）
+        valid_mask = ~weights.isna()
+        valid_weeks = weeks[valid_mask]
+        valid_weights = weights[valid_mask]
+        
+        if len(valid_weights) == 0:
+            ax.text(0.5, 0.5, '暂无有效体重数据', ha='center', va='center',
+                transform=ax.transAxes, fontsize=14)
+            return
+        
         # 历史数据
-        ax.plot(weeks, weights, 'o-',
-               color=self.theme.colors['primary'],
-               linewidth=self.theme.styles['line_width'],
-               markersize=self.theme.styles['marker_size'],
-               label='实际数据')
+        ax.plot(valid_weeks, valid_weights, 'o-',
+            color=self.theme.colors['primary'],
+            linewidth=self.theme.styles['line_width'],
+            markersize=self.theme.styles['marker_size'],
+            label='实际数据')
         
         # 预测未来趋势
-        if len(weeks) > 3:
-            # 使用多项式拟合
-            z = np.polyfit(weeks.values, weights.dropna().values, 2)
+        if len(valid_weeks) > 3:
+            # 使用有效数据进行多项式拟合
+            z = np.polyfit(valid_weeks.values, valid_weights.values, 2)
             p = np.poly1d(z)
             
             # 预测未来8周
-            future_weeks = np.arange(weeks.max() + 1, weeks.max() + 9)
+            future_weeks = np.arange(valid_weeks.max() + 1, valid_weeks.max() + 9)
             predicted_weights = p(future_weeks)
             
             # 绘制预测
             ax.plot(future_weeks, predicted_weights, 'o--',
-                   color=self.theme.colors['warning'],
-                   linewidth=self.theme.styles['line_width'],
-                   markersize=self.theme.styles['marker_size'],
-                   label='预测趋势', alpha=0.7)
+                color=self.theme.colors['warning'],
+                linewidth=self.theme.styles['line_width'],
+                markersize=self.theme.styles['marker_size'],
+                label='预测趋势', alpha=0.7)
             
             # 添加置信区间
-            std_dev = weights.std()
+            std_dev = valid_weights.std()
             confidence_upper = predicted_weights + 1.96 * std_dev
             confidence_lower = predicted_weights - 1.96 * std_dev
             
             ax.fill_between(future_weeks, confidence_lower, confidence_upper,
-                           color=self.theme.colors['warning'], alpha=0.2,
-                           label='95%置信区间')
+                        color=self.theme.colors['warning'], alpha=0.2,
+                        label='95%置信区间')
             
-            # 标记预测目标达成点
-            if hasattr(df, 'target_weight'):
-                target = df['target_weight'].iloc[0]
-                crossing_points = np.where(np.diff(np.sign(predicted_weights - target)))[0]
-                if len(crossing_points) > 0:
-                    target_week = future_weeks[crossing_points[0]]
-                    target_weight = predicted_weights[crossing_points[0]]
-                    ax.plot(target_week, target_weight, 'r*', markersize=15,
-                           label=f'预计达标: 第{target_week}周')
+            # 标记预测目标达成点（如果有目标体重）
+            if 'goals' in df.columns and len(df['goals']) > 0:
+                try:
+                    target = df['goals'].iloc[0].get('target_weight')
+                    if target:
+                        crossing_points = np.where(np.diff(np.sign(predicted_weights - target)))[0]
+                        if len(crossing_points) > 0:
+                            target_week = future_weeks[crossing_points[0]]
+                            target_weight = predicted_weights[crossing_points[0]]
+                            ax.plot(target_week, target_weight, 'r*', markersize=15,
+                                label=f'预计达标: 第{target_week}周')
+                except:
+                    pass  # 忽略目标相关的错误
         
         ax.set_xlabel('时间（周）', fontsize=self.theme.fonts['label']['size'])
         ax.set_ylabel('体重（kg）', fontsize=self.theme.fonts['label']['size'])
@@ -757,10 +752,10 @@ class WeightLossVisualizer:
         ax.set_axisbelow(True)
         
         # 添加当前日期垂直线
-        current_week = weeks.max()
+        current_week = valid_weeks.max()
         ax.axvline(x=current_week, color='black', linestyle=':', alpha=0.5)
         ax.text(current_week, ax.get_ylim()[1], '当前', ha='center', va='bottom')
-    
+
     def _mark_plateaus(self, ax: plt.Axes, weeks, weights):
         """标记平台期"""
         if len(weights) < 3:
