@@ -1,0 +1,270 @@
+# ========================================
+# Python 相关
+# ========================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# ========================================
+# 项目生成的文件和目录
+# ========================================
+# 结果输出目录
+results/
+./results/
+test_results/
+
+# 数据目录
+data/
+./data/
+synthetic_data.csv
+synthetic_weight_loss_data.csv
+real_weight_loss_data.csv
+tracking_data_*.json
+
+# 日志文件
+*.log
+logs/
+de_weight_loss.log
+optimization_*.log
+
+# 配置文件（可能包含个人设置）
+config.json
+config_*.json
+# 但保留示例配置
+!config.example.json
+
+# 报告和可视化文件
+*.html
+report_*.md
+weight_loss_report.html
+
+# 图片和动画文件（由程序生成的）
+optimization_results.png
+optimization_progress.png
+solution_space.png
+weight_loss_dashboard.png
+weight_loss_animation.gif
+real_data_dashboard.png
+*.png
+*.gif
+# 但保留文档中的图片
+!docs/**/*.png
+!docs/**/*.gif
+
+# 解决方案库文件
+solution_library.json
+
+# ========================================
+# Jupyter Notebook
+# ========================================
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+*.ipynb
+# 但保留示例notebook
+!examples/*.ipynb
+
+# ========================================
+# 虚拟环境
+# ========================================
+# Virtualenv
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# conda
+conda-meta/
+*.conda
+*.tar.bz2
+
+# ========================================
+# IDE 和编辑器
+# ========================================
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.history/
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.swp
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# ========================================
+# 操作系统相关
+# ========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# ========================================
+# 数据库
+# ========================================
+*.db
+*.sqlite
+*.sqlite3
+
+# ========================================
+# 临时文件
+# ========================================
+*.tmp
+*.bak
+*.backup
+*.old
+tmp/
+temp/
+
+# ========================================
+# 敏感信息
+# ========================================
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# API密钥和证书
+*.key
+*.pem
+*.crt
+*.cer
+
+# ========================================
+# 其他
+# ========================================
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Excel临时文件
+~$*.xlsx
+~$*.xls
+
+# PDF文件（如果是生成的报告）
+*.pdf
+# 但保留文档中的PDF
+!docs/**/*.pdf
+
+# 大文件
+*.csv
+# 但保留示例数据
+!examples/sample_data.csv
+
+# Node（如果后续添加前端）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================================
+# 保留的文件（使用!前缀表示不忽略）
+# ========================================
+# 保留README相关文件
+!README.md
+!readme.md
+!LICENSE
+!requirements.txt
+!setup.py
+!.gitignore
+
+# 保留GitHub相关配置
+!.github/
