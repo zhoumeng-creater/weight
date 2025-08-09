@@ -203,7 +203,7 @@ python test_font.py
 
 #### 场景一：初次使用者
 
-![image-20250809182237379](docs/readme-images/交互式界面.png) 
+![image-20250809182237379](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\交互式界面.png) 
 
 *交互式模式的输入界面示例*
 
@@ -317,7 +317,7 @@ flowchart TD
 
 ### 适应度评估体系
 
-![适应度评估](docs/readme-images/适应度评估.png) 
+![适应度评估](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\适应度评估.png) 
 
 *三维目标的权重分配和评估流程*
 
@@ -339,7 +339,7 @@ flowchart TD
 
 ### 代谢适应机制
 
-![代谢适应](docs/readme-images/代谢适应机制.png) 
+![代谢适应](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\代谢适应机制.png) 
 
 *长期减肥过程中的代谢适应现象和激素变化*
 
@@ -369,7 +369,7 @@ flowchart TD
 
 运行完成后，打开 `weight_loss_report.html`，您将看到：
 
-![报告示例](docs/readme-images/网站.png) 
+![报告示例](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\网站.png) 
 
 *HTML报告界面示例，展示关键指标和图表*
 
@@ -391,7 +391,7 @@ flowchart TD
 
 #### 3. 趋势图表解读
 
-![图表解读](docs/readme-images/optimization_results.png) 
+![图表解读](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\optimization_results.png) 
 
 *各类图表的含义和解读方法*
 
@@ -685,7 +685,7 @@ tracker.load_from_file('tracking_data.json')
 
 ### 精度与速度权衡
 
-![性能对比](docs/readme-images/性能配置对比分析.png) 
+![性能对比](C:\Users\15995\OneDrive - Coventry University\weight\docs\readme-images\性能配置对比分析.png) 
 
 *不同配置下的运行时间和精度对比*
 
