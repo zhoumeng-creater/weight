@@ -216,7 +216,7 @@ class EnhancedExperimentRunner:
         # 数据收集器
         self.data_collector = ExperimentDataCollector()
         
-    def run_experiment_A1_benchmark(self, n_subjects: int = 30, duration_weeks: int = 16):
+    def run_experiment_A1_benchmark(self, n_subjects: int = 300, duration_weeks: int = 16):
         """实验A1: 基准对比实验"""
         logger.info("=" * 50)
         logger.info("开始实验A1: 基准对比实验")
@@ -260,7 +260,7 @@ class EnhancedExperimentRunner:
         
         return results, analysis
     
-    def run_experiment_A2_plateau_breakthrough(self, n_subjects: int = 30):
+    def run_experiment_A2_plateau_breakthrough(self, n_subjects: int = 300):
         """实验A2: 平台期突破专项实验"""
         logger.info("=" * 50)
         logger.info("开始实验A2: 平台期突破实验")
@@ -338,7 +338,7 @@ class EnhancedExperimentRunner:
             logger.info(f"\n测试场景: {scenario['name']}")
             
             # 测试10个不同的虚拟人
-            subjects = self.subject_generator.generate_standard_subjects(10)
+            subjects = self.subject_generator.generate_standard_subjects(100)
             
             scenario_results = {
                 'basic_model': [],
@@ -382,7 +382,7 @@ class EnhancedExperimentRunner:
         
         # 参数网格
         param_grid = {
-            'population_size': [5, 10, 20, 30],
+            'population_size': [50, 100, 200, 300],
             'scaling_factor': [0.4, 0.6, 0.8, 1.0],
             'crossover_rate': [0.5, 0.7, 0.9],
             'max_iterations': [8, 12, 16]
@@ -462,7 +462,7 @@ class EnhancedExperimentRunner:
         ]
         
         # 测试对象
-        subjects = self.subject_generator.generate_standard_subjects(10)
+        subjects = self.subject_generator.generate_standard_subjects(100)
         
         results = {'full_model': []}
         
@@ -514,7 +514,7 @@ class EnhancedExperimentRunner:
         logger.info("=" * 50)
         
         # 生成测试对象
-        subjects = self.subject_generator.generate_standard_subjects(20)
+        subjects = self.subject_generator.generate_standard_subjects(200)
         
         results = []
         
@@ -1121,9 +1121,7 @@ class EnhancedExperimentRunner:
         }
         
         return analysis
-    
-
-    
+        
     def _save_experiment_results(self, experiment_name: str, results: Any, analysis: Any):
         """保存实验结果"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

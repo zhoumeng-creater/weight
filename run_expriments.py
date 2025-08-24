@@ -20,13 +20,14 @@ from experiment_runner import EnhancedExperimentRunner, VirtualSubjectGenerator
 from visualization import WeightLossVisualizer, OptimizationVisualizer
 from font_manager import setup_chinese_font
 
-# 设置中文字体
-setup_chinese_font()
+
 
 # 设置绘图风格
 plt.style.use('seaborn-v0_8-whitegrid')
 sns.set_palette("husl")
 
+# 设置中文字体
+setup_chinese_font()
 
 class ExperimentAnalyzer:
     """实验结果分析器"""
@@ -105,7 +106,7 @@ class ExperimentAnalyzer:
             data_points = np.random.normal(mean, std, 30)
             box_data.append(data_points)
         
-        ax.boxplot(box_data, labels=methods)
+        ax.boxplot(box_data, tick_labels=methods)
         ax.set_ylabel('减重 (kg)')
         ax.set_title('减重分布箱线图')
         ax.grid(axis='y', alpha=0.3)

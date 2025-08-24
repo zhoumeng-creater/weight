@@ -55,6 +55,7 @@ cover/
 results/
 ./results/
 test_results/
+experiment_results/
 
 # 数据目录
 data/
