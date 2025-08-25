@@ -260,11 +260,18 @@ class SolutionGenerator:
         max_attempts = 100
         
         for _ in range(max_attempts):
-            # 生成热量
-            calories = np.random.uniform(
-                max(self.constraints.min_calories, person_tdee * 0.6),
-                min(self.constraints.max_calories, person_tdee * 0.95)
-            )
+        # 生成热量 - 修复：确保范围有效
+            cal_lower = max(self.constraints.min_calories, person_tdee * 0.6)
+            cal_upper = min(self.constraints.max_calories, person_tdee * 0.95)
+            
+            # 关键修复：如果上界小于下界，调整范围
+            if cal_upper <= cal_lower:
+                # 方案1：使用最小热量附近的范围
+                cal_lower = self.constraints.min_calories
+                cal_upper = min(self.constraints.max_calories, 
+                            max(self.constraints.min_calories + 300, person_tdee * 1.1))
+                
+            calories = np.random.uniform(cal_lower, cal_upper)
             
             # 生成营养素比例（使用Dirichlet分布确保和为1）
             alpha = [3, 4, 3]  # 控制分布的参数
