@@ -1,6 +1,6 @@
 """
 配置文件
-统一管理所有参数配置，不包含任何业务逻辑
+统一管理所有参数配置，包括算法、营养、运动和实验参数
 """
 
 import json
@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class AlgorithmConfig:
     """差分进化算法配置"""
     # 基础参数
-    population_size: int = 100
-    max_iterations: int = 12000
+    population_size: int = 20
+    max_iterations: int = 12
     scaling_factor: float = 0.8
     crossover_rate: float = 0.9
     
@@ -82,154 +82,186 @@ class ExerciseConfig:
     
     # 力量训练
     strength_frequency_range: tuple = (2, 5)
-    strength_duration_minutes: int = 60  # 假设每次时长
-    strength_muscle_groups: List[str] = field(default_factory=lambda: [
-        "胸部", "背部", "腿部", "肩部", "手臂", "核心"
-    ])
+    strength_duration_minutes: int = 60
     
-    # 运动限制
+    # 总体限制
     max_weekly_hours: float = 15
     min_rest_days: int = 1
-    
-    # 能量消耗估算（kcal/分钟/kg体重）
-    cardio_calorie_burn_rate: Dict[str, float] = field(default_factory=lambda: {
-        "walking": 0.05,
-        "jogging": 0.10,
-        "running": 0.15,
-        "cycling": 0.08,
-        "swimming": 0.12,
-        "hiit": 0.14
-    })
-    
-    strength_calorie_burn_per_session: float = 300  # 平均每次力量训练消耗
 
 
 @dataclass
 class MetabolicConfig:
     """代谢模型配置"""
     # BMR计算方法
-    bmr_equation: str = "mifflin"  # 可选: "mifflin", "harris", "katch"
+    bmr_formula: str = "mifflin"  # "mifflin", "harris", "katch"
     
-    # 活动系数
-    activity_levels: Dict[str, float] = field(default_factory=lambda: {
-        "sedentary": 1.2,      # 久坐
-        "lightly_active": 1.375,  # 轻度活动
-        "moderately_active": 1.55,  # 中度活动
-        "very_active": 1.725,    # 高度活动
-        "extra_active": 1.9      # 极度活动
-    })
+    # 代谢适应
+    enable_metabolic_adaptation: bool = True
+    adaptation_rate: float = 0.02  # 每周2%的适应
+    max_adaptation_factor: float = 0.75  # 最大降至基础的75%
     
-    # 代谢适应参数
-    adaptation_rate_per_week: float = 0.05  # 每周适应率
-    min_adaptation_factor: float = 0.75  # 最低代谢率（相对于初始）
-    adaptation_recovery_weeks: int = 2  # 恢复正常代谢所需周数
+    # NEAT（非运动性活动产热）
+    consider_neat: bool = True
+    neat_variation_range: tuple = (0.9, 1.1)  # NEAT变化范围
     
-    # 体成分变化
-    calories_per_kg_fat: float = 7700
-    calories_per_kg_muscle: float = 1800
-    
-    # 激素影响因子
-    leptin_sensitivity: float = 0.1
+    # 激素影响
+    consider_hormones: bool = True
+    thyroid_sensitivity: float = 0.1
     cortisol_impact: float = 0.05
-    thyroid_impact: float = 0.1
-    
-    # 睡眠影响
-    optimal_sleep_hours: float = 8.0
-    sleep_deficit_penalty: float = 0.05  # 每少1小时的代谢惩罚
+    leptin_sensitivity: float = 0.15
 
 
 @dataclass
 class FitnessConfig:
     """适应度评估配置"""
-    # 基础权重
+    # 默认权重
     default_weights: Dict[str, float] = field(default_factory=lambda: {
         "muscle_loss": 0.4,
         "fat_loss": 0.4,
         "sustainability": 0.2
     })
     
-    # 阶段性权重调整
-    phase_weights: Dict[str, Dict[str, float]] = field(default_factory=lambda: {
-        "initial": {"muscle_loss": 0.3, "fat_loss": 0.5, "sustainability": 0.2},
-        "middle": {"muscle_loss": 0.4, "fat_loss": 0.4, "sustainability": 0.2},
-        "final": {"muscle_loss": 0.5, "fat_loss": 0.25, "sustainability": 0.25}
+    # 自适应权重
+    use_adaptive_weights: bool = True
+    weight_adaptation_rate: float = 0.1
+    
+    # 惩罚项
+    extreme_deficit_penalty: float = 0.5  # 极端热量赤字惩罚
+    muscle_loss_penalty: float = 0.8      # 肌肉流失惩罚
+    
+    # 奖励项
+    consistency_bonus: float = 0.1        # 一致性奖励
+    adherence_bonus: float = 0.15         # 依从性奖励
+
+
+@dataclass
+class ExperimentConfig:
+    """实验配置 - 新增部分"""
+    # 实验规模
+    default_n_subjects: int = 100
+    benchmark_n_subjects: int = 300
+    plateau_n_subjects: int = 100
+    quick_test_n_subjects: int = 10
+    
+    # 实验周期
+    default_duration_weeks: int = 16
+    benchmark_duration_weeks: int = 16
+    plateau_observation_weeks: int = 8
+    long_term_tracking_weeks: int = 52
+    
+    # 判定标准
+    success_weight_loss_threshold: float = 5.0  # kg - 成功减重阈值
+    plateau_detection_threshold: float = 0.2     # kg - 平台期检测阈值
+    plateau_detection_weeks: int = 2             # 连续几周判定为平台期
+    breakthrough_threshold: float = 0.5          # kg - 突破平台期阈值
+    
+    # 统计分析
+    significance_level: float = 0.05             # 统计显著性水平
+    confidence_interval: float = 0.95            # 置信区间
+    min_sample_size: int = 30                    # 最小样本量
+    
+    # 参数搜索网格
+    sensitivity_param_grid: Dict = field(default_factory=lambda: {
+        'population_size': [50, 100, 200, 300],
+        'scaling_factor': [0.4, 0.6, 0.8, 1.0],
+        'crossover_rate': [0.5, 0.7, 0.9],
+        'max_iterations': [8, 12, 16]
     })
     
-    # 理想指标
-    ideal_weekly_weight_loss: float = 0.75  # kg
-    ideal_muscle_retention_rate: float = 0.9  # 90%肌肉保留
-    max_acceptable_deficit: float = 0.35  # 最大可接受能量赤字
+    # 消融研究组件
+    ablation_components: List[str] = field(default_factory=lambda: [
+        'metabolic_adaptation',
+        'sleep_optimization', 
+        'strength_training',
+        'cardio_training',
+        'nutrition_optimization',
+        'neat_adjustment'
+    ])
     
-    # 惩罚因子
-    plateau_penalty: float = 0.1  # 每周平台期惩罚
-    extreme_deficit_penalty: float = 0.5  # 极端赤字惩罚
-    muscle_loss_threshold: float = 0.25  # 肌肉流失警戒线
+    # 测试场景
+    test_scenarios: List[Dict] = field(default_factory=lambda: [
+        {'duration': 4, 'deficit': 500, 'name': '短期适度减脂'},
+        {'duration': 12, 'deficit': 500, 'name': '长期适度减脂'},
+        {'duration': 8, 'deficit': 1000, 'name': '激进减脂'},
+        {'duration': 16, 'deficit': 300, 'name': '缓慢减脂'}
+    ])
+    
+    # 实验输出设置
+    save_raw_data: bool = True
+    save_intermediate_results: bool = True
+    generate_plots: bool = True
+    generate_reports: bool = True
+    plot_dpi: int = 300
+    plot_format: str = 'png'
 
 
 @dataclass
 class UserPreferences:
-    """用户偏好设置"""
+    """用户偏好配置"""
     # 饮食偏好
-    dietary_restrictions: List[str] = field(default_factory=list)  # 如：vegetarian, vegan, keto
-    preferred_meal_frequency: int = 3  # 每日餐次
-    intermittent_fasting: Optional[str] = None  # 如："16:8", "5:2"
+    vegetarian: bool = False
+    vegan: bool = False
+    gluten_free: bool = False
+    dairy_free: bool = False
     
     # 运动偏好
-    preferred_exercises: List[str] = field(default_factory=list)
-    avoided_exercises: List[str] = field(default_factory=list)
-    gym_access: bool = True
-    home_equipment: List[str] = field(default_factory=list)  # 如：dumbbells, resistance_bands
+    prefer_home_workout: bool = False
+    prefer_gym: bool = True
+    prefer_outdoor: bool = False
     
-    # 生活方式
-    work_schedule: str = "regular"  # regular, shift, flexible
-    stress_level: str = "moderate"  # low, moderate, high
-    social_eating_frequency: int = 2  # 每周社交聚餐次数
+    # 时间限制
+    max_daily_exercise_minutes: int = 90
+    available_days_per_week: int = 5
     
-    # 目标设置
-    primary_goal: str = "fat_loss"  # fat_loss, muscle_gain, health
-    target_date: Optional[str] = None  # 目标达成日期
-    acceptable_muscle_loss: float = 0.1  # 可接受的肌肉流失比例
+    # 睡眠习惯
+    typical_bedtime: str = "23:00"
+    typical_wake_time: str = "07:00"
+    
+    # 特殊考虑
+    injuries: List[str] = field(default_factory=list)
+    medical_conditions: List[str] = field(default_factory=list)
+    medications: List[str] = field(default_factory=list)
 
 
 @dataclass
 class SystemConfig:
     """系统配置"""
-    # 日志设置
+    # 日志
     log_level: str = "INFO"
-    log_file: Optional[str] = "de_weight_loss.log"
+    log_to_file: bool = True
+    log_file_path: str = "./logs/optimization.log"
     
-    # 数据存储
-    data_directory: str = "./data"
-    results_directory: str = "./results"
-    save_intermediate_results: bool = True
+    # 输出
+    output_directory: str = "./results"
+    experiment_output_directory: str = "./experiment_results"
+    create_timestamp_folders: bool = True
     
-    # 可视化设置
-    plot_style: str = "seaborn"
-    figure_dpi: int = 300
-    save_plots: bool = True
+    # 可视化
     show_plots: bool = True
-    real_time_monitoring: bool = False
+    save_plots: bool = True
+    plot_style: str = "seaborn-v0_8-whitegrid"
     
-    # 性能设置
-    parallel_evaluation: bool = False
-    num_threads: int = 4
-    random_seed: Optional[int] = 42
+    # 性能
+    use_multiprocessing: bool = False
+    num_processes: int = 4
+    cache_enabled: bool = True
     
-    # 导出设置
-    export_format: List[str] = field(default_factory=lambda: ["json", "csv", "html"])
-    include_detailed_history: bool = True
+    # 随机种子
+    random_seed: int = 42
+    ensure_reproducibility: bool = True
 
 
 class ConfigManager:
-    """配置管理器 - 只负责配置的加载、保存和验证"""
+    """配置管理器"""
     
-    def __init__(self, config_file: str = "config.json"):
+    def __init__(self, config_file: str = "./config/config.json"):
         self.config_file = config_file
         self.algorithm = AlgorithmConfig()
         self.nutrition = NutritionConfig()
         self.exercise = ExerciseConfig()
         self.metabolic = MetabolicConfig()
         self.fitness = FitnessConfig()
+        self.experiment = ExperimentConfig()  # 新增
         self.user_preferences = UserPreferences()
         self.system = SystemConfig()
         
@@ -254,6 +286,8 @@ class ConfigManager:
                     self.metabolic = MetabolicConfig(**data['metabolic'])
                 if 'fitness' in data:
                     self.fitness = FitnessConfig(**data['fitness'])
+                if 'experiment' in data:  # 新增
+                    self.experiment = ExperimentConfig(**data['experiment'])
                 if 'user_preferences' in data:
                     self.user_preferences = UserPreferences(**data['user_preferences'])
                 if 'system' in data:
@@ -271,6 +305,7 @@ class ConfigManager:
             'exercise': asdict(self.exercise),
             'metabolic': asdict(self.metabolic),
             'fitness': asdict(self.fitness),
+            'experiment': asdict(self.experiment),  # 新增
             'user_preferences': asdict(self.user_preferences),
             'system': asdict(self.system)
         }
@@ -322,6 +357,13 @@ class ConfigManager:
         
         if not (0 < self.algorithm.crossover_rate <= 1):
             errors.append("交叉率应在(0, 1]范围内")
+        
+        # 验证实验参数
+        if self.experiment.plateau_detection_threshold < 0:
+            errors.append("平台期检测阈值不能为负")
+        
+        if self.experiment.significance_level <= 0 or self.experiment.significance_level >= 1:
+            errors.append("显著性水平应在(0, 1)范围内")
         
         return errors
     
@@ -444,3 +486,9 @@ if __name__ == "__main__":
     # 测试约束配置获取
     constraints = config.get_constraint_config()
     print(f"\n约束配置示例 - 热量范围: {constraints['min_calories']}-{constraints['max_calories']}")
+    
+    # 测试实验配置
+    print(f"\n实验配置:")
+    print(f"  - 基准实验样本数: {config.experiment.benchmark_n_subjects}")
+    print(f"  - 成功减重阈值: {config.experiment.success_weight_loss_threshold} kg")
+    print(f"  - 平台期检测阈值: {config.experiment.plateau_detection_threshold} kg")

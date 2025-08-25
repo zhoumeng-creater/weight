@@ -7,6 +7,7 @@ import numpy as np
 from typing import Dict, Tuple, Optional
 from dataclasses import dataclass
 import logging
+from config import ConfigManager
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +26,14 @@ class FitnessWeights:
         self.fat_loss_weight /= total
         self.sustainability_weight /= total
 
-
 class FitnessEvaluator:
     """适应度评估器"""
     
-    def __init__(self, weights: Optional[FitnessWeights] = None):
+    def __init__(self, weights: Optional[FitnessWeights] = None, config: Optional[ConfigManager] = None):
         self.weights = weights or FitnessWeights()
         self.weights.normalize()
-        
+        self.config = config or ConfigManager()
+
     def calculate_muscle_loss_score(self, muscle_loss_rate: float) -> float:
         """
         计算肌肉流失评分（0-1，越低越好）
@@ -211,8 +212,11 @@ class FitnessEvaluator:
 class AdaptiveFitnessEvaluator(FitnessEvaluator):
     """自适应适应度评估器（根据不同阶段调整权重）"""
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, config: Optional[ConfigManager] = None):
+        super().__init__(config)
+        # 使用配置中的自适应参数
+        self.use_adaptive = self.config.fitness.use_adaptive_weights
+        self.adaptation_rate = self.config.fitness.weight_adaptation_rate
         
     def update_weights(self, person, week: int):
         """根据减肥阶段动态调整权重"""

@@ -7,6 +7,7 @@ import numpy as np
 from dataclasses import dataclass, field
 from typing import Dict, Tuple, Optional
 import logging
+from config import ConfigManager
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,8 @@ class PersonProfile:
 class MetabolicModel:
     """人体代谢模型"""
     
-    def __init__(self):
+    def __init__(self, config: Optional[ConfigManager] = None):
+        self.config = config or ConfigManager()
         # 能量转换常数
         self.CALORIES_PER_KG_FAT = 7700  # 1kg脂肪约等于7700千卡
         self.CALORIES_PER_KG_MUSCLE = 1800  # 1kg肌肉约等于1800千卡

@@ -179,7 +179,7 @@ def create_visualizations(results, tracker, output_dir):
     
     # 3. 动画（可选）
     try:
-        anim = viz.create_animation(
+        anim = opt_viz.create_animation(
             tracker,
             save_path=os.path.join(output_dir, "weight_loss_animation.gif")
         )

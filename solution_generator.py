@@ -8,6 +8,7 @@ from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
 import logging
 import json
+from config import ConfigManager
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +86,23 @@ class SolutionConstraints:
 class SolutionGenerator:
     """方案生成器"""
     
-    def __init__(self, constraints: Optional[SolutionConstraints] = None):
-        self.constraints = constraints or SolutionConstraints()
+    def __init__(self, constraints: Optional[SolutionConstraints] = None,
+                 config: Optional[ConfigManager] = None):
+        """
+        初始化方案生成器
+        
+        Args:
+            constraints: 约束条件
+            config: 配置管理器
+        """
+        self.config = config or ConfigManager()
+        
+        # 如果没有提供约束，从配置生成
+        if constraints is None:
+            constraint_dict = self.config.get_constraint_config()
+            self.constraints = SolutionConstraints(**constraint_dict)
+        else:
+            self.constraints = constraints
         
         # 预定义的方案模板
         self.templates = self._load_templates()
