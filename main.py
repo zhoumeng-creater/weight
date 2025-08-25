@@ -16,9 +16,10 @@ from metabolic_model import PersonProfile
 from config import ConfigManager, load_preset
 from solution_generator import SolutionGenerator, SolutionConstraints
 from de_algorithm import DifferentialEvolution
-from visualization import WeightLossVisualizer, DataTracker, OptimizationVisualizer, ReportGenerator
+from visualization import WeightLossVisualizer, DataTracker, OptimizationVisualizer, ReportGenerator, DataTracker
 from fitness_evaluator import AdaptiveFitnessEvaluator
 from metabolic_model import AdvancedMetabolicModel
+from virtual_subjects import VirtualSubjectGenerator  # 如果需要生成测试数据
 
 # 替换原有的字体设置代码
 from font_manager import setup_chinese_font
