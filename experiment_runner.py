@@ -45,6 +45,38 @@ def np_pd_convert(o):
         return o.to_dict(orient="records")
     if isinstance(o, (pd.Timestamp, datetime)):
         return o.isoformat()
+    
+     # 添加这部分：处理 Solution 对象
+    from solution_generator import Solution
+    if isinstance(o, Solution):
+        return {
+            'type': 'Solution',
+            'calories': float(o.calories),
+            'protein_ratio': float(o.protein_ratio),
+            'carb_ratio': float(o.carb_ratio),
+            'fat_ratio': float(o.fat_ratio),
+            'cardio_freq': int(o.cardio_freq),
+            'cardio_duration': int(o.cardio_duration),
+            'strength_freq': int(o.strength_freq),
+            'sleep_hours': float(o.sleep_hours),
+            'fitness': float(o.fitness) if o.fitness is not None else None,
+            'vector': o.to_vector().tolist()
+        }
+    
+    # 添加这部分：处理 PersonProfile 对象（可能也会遇到）
+    from metabolic_model import PersonProfile
+    if isinstance(o, PersonProfile):
+        return {
+            'type': 'PersonProfile',
+            'age': o.age,
+            'gender': o.gender,
+            'height': o.height,
+            'weight': o.weight,
+            'body_fat_percentage': o.body_fat_percentage,
+            'activity_level': o.activity_level,
+            'weeks_on_diet': o.weeks_on_diet,
+            'metabolic_adaptation_factor': o.metabolic_adaptation_factor
+        }
     raise TypeError(f"Type {type(o)} not serializable")
 
 
@@ -331,7 +363,6 @@ class EnhancedExperimentRunner:
         logger.info("开始实验D1: 消融研究")
         logger.info("=" * 50)
         
-        # 使用配置中的组件列表
         components = self.config.experiment.ablation_components
         
         test_subject = PersonProfile(
@@ -357,12 +388,27 @@ class EnhancedExperimentRunner:
         for component in components:
             logger.info(f"测试移除组件: {component}")
             
-            # 创建配置副本并禁用组件
+            # 创建配置副本
             ablated_config = copy.deepcopy(self.config)
-            self._disable_component(ablated_config, component)
+            
+            # 真正禁用组件的方法
+            if component == 'metabolic_adaptation':
+                ablated_config.metabolic.enable_metabolic_adaptation = False
+            elif component == 'neat_adjustment':
+                ablated_config.metabolic.consider_neat = False
+            else:
+                # 对于其他组件，我们需要在优化过程中强制固定值
+                # 这需要修改 DifferentialEvolution 类来支持
+                ablated_config.experiment.disabled_component = component
             
             # 运行优化
             optimizer = DifferentialEvolution(copy.deepcopy(test_subject), ablated_config)
+            
+            # 如果有禁用的组件，修改初始种群生成
+            if hasattr(ablated_config.experiment, 'disabled_component'):
+                # 这里需要自定义种群生成逻辑
+                pass
+            
             best_solution, opt_results = optimizer.optimize()
             
             results[f"without_{component}"] = {
@@ -761,18 +807,27 @@ class EnhancedExperimentRunner:
         """禁用指定组件"""
         if component == 'metabolic_adaptation':
             config.metabolic.enable_metabolic_adaptation = False
+            
         elif component == 'sleep_optimization':
-            # 固定睡眠时间
-            pass
+            # 固定睡眠时间为7小时（不优化）
+            config.algorithm.population_size = config.algorithm.population_size  # 保持不变
+            # 标记：在生成方案时固定睡眠
+            config.experiment.disable_sleep_opt = True
+            
         elif component == 'strength_training':
-            # 禁用力量训练
-            pass
+            # 禁用力量训练（设置为0）
+            config.exercise.strength_frequency_range = (0, 0)
+            
         elif component == 'cardio_training':
-            # 禁用有氧训练
-            pass
+            # 禁用有氧训练（设置为0）
+            config.exercise.cardio_frequency_range = (0, 0)
+            
         elif component == 'nutrition_optimization':
-            # 使用固定营养比例
-            pass
+            # 使用固定营养比例（不优化）
+            config.nutrition.protein_range = (0.30, 0.30)  # 固定30%
+            config.nutrition.carb_range = (0.40, 0.40)     # 固定40%
+            config.nutrition.fat_range = (0.30, 0.30)      # 固定30%
+            
         elif component == 'neat_adjustment':
             config.metabolic.consider_neat = False
     

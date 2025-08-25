@@ -500,6 +500,27 @@ class SolutionGenerator:
         
         return valid_solutions
 
+    def generate_with_disabled_components(self, person_tdee: float, 
+                                        disabled_components: List[str]) -> np.ndarray:
+        """生成考虑禁用组件的方案"""
+        solution = self.generate_random_solution(person_tdee)
+        
+        # 根据禁用的组件固定相应的值
+        for component in disabled_components:
+            if component == 'sleep_optimization':
+                solution[7] = 7.0  # 固定睡眠7小时
+            elif component == 'strength_training':
+                solution[6] = 0  # 无力量训练
+            elif component == 'cardio_training':
+                solution[4] = 0  # 无有氧训练
+                solution[5] = 0  # 无有氧时长
+            elif component == 'nutrition_optimization':
+                # 固定营养比例
+                solution[1] = 0.30  # 蛋白质30%
+                solution[2] = 0.40  # 碳水40%
+                solution[3] = 0.30  # 脂肪30%
+        
+        return solution
 
 class SolutionLibrary:
     """方案库管理"""

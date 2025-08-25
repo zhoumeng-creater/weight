@@ -1081,7 +1081,14 @@ class ExperimentVisualizer:
         """可视化消融研究结果"""
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         
-        components = list(analysis.keys())
+        # 正确分离组件数据和元数据
+        components = []
+        metadata_keys = ['ranking', 'full_model']  # 已知的非组件键
+
+        for key in analysis.keys():
+            if key not in metadata_keys and isinstance(analysis[key], dict):
+                components.append(key)
+
         if 'full_model' in components:
             components.remove('full_model')
         
@@ -1089,38 +1096,39 @@ class ExperimentVisualizer:
         ax = axes[0, 0]
         importance_scores = []
         
-        if 'full_model' in analysis:
-            full_performance = analysis['full_model']['avg_fitness']
-            
-            for comp in components:
-                without_comp = analysis[comp]['avg_fitness']
-                importance = abs(full_performance - without_comp) / full_performance
-                importance_scores.append(importance * 100)
-        else:
-            importance_scores = [analysis[c].get('importance', 0) for c in components]
+        # 现在 components 只包含实际的组件名称
+        for comp in components:
+            if comp in analysis and isinstance(analysis[comp], dict):
+                importance_scores.append(analysis[comp].get('importance', 0) * 100)
         
-        bars = ax.bar(components, importance_scores)
-        ax.set_ylabel('重要性 (%)')
-        ax.set_title('组件重要性分析')
-        ax.set_xticklabels(components, rotation=45, ha='right')
-        
-        # 着色最重要的组件
         if importance_scores:
+            bars = ax.bar(components, importance_scores)
+            ax.set_ylabel('重要性 (%)')
+            ax.set_title('组件重要性分析')
+            ax.set_xticklabels(components, rotation=45, ha='right')
+            
+            # 着色最重要的组件
             max_idx = np.argmax(importance_scores)
             bars[max_idx].set_color(self.theme.colors['danger'])
         
         # 2. 性能影响（折线图）
         ax = axes[0, 1]
         
-        if 'full_model' in analysis:
-            baseline = analysis['full_model']['avg_fitness']
-            performances = [analysis[c]['avg_fitness'] for c in components]
-            
+        performances = []
+        for comp in components:
+            if comp in analysis and isinstance(analysis[comp], dict):
+                performances.append(analysis[comp].get('fitness_without', 0))
+        
+        if performances:
             x = range(len(components))
             ax.plot(x, performances, 'o-', linewidth=2, markersize=8,
-                   color=self.theme.colors['primary'])
-            ax.axhline(y=baseline, color='red', linestyle='--',
-                      label=f'完整模型: {baseline:.3f}')
+                color=self.theme.colors['primary'])
+            
+            # 如果有完整模型的基准线
+            if 'full_model' in analysis and isinstance(analysis['full_model'], dict):
+                baseline = analysis['full_model'].get('fitness', 0)
+                ax.axhline(y=baseline, color='red', linestyle='--',
+                        label=f'完整模型: {baseline:.3f}')
             
             ax.set_xticks(x)
             ax.set_xticklabels(components, rotation=45, ha='right')
