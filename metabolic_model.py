@@ -60,9 +60,10 @@ class MetabolicModel:
         self.CALORIES_PER_KG_FAT = 7700  # 1kg脂肪约等于7700千卡
         self.CALORIES_PER_KG_MUSCLE = 1800  # 1kg肌肉约等于1800千卡
         
-        # 代谢适应参数
-        self.ADAPTATION_RATE = 0.05  # 每周代谢适应率
-        self.MIN_ADAPTATION_FACTOR = 0.75  # 最小代谢适应因子
+        # 使用配置中的代谢适应参数
+        self.ADAPTATION_RATE = self.config.metabolic.adaptation_rate if self.config else 0.05
+        self.MIN_ADAPTATION_FACTOR = self.config.metabolic.max_adaptation_factor if self.config else 0.75
+        self.enable_adaptation = self.config.metabolic.enable_metabolic_adaptation if self.config else True
         
     def calculate_bmr(self, person: PersonProfile) -> float:
         """计算当前BMR（考虑代谢适应）"""
@@ -116,6 +117,9 @@ class MetabolicModel:
     def calculate_metabolic_adaptation(self, person: PersonProfile, 
                                      energy_deficit: float, week: int) -> float:
         """计算代谢适应"""
+        if not self.enable_adaptation:
+            return 1.0  # 返回1.0表示没有适应
+        
         # 基于能量缺口和时间的代谢适应
         if energy_deficit > 0:
             # 每周根据能量缺口程度进行适应

@@ -20,9 +20,10 @@ class DifferentialEvolution:
     def __init__(self, person: PersonProfile, config: ConfigManager):
         self.person = person
         self.config = config
-        self.metabolic_model = MetabolicModel()
-        self.fitness_evaluator = FitnessEvaluator()
-        self.solution_generator = SolutionGenerator()
+        # 传递配置给MetabolicModel
+        self.metabolic_model = MetabolicModel(config)  # ✅ 传递config
+        self.fitness_evaluator = FitnessEvaluator(config=config)  # ✅ 传递config
+        self.solution_generator = SolutionGenerator(config=config)  # ✅ 传递config
         
         # 记录进化历史
         self.best_fitness_history = []

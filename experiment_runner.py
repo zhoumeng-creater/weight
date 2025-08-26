@@ -391,23 +391,21 @@ class EnhancedExperimentRunner:
             # 创建配置副本
             ablated_config = copy.deepcopy(self.config)
             
-            # 真正禁用组件的方法
-            if component == 'metabolic_adaptation':
-                ablated_config.metabolic.enable_metabolic_adaptation = False
-            elif component == 'neat_adjustment':
-                ablated_config.metabolic.consider_neat = False
-            else:
-                # 对于其他组件，我们需要在优化过程中强制固定值
-                # 这需要修改 DifferentialEvolution 类来支持
-                ablated_config.experiment.disabled_component = component
+            # ✅ 调用_disable_component方法
+            self._disable_component(ablated_config, component)
             
             # 运行优化
-            optimizer = DifferentialEvolution(copy.deepcopy(test_subject), ablated_config)
+            test_subject_copy = copy.deepcopy(test_subject)
             
-            # 如果有禁用的组件，修改初始种群生成
-            if hasattr(ablated_config.experiment, 'disabled_component'):
-                # 这里需要自定义种群生成逻辑
-                pass
+            # 如果禁用了某些组件，需要特殊处理初始种群
+            if component in ['sleep_optimization', 'strength_training', 
+                            'cardio_training', 'nutrition_optimization']:
+                # 创建自定义优化器
+                optimizer = self._create_ablated_optimizer(
+                    test_subject_copy, ablated_config, component
+                )
+            else:
+                optimizer = DifferentialEvolution(test_subject_copy, ablated_config)
             
             best_solution, opt_results = optimizer.optimize()
             
@@ -424,6 +422,127 @@ class EnhancedExperimentRunner:
         self._save_experiment_results("D1_ablation", results, analysis)
         
         return results, analysis
+
+    def _create_ablated_optimizer(self, subject: PersonProfile, config: ConfigManager, 
+                                disabled_component: str):
+        """创建禁用特定组件的优化器"""
+        
+        class AblatedDifferentialEvolution(DifferentialEvolution):
+            def __init__(self, person, config, disabled_component):
+                super().__init__(person, config)
+                self.disabled_component = disabled_component
+                
+            def optimize(self):
+                # 修改种群生成逻辑
+                logger.info(f"开始差分进化优化（禁用组件：{self.disabled_component}）...")
+                logger.info(f"目标用户: {self.person}")
+                
+                # 使用特殊的种群生成方法
+                bmr = self.metabolic_model.calculate_bmr(self.person)
+                tdee = bmr * self.person.activity_level
+                
+                # 生成禁用组件的种群
+                population = []
+                for _ in range(self.config.algorithm.population_size):
+                    solution_vector = self.solution_generator.generate_with_disabled_components(
+                        tdee, [self.disabled_component]
+                    )
+                    population.append(Solution(solution_vector))
+                
+                # 继续正常的优化流程
+                self.evaluate_population(population, week=0)
+                best_solution = min(population, key=lambda x: x.fitness)
+                logger.info(f"初始最佳方案: {best_solution}, 适应度: {best_solution.fitness:.3f}")
+                
+                # 进化主循环
+                iteration = 0
+                while not self.check_termination(iteration, best_solution.fitness):
+                    logger.info(f"\n--- 第 {iteration + 1} 周 ---")
+                    
+                    new_population = []
+                    
+                    for i, target in enumerate(population):
+                        # 变异
+                        mutant = self.mutate(population, i)
+                        
+                        # 确保变异体也符合禁用组件的约束
+                        mutant_vector = mutant.to_vector()
+                        mutant_vector = self._apply_component_constraints(
+                            mutant_vector, self.disabled_component
+                        )
+                        mutant = Solution(mutant_vector)
+                        
+                        # 交叉
+                        trial = self.crossover(target, mutant)
+                        
+                        # 再次确保符合约束
+                        trial_vector = trial.to_vector()
+                        trial_vector = self._apply_component_constraints(
+                            trial_vector, self.disabled_component
+                        )
+                        trial = Solution(trial_vector)
+                        
+                        # 评估和选择
+                        self.evaluate_population([trial], week=iteration+1)
+                        selected = self.selection(target, trial)
+                        new_population.append(selected)
+                    
+                    population = new_population
+                    
+                    # 更新最佳方案
+                    current_best = min(population, key=lambda x: x.fitness)
+                    if current_best.fitness < best_solution.fitness:
+                        best_solution = current_best
+                        logger.info(f"发现更优方案! 适应度: {best_solution.fitness:.3f}")
+                    
+                    # 记录历史
+                    self.best_fitness_history.append(best_solution.fitness)
+                    avg_fitness = np.mean([s.fitness for s in population])
+                    self.avg_fitness_history.append(avg_fitness)
+                    self.best_solutions_history.append(best_solution)
+                    self.population_history.append(population.copy())
+                    self.fitness_history.append([s.fitness for s in population])
+                    
+                    # 更新人体状态
+                    self.person = self.metabolic_model.update_person_state(
+                        self.person, best_solution, week=iteration+1
+                    )
+                    
+                    iteration += 1
+                
+                # 返回结果
+                results = {
+                    'best_solution': best_solution,
+                    'best_fitness_history': self.best_fitness_history,
+                    'avg_fitness_history': self.avg_fitness_history,
+                    'best_solutions_history': self.best_solutions_history,
+                    'population_history': self.population_history,
+                    'fitness_history': self.fitness_history,
+                    'final_person_state': self.person,
+                    'initial_weight': self.person.initial_weight,
+                    'total_iterations': iteration
+                }
+                
+                return best_solution, results
+            
+            def _apply_component_constraints(self, solution_vector, component):
+                """应用组件约束"""
+                if component == 'sleep_optimization':
+                    solution_vector[7] = 7.0  # 固定睡眠时间
+                elif component == 'strength_training':
+                    solution_vector[6] = 0  # 无力量训练
+                elif component == 'cardio_training':
+                    solution_vector[4] = 0  # 无有氧训练
+                    solution_vector[5] = 0
+                elif component == 'nutrition_optimization':
+                    # 固定营养比例
+                    solution_vector[1] = 0.30
+                    solution_vector[2] = 0.40
+                    solution_vector[3] = 0.30
+                
+                return solution_vector
+        
+        return AblatedDifferentialEvolution(subject, config, disabled_component)
     
     def run_experiment_E1_long_term_tracking(self, weeks: Optional[int] = None):
         """实验E1: 长期效果追踪"""
