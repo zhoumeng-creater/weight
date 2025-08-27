@@ -1096,22 +1096,6 @@ class EnhancedExperimentRunner:
         analysis['optimal_parameters'] = best_result['parameters']
         analysis['optimal_fitness'] = best_result['avg_fitness']
         
-        # ✅ 添加统计检验：参数的显著性
-        analysis['statistical_tests'] = {}
-        
-        for param_name in param_names:
-            param_values = [r['parameters'][param_name] for r in results]
-            fitness_values = [r['avg_fitness'] for r in results]
-            
-            # Spearman相关性检验
-            rho, p_value = stats.spearmanr(param_values, fitness_values)
-            
-            analysis['statistical_tests'][f'{param_name}_correlation'] = {
-                'correlation': rho,
-                'p_value': p_value,
-                'significant': p_value < self.config.experiment.significance_level
-            }
-
         return analysis
     
     def _analyze_ablation_results(self, results: Dict) -> Dict:
@@ -1121,7 +1105,6 @@ class EnhancedExperimentRunner:
         if 'full_model' in results:
             full_fitness = results['full_model']['fitness']
             
-            component_impacts = []
             for key, value in results.items():
                 if key.startswith('without_'):
                     component = key.replace('without_', '')
@@ -1135,22 +1118,7 @@ class EnhancedExperimentRunner:
                         'fitness_with': full_fitness,
                         'impact': value['fitness'] - full_fitness
                     }
-                    component_impacts.append(value['fitness'] - full_fitness)
-
-            # ✅ 添加统计检验：组件影响的显著性
-            if component_impacts:
-                # 单样本t检验：测试影响是否显著不为0
-                t_stat, p_value = stats.ttest_1samp(component_impacts, 0)
-                
-                analysis['statistical_tests'] = {
-                    'components_impact_test': {
-                        't_statistic': t_stat,
-                        'p_value': p_value,
-                        'significant': p_value < 0.05,
-                        'mean_impact': np.mean(component_impacts),
-                        'std_impact': np.std(component_impacts)
-                    }
-                }        
+        
         # 排序组件重要性
         if analysis:
             sorted_components = sorted(analysis.items(), 
@@ -1276,34 +1244,10 @@ class EnhancedExperimentRunner:
         
         if isinstance(analysis, dict):
             for key, value in analysis.items():
-                if key == 'statistical_tests':  # 跳过统计检验部分
-                    continue
-                    
-                if isinstance(value, dict):
-                    # 原有的字段
-                    if 'mean_weight_loss' in value:
-                        findings.append(f"- {key}: 平均减重 {value['mean_weight_loss']:.2f} kg")
-                    elif 'success_rate' in value:
-                        findings.append(f"- {key}: 成功率 {value['success_rate']:.1%}")
-                    
-                    # B1实验的字段
-                    elif 'mean_difference' in value:
-                        findings.append(f"- {key}: 模型差异 {value['mean_difference']:.3f} kg")
-                    elif 'basic_mean_loss' in value and 'advanced_mean_loss' in value:
-                        findings.append(f"- {key}: 基础模型减重 {value['basic_mean_loss']:.2f} kg, "
-                                    f"高级模型减重 {value['advanced_mean_loss']:.2f} kg")
-                    
-                    # D1实验的字段
-                    elif 'importance' in value:
-                        findings.append(f"- {key}: 重要性 {value['importance']:.1%}")
-                    
-                    # C1实验的字段
-                    elif key == 'optimal_parameters':
-                        param_str = ', '.join([f"{k}={v}" for k, v in value.items()])
-                        findings.append(f"- 最优参数: {param_str}")
-                    elif key == 'sensitivity_scores':
-                        for param, score in value.items():
-                            findings.append(f"- {param} 敏感度: {score:.3f}")
+                if isinstance(value, dict) and 'mean_weight_loss' in value:
+                    findings.append(f"- {key}: 平均减重 {value['mean_weight_loss']:.2f} kg")
+                elif isinstance(value, dict) and 'success_rate' in value:
+                    findings.append(f"- {key}: 成功率 {value['success_rate']:.1%}")
         
         return "\n".join(findings) if findings else "- 详见分析结果"
     

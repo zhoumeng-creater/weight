@@ -947,7 +947,8 @@ class ExperimentVisualizer:
         """可视化平台期突破实验结果"""
         fig, axes = plt.subplots(2, 2, figsize=(14, 10))
         
-        strategies = list(analysis.keys())
+        strategies = [key for key in analysis.keys() 
+                    if key not in ['statistical_tests', 'metadata']]
         
         # 1. 突破成功率
         ax = axes[0, 0]
