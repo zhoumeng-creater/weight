@@ -541,6 +541,13 @@ class EnhancedExperimentRunner:
                     solution_vector[3] = 0.30
                 
                 return solution_vector
+            
+            def _apply_bounds(self, solution_vector):
+                """应用边界约束"""
+                bounds = self.solution_generator.get_bounds()
+                for i in range(len(solution_vector)):
+                    solution_vector[i] = np.clip(solution_vector[i], bounds[i][0], bounds[i][1])
+                return solution_vector
         
         return AblatedDifferentialEvolution(subject, config, disabled_component)
     
@@ -1191,6 +1198,50 @@ class EnhancedExperimentRunner:
         
         analysis['plateau_frequency'] = np.mean(plateau_counts) / len(results[0]['tracking_data']['weight'])
         
+
+        # ✅ 添加统计检验
+        analysis['statistical_tests'] = {}
+        
+        # 1. 测试体重减少的显著性（单样本t检验）
+        weight_losses = [r['total_weight_loss'] for r in results]
+        if weight_losses:
+            from scipy import stats
+            t_stat, p_value = stats.ttest_1samp(weight_losses, 0)
+            analysis['statistical_tests']['weight_loss_significance'] = {
+                't_statistic': t_stat,
+                'p_value': p_value,
+                'significant': p_value < 0.05,
+                'mean_loss': np.mean(weight_losses),
+                'std_loss': np.std(weight_losses)
+            }
+        
+        # 2. 测试代谢适应的显著性（是否显著不等于1）
+        if analysis['metabolic_adaptation']:
+            t_stat, p_value = stats.ttest_1samp(analysis['metabolic_adaptation'], 1.0)
+            analysis['statistical_tests']['metabolic_adaptation_test'] = {
+                't_statistic': t_stat,
+                'p_value': p_value,
+                'significant': p_value < 0.05,
+                'mean_factor': analysis['mean_metabolic_adaptation']
+            }
+        
+        # 3. 计算体重保持率（最后4周体重变化）
+        retention_rates = []
+        for result in results:
+            weights = result['tracking_data']['weight']
+            if len(weights) >= 8:
+                last_month_change = abs(weights[-1] - weights[-4])
+                retention_rate = 1 - (last_month_change / result['total_weight_loss']) if result['total_weight_loss'] > 0 else 0
+                retention_rates.append(retention_rate)
+        
+        if retention_rates:
+            analysis['retention_rate'] = np.mean(retention_rates)
+            analysis['statistical_tests']['retention_analysis'] = {
+                'mean_retention': analysis['retention_rate'],
+                'std_retention': np.std(retention_rates),
+                'good_retention_rate': sum(1 for r in retention_rates if r > 0.8) / len(retention_rates)
+            }
+            
         return analysis
     
     # ============ 保存方法 ============
