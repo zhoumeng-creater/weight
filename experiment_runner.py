@@ -544,7 +544,7 @@ class EnhancedExperimentRunner:
             
             def _apply_bounds(self, solution_vector):
                 """应用边界约束"""
-                bounds = self.solution_generator.get_bounds()
+                bounds = self.solution_generator.handle_bounds()
                 for i in range(len(solution_vector)):
                     solution_vector[i] = np.clip(solution_vector[i], bounds[i][0], bounds[i][1])
                 return solution_vector
@@ -1160,10 +1160,15 @@ class EnhancedExperimentRunner:
                 }        
         # 排序组件重要性
         if analysis:
-            sorted_components = sorted(analysis.items(), 
-                                     key=lambda x: x[1]['importance'], 
-                                     reverse=True)
-            analysis['ranking'] = [comp for comp, _ in sorted_components]
+            # 过滤出只有importance键的组件
+            components_with_importance = {k: v for k, v in analysis.items() 
+                                        if isinstance(v, dict) and 'importance' in v}
+            
+            if components_with_importance:
+                sorted_components = sorted(components_with_importance.items(), 
+                                        key=lambda x: x[1]['importance'], 
+                                        reverse=True)
+                analysis['ranking'] = [comp for comp, _ in sorted_components]
         
         return analysis
     
