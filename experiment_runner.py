@@ -1369,8 +1369,19 @@ class EnhancedExperimentRunner:
         
         if 'statistical_tests' in analysis:
             for test_name, test_result in analysis['statistical_tests'].items():
-                stats.append(f"- {test_name}: p={test_result['p_value']:.4f} "
-                           f"({'显著' if test_result['significant'] else '不显著'})")
+                # 添加错误检查
+                if isinstance(test_result, dict):
+                    if 'p_value' in test_result:
+                        stats.append(f"- {test_name}: p={test_result['p_value']:.4f} "
+                                f"({'显著' if test_result.get('significant', False) else '不显著'})")
+                    else:
+                        # 如果没有p_value，尝试其他格式
+                        if 'mean_retention' in test_result:
+                            stats.append(f"- {test_name}: 平均保持率={test_result['mean_retention']:.2f}")
+                        else:
+                            stats.append(f"- {test_name}: {test_result}")
+                else:
+                    stats.append(f"- {test_name}: {test_result}")
         
         return "\n".join(stats) if stats else "- 无统计检验结果"
     
