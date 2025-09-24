@@ -786,92 +786,97 @@ class OptimizationVisualizer(WeightLossVisualizer):
         return figures
     
     def plot_optimization_progress(self, 
-                                  population_history: List,
-                                  fitness_history: List,
-                                  best_solutions: List,
-                                  save_path: Optional[str] = None):
-        """绘制优化进展"""
-        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+                                population_history: List,
+                                fitness_history: List,
+                                best_solutions: List,
+                                save_path: Optional[str] = None) -> Dict[str, plt.Figure]:
+        """绘制优化进展 - 每个图单独绘制"""
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
-        # 1. 种群多样性
-        ax = axes[0, 0]
+        # 1. 种群多样性 - 单独图形
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         generations = range(len(population_history))
         diversity = []
         
         for pop in population_history:
-            # 计算种群多样性（标准差）
             pop_array = np.array([ind.to_vector() if hasattr(ind, 'to_vector') else ind 
-                                 for ind in pop])
+                                for ind in pop])
             diversity.append(np.mean(np.std(pop_array, axis=0)))
         
-        ax.plot(generations, diversity, 'b-', linewidth=2)
-        ax.set_xlabel('代数')
-        ax.set_ylabel('多样性指数')
-        ax.set_title('种群多样性变化')
-        ax.grid(True, alpha=0.3)
+        ax1.plot(generations, diversity, 'b-', linewidth=2)
+        ax1.set_xlabel('代数')
+        ax1.set_ylabel('多样性指数')
+        ax1.set_title('种群多样性变化')
+        ax1.grid(True, alpha=0.3)
+        figures['diversity'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_diversity.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig1)
         
-        # 2. 适应度分布
-        ax = axes[0, 1]
-        
-        # 选择几个关键代数
+        # 2. 适应度分布 - 单独图形
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
         key_gens = [0, len(fitness_history)//4, len(fitness_history)//2, -1]
         
         for i, gen_idx in enumerate(key_gens):
             if gen_idx < len(fitness_history):
                 gen_fitness = fitness_history[gen_idx]
-                ax.hist(gen_fitness, alpha=0.5, bins=20, 
-                       label=f'第{gen_idx if gen_idx >= 0 else len(fitness_history)+gen_idx}代')
+                ax2.hist(gen_fitness, alpha=0.5, bins=20, 
+                    label=f'第{gen_idx if gen_idx >= 0 else len(fitness_history)+gen_idx}代')
         
-        ax.set_xlabel('适应度值')
-        ax.set_ylabel('频数')
-        ax.set_title('适应度分布演化')
-        ax.legend()
+        ax2.set_xlabel('适应度值')
+        ax2.set_ylabel('频数')
+        ax2.set_title('适应度分布演化')
+        ax2.legend()
+        figures['fitness_distribution'] = fig2
+        if base_path:
+            fig2.savefig(f"{base_path}_fitness_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig2)
         
-        # 3. 收敛曲线
-        ax = axes[1, 0]
+        # 3. 收敛曲线 - 单独图形
+        fig3, ax3 = plt.subplots(figsize=(10, 6))
         
         best_fitness = [min(gen) for gen in fitness_history]
         avg_fitness = [np.mean(gen) for gen in fitness_history]
         worst_fitness = [max(gen) for gen in fitness_history]
         
         generations = range(len(fitness_history))
-        ax.fill_between(generations, worst_fitness, best_fitness, 
-                       alpha=0.3, color='gray', label='范围')
-        ax.plot(generations, best_fitness, 'g-', linewidth=2, label='最佳')
-        ax.plot(generations, avg_fitness, 'b--', linewidth=1.5, label='平均')
+        ax3.fill_between(generations, worst_fitness, best_fitness, 
+                    alpha=0.3, color='gray', label='范围')
+        ax3.plot(generations, best_fitness, 'g-', linewidth=2, label='最佳')
+        ax3.plot(generations, avg_fitness, 'b--', linewidth=1.5, label='平均')
         
-        ax.set_xlabel('代数')
-        ax.set_ylabel('适应度')
-        ax.set_title('收敛过程')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
+        ax3.set_xlabel('代数')
+        ax3.set_ylabel('适应度')
+        ax3.set_title('收敛过程')
+        ax3.legend()
+        ax3.grid(True, alpha=0.3)
+        figures['convergence'] = fig3
+        if base_path:
+            fig3.savefig(f"{base_path}_convergence.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig3)
         
-        # 4. 参数轨迹
-        ax = axes[1, 1]
+        # 4. 参数轨迹 - 单独图形
+        fig4, ax4 = plt.subplots(figsize=(10, 6))
         
         if best_solutions:
-            # 提取关键参数
             calories = [s.calories if hasattr(s, 'calories') else s[0] for s in best_solutions]
-            
-            # 归一化到0-1范围
             calories_norm = (np.array(calories) - np.min(calories)) / (np.max(calories) - np.min(calories))
             
             generations = range(len(best_solutions))
-            ax.plot(generations, calories_norm, label='热量', linewidth=2)
+            ax4.plot(generations, calories_norm, label='热量', linewidth=2)
             
-            ax.set_xlabel('代数')
-            ax.set_ylabel('归一化参数值')
-            ax.set_title('最优解参数轨迹')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
+            ax4.set_xlabel('代数')
+            ax4.set_ylabel('归一化参数值')
+            ax4.set_title('最优解参数轨迹')
+            ax4.legend()
+            ax4.grid(True, alpha=0.3)
+        figures['parameter_trajectory'] = fig4
+        if base_path:
+            fig4.savefig(f"{base_path}_parameter_trajectory.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig4)
         
-        plt.suptitle('优化过程详细分析', fontsize=14, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path:
-            fig.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
-        
-        return fig
+        return figures
 
 
 class ExperimentVisualizer:
@@ -881,40 +886,42 @@ class ExperimentVisualizer:
         self.theme = theme or ThemeConfig()
         self.results_dir = "./experiment_results"
     
-    def visualize_benchmark_results(self, analysis: Dict, save_path: Optional[str] = None):
-        """可视化基准对比实验结果"""
-        # 创建图表
-        fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    def visualize_benchmark_results(self, analysis: Dict, save_path: Optional[str] = None) -> Dict[str, plt.Figure]:
+        """可视化基准对比实验结果 - 每个图单独绘制"""
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
         # 准备数据
         methods = list(analysis.keys())
         if 'statistical_tests' in methods:
             methods.remove('statistical_tests')
         
-        # 1. 平均减重对比（柱状图）
-        ax = axes[0, 0]
+        # 1. 平均减重对比 - 单独图形
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         mean_losses = [analysis[m]['mean_weight_loss'] for m in methods]
         std_losses = [analysis[m]['std_weight_loss'] for m in methods]
         
-        bars = ax.bar(methods, mean_losses, yerr=std_losses, capsize=5)
-        ax.set_ylabel('平均减重 (kg)')
-        ax.set_title('不同方法的减重效果对比')
-        ax.grid(axis='y', alpha=0.3)
+        bars = ax1.bar(methods, mean_losses, yerr=std_losses, capsize=5)
+        ax1.set_ylabel('平均减重 (kg)')
+        ax1.set_title('不同方法的减重效果对比')
+        ax1.grid(axis='y', alpha=0.3)
         
-        # 标记最优方法
         max_idx = np.argmax(mean_losses)
         bars[max_idx].set_color(self.theme.colors['success'])
+        figures['mean_weight_loss'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_mean_weight_loss.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig1)
         
-        # 2. 成功率对比（柱状图）
-        ax = axes[0, 1]
+        # 2. 成功率对比 - 单独图形
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
         success_rates = [analysis[m]['success_rate'] * 100 for m in methods]
-        bars = ax.bar(methods, success_rates)
-        ax.set_ylabel('成功率 (%)')
-        ax.set_title('减重成功率对比 (>5kg)')
-        ax.set_ylim(0, 105)
-        ax.grid(axis='y', alpha=0.3)
+        bars = ax2.bar(methods, success_rates)
+        ax2.set_ylabel('成功率 (%)')
+        ax2.set_title('减重成功率对比 (>5kg)')
+        ax2.set_ylim(0, 105)
+        ax2.grid(axis='y', alpha=0.3)
         
-        # 着色
         for i, bar in enumerate(bars):
             if success_rates[i] >= 75:
                 bar.set_color(self.theme.colors['success'])
@@ -922,62 +929,76 @@ class ExperimentVisualizer:
                 bar.set_color(self.theme.colors['warning'])
             else:
                 bar.set_color(self.theme.colors['danger'])
+        figures['success_rates'] = fig2
+        if base_path:
+            fig2.savefig(f"{base_path}_success_rates.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig2)
         
-        # 3. 减重分布（箱线图）
-        ax = axes[0, 2]
-        # 这里需要原始数据，暂时用模拟数据
+        # 3. 减重分布箱线图 - 单独图形
+        fig3, ax3 = plt.subplots(figsize=(10, 6))
         box_data = []
         for m in methods:
             mean = analysis[m]['mean_weight_loss']
             std = analysis[m]['std_weight_loss']
-            # 生成模拟数据
             data_points = np.random.normal(mean, std, 100)
             box_data.append(data_points)
         
-        bp = ax.boxplot(box_data, tick_labels=methods, patch_artist=True)
+        bp = ax3.boxplot(box_data, tick_labels=methods, patch_artist=True)
         for patch in bp['boxes']:
             patch.set_facecolor(self.theme.colors['info'])
             patch.set_alpha(0.7)
         
-        ax.set_ylabel('减重 (kg)')
-        ax.set_title('减重分布箱线图')
-        ax.grid(axis='y', alpha=0.3)
+        ax3.set_ylabel('减重 (kg)')
+        ax3.set_title('减重分布箱线图')
+        ax3.grid(axis='y', alpha=0.3)
+        figures['weight_distribution'] = fig3
+        if base_path:
+            fig3.savefig(f"{base_path}_weight_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig3)
         
-        # 4. 效果对比雷达图
-        ax = axes[1, 0]
-        self._plot_radar_chart(ax, methods, analysis)
+        # 4. 效果对比雷达图 - 单独图形
+        fig4 = plt.figure(figsize=(10, 8))
+        ax4 = fig4.add_subplot(111, projection='polar')
+        self._plot_radar_chart(ax4, methods, analysis)
+        figures['radar_comparison'] = fig4
+        if base_path:
+            fig4.savefig(f"{base_path}_radar_comparison.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig4)
         
-        # 5. 统计显著性热图
-        ax = axes[1, 1]
+        # 5. 统计显著性热图 - 单独图形
+        fig5, ax5 = plt.subplots(figsize=(10, 8))
         if 'statistical_tests' in analysis:
-            self._plot_significance_heatmap(ax, methods, analysis['statistical_tests'])
+            self._plot_significance_heatmap(ax5, methods, analysis['statistical_tests'])
         else:
-            ax.text(0.5, 0.5, '无统计检验数据', ha='center', va='center')
-            ax.set_title('统计显著性分析')
+            ax5.text(0.5, 0.5, '无统计检验数据', ha='center', va='center')
+            ax5.set_title('统计显著性分析')
+        figures['significance_heatmap'] = fig5
+        if base_path:
+            fig5.savefig(f"{base_path}_significance_heatmap.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig5)
         
-        # 6. 方法排名
-        ax = axes[1, 2]
-        self._plot_method_ranking(ax, methods, analysis)
+        # 6. 方法排名 - 单独图形
+        fig6, ax6 = plt.subplots(figsize=(10, 6))
+        self._plot_method_ranking(ax6, methods, analysis)
+        figures['method_ranking'] = fig6
+        if base_path:
+            fig6.savefig(f"{base_path}_method_ranking.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig6)
         
-        plt.suptitle('实验A1: 基准对比实验结果', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path:
-            plt.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
-        
-        return fig
+        return figures
     
-    def visualize_plateau_results(self, analysis: Dict, save_path: Optional[str] = None):
-        """可视化平台期突破实验结果"""
-        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    def visualize_plateau_results(self, analysis: Dict, save_path: Optional[str] = None) -> Dict[str, plt.Figure]:
+        """可视化平台期突破实验结果 - 每个图单独绘制"""
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
         strategies = [key for key in analysis.keys() 
                     if key not in ['statistical_tests', 'metadata']]
         
-        # 1. 突破成功率
-        ax = axes[0, 0]
+        # 1. 突破成功率 - 单独图形
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         success_rates = [analysis[s]['success_rate'] * 100 for s in strategies]
-        bars = ax.bar(strategies, success_rates)
+        bars = ax1.bar(strategies, success_rates)
         
         for i, bar in enumerate(bars):
             if success_rates[i] >= 70:
@@ -987,68 +1008,75 @@ class ExperimentVisualizer:
             else:
                 bar.set_color(self.theme.colors['danger'])
         
-        ax.set_ylabel('突破成功率 (%)')
-        ax.set_title('平台期突破成功率对比')
-        ax.set_ylim(0, 105)
-        ax.grid(axis='y', alpha=0.3)
+        ax1.set_ylabel('突破成功率 (%)')
+        ax1.set_title('平台期突破成功率对比')
+        ax1.set_ylim(0, 105)
+        ax1.grid(axis='y', alpha=0.3)
+        figures['breakthrough_success_rate'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_breakthrough_success_rate.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig1)
         
-        # 2. 平均体重变化
-        ax = axes[0, 1]
+        # 2. 平均体重变化 - 单独图形
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
         mean_changes = [analysis[s]['mean_weight_change'] for s in strategies]
         std_changes = [analysis[s]['std_weight_change'] for s in strategies]
         
-        bars = ax.bar(strategies, mean_changes, yerr=std_changes, capsize=5)
-        ax.set_ylabel('体重变化 (kg)')
-        ax.set_title('平均体重变化')
-        ax.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
-        ax.grid(axis='y', alpha=0.3)
+        bars = ax2.bar(strategies, mean_changes, yerr=std_changes, capsize=5)
+        ax2.set_ylabel('体重变化 (kg)')
+        ax2.set_title('平均体重变化')
+        ax2.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
+        ax2.grid(axis='y', alpha=0.3)
+        figures['weight_change'] = fig2
+        if base_path:
+            fig2.savefig(f"{base_path}_weight_change.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig2)
         
-        # 3. 策略效果分布
-        ax = axes[1, 0]
-        # 创建小提琴图
+        # 3. 策略效果分布 - 单独图形
+        fig3, ax3 = plt.subplots(figsize=(10, 6))
         data_for_violin = []
         for s in strategies:
-            # 模拟数据
             mean = analysis[s]['mean_weight_change']
             std = analysis[s]['std_weight_change']
             data = np.random.normal(mean, std, 100)
             data_for_violin.append(data)
         
-        parts = ax.violinplot(data_for_violin, positions=range(len(strategies)),
-                             showmeans=True, showextrema=True)
+        parts = ax3.violinplot(data_for_violin, positions=range(len(strategies)),
+                            showmeans=True, showextrema=True)
         
         for pc in parts['bodies']:
             pc.set_facecolor(self.theme.colors['primary'])
             pc.set_alpha(0.7)
         
-        ax.set_xticks(range(len(strategies)))
-        ax.set_xticklabels(strategies, rotation=45, ha='right')
-        ax.set_ylabel('体重变化 (kg)')
-        ax.set_title('策略效果分布')
-        ax.grid(axis='y', alpha=0.3)
+        ax3.set_xticks(range(len(strategies)))
+        ax3.set_xticklabels(strategies, rotation=45, ha='right')
+        ax3.set_ylabel('体重变化 (kg)')
+        ax3.set_title('策略效果分布')
+        ax3.grid(axis='y', alpha=0.3)
+        figures['strategy_distribution'] = fig3
+        if base_path:
+            fig3.savefig(f"{base_path}_strategy_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig3)
         
-        # 4. 成功案例分析
-        ax = axes[1, 1]
+        # 4. 成功案例分析 - 单独图形
+        fig4, ax4 = plt.subplots(figsize=(10, 8))
         successful_cases = [analysis[s]['successful_cases'] for s in strategies]
         
-        # 创建饼图
         colors = [self.theme.colors['primary'], self.theme.colors['secondary'],
-                 self.theme.colors['info'], self.theme.colors['warning'],
-                 self.theme.colors['success']][:len(strategies)]
+                self.theme.colors['info'], self.theme.colors['warning'],
+                self.theme.colors['success']][:len(strategies)]
         
-        wedges, texts, autotexts = ax.pie(successful_cases, labels=strategies,
-                                          colors=colors, autopct='%1.0f',
-                                          startangle=90)
+        wedges, texts, autotexts = ax4.pie(successful_cases, labels=strategies,
+                                        colors=colors, autopct='%1.0f',
+                                        startangle=90)
         
-        ax.set_title('成功案例分布')
+        ax4.set_title('成功案例分布')
+        figures['success_case_distribution'] = fig4
+        if base_path:
+            fig4.savefig(f"{base_path}_success_case_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig4)
         
-        plt.suptitle('实验A2: 平台期突破实验结果', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path:
-            plt.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
-        
-        return fig
+        return figures
     
     def visualize_sensitivity_analysis(self, results: List[Dict], param_names: List[str],
                                       save_path: Optional[str] = None):
@@ -1102,42 +1130,45 @@ class ExperimentVisualizer:
         
         return fig
     
-    def visualize_ablation_study(self, analysis: Dict, save_path: Optional[str] = None):
-        """可视化消融研究结果"""
-        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    def visualize_ablation_study(self, analysis: Dict, save_path: Optional[str] = None) -> Dict[str, plt.Figure]:
+        """可视化消融研究结果 - 每个图单独绘制"""
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
         # 正确分离组件数据和元数据
         components = []
-        metadata_keys = ['ranking', 'full_model']  # 已知的非组件键
-
+        metadata_keys = ['ranking', 'full_model', 'statistical_tests']
+        
         for key in analysis.keys():
             if key not in metadata_keys and isinstance(analysis[key], dict):
                 components.append(key)
-
+        
         if 'full_model' in components:
             components.remove('full_model')
         
-        # 1. 组件重要性（柱状图）
-        ax = axes[0, 0]
+        # 1. 组件重要性 - 单独图形
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         importance_scores = []
         
-        # 现在 components 只包含实际的组件名称
         for comp in components:
             if comp in analysis and isinstance(analysis[comp], dict):
                 importance_scores.append(analysis[comp].get('importance', 0) * 100)
         
         if importance_scores:
-            bars = ax.bar(components, importance_scores)
-            ax.set_ylabel('重要性 (%)')
-            ax.set_title('组件重要性分析')
-            ax.set_xticklabels(components, rotation=45, ha='right')
+            bars = ax1.bar(components, importance_scores)
+            ax1.set_ylabel('重要性 (%)')
+            ax1.set_title('组件重要性分析')
+            ax1.set_xticklabels(components, rotation=45, ha='right')
             
-            # 着色最重要的组件
             max_idx = np.argmax(importance_scores)
             bars[max_idx].set_color(self.theme.colors['danger'])
+        figures['component_importance'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_component_importance.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig1)
         
-        # 2. 性能影响（折线图）
-        ax = axes[0, 1]
+        # 2. 性能影响 - 单独图形
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
         
         performances = []
         for comp in components:
@@ -1146,67 +1177,69 @@ class ExperimentVisualizer:
         
         if performances:
             x = range(len(components))
-            ax.plot(x, performances, 'o-', linewidth=2, markersize=8,
+            ax2.plot(x, performances, 'o-', linewidth=2, markersize=8,
                 color=self.theme.colors['primary'])
             
-            # 如果有完整模型的基准线
             if 'full_model' in analysis and isinstance(analysis['full_model'], dict):
                 baseline = analysis['full_model'].get('fitness', 0)
-                ax.axhline(y=baseline, color='red', linestyle='--',
+                ax2.axhline(y=baseline, color='red', linestyle='--',
                         label=f'完整模型: {baseline:.3f}')
             
-            ax.set_xticks(x)
-            ax.set_xticklabels(components, rotation=45, ha='right')
-            ax.set_ylabel('适应度')
-            ax.set_title('移除组件后的性能')
-            ax.legend()
-            ax.grid(True, alpha=0.3)
+            ax2.set_xticks(x)
+            ax2.set_xticklabels(components, rotation=45, ha='right')
+            ax2.set_ylabel('适应度')
+            ax2.set_title('移除组件后的性能')
+            ax2.legend()
+            ax2.grid(True, alpha=0.3)
+        figures['performance_impact'] = fig2
+        if base_path:
+            fig2.savefig(f"{base_path}_performance_impact.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig2)
         
-        # 3. 组件相关性热图
-        ax = axes[1, 0]
+        # 3. 组件相关性热图 - 单独图形
+        fig3, ax3 = plt.subplots(figsize=(10, 8))
         
-        # 创建相关性矩阵（示例）
         n_comp = len(components)
         correlation_matrix = np.random.rand(n_comp, n_comp)
         correlation_matrix = (correlation_matrix + correlation_matrix.T) / 2
         np.fill_diagonal(correlation_matrix, 1)
         
-        im = ax.imshow(correlation_matrix, cmap='coolwarm', vmin=-1, vmax=1)
-        ax.set_xticks(range(n_comp))
-        ax.set_yticks(range(n_comp))
-        ax.set_xticklabels(components, rotation=45, ha='right')
-        ax.set_yticklabels(components)
-        ax.set_title('组件相关性')
+        im = ax3.imshow(correlation_matrix, cmap='coolwarm', vmin=-1, vmax=1)
+        ax3.set_xticks(range(n_comp))
+        ax3.set_yticks(range(n_comp))
+        ax3.set_xticklabels(components, rotation=45, ha='right')
+        ax3.set_yticklabels(components)
+        ax3.set_title('组件相关性')
         
-        # 添加颜色条
-        plt.colorbar(im, ax=ax)
+        plt.colorbar(im, ax=ax3)
+        figures['component_correlation'] = fig3
+        if base_path:
+            fig3.savefig(f"{base_path}_component_correlation.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig3)
         
-        # 4. 累积贡献（饼图）
-        ax = axes[1, 1]
+        # 4. 累积贡献 - 单独图形
+        fig4, ax4 = plt.subplots(figsize=(10, 8))
         
         if importance_scores:
-            # 归一化重要性分数
             total_importance = sum(importance_scores)
             if total_importance > 0:
                 sizes = [s/total_importance * 100 for s in importance_scores]
                 
                 colors = plt.cm.Set3(range(len(components)))
-                wedges, texts, autotexts = ax.pie(sizes, labels=components,
-                                                  colors=colors, autopct='%1.1f%%',
-                                                  startangle=90)
+                wedges, texts, autotexts = ax4.pie(sizes, labels=components,
+                                                colors=colors, autopct='%1.1f%%',
+                                                startangle=90)
                 
-                ax.set_title('组件贡献度分布')
+                ax4.set_title('组件贡献度分布')
+        figures['contribution_distribution'] = fig4
+        if base_path:
+            fig4.savefig(f"{base_path}_contribution_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        plt.close(fig4)
         
-        plt.suptitle('消融研究结果', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path:
-            plt.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
-        
-        return fig
+        return figures
     
     def _plot_radar_chart(self, ax, methods, analysis):
-        """绘制雷达图"""
+        """绘制雷达图 - 注意这个方法被单独调用时需要特殊处理"""
         # 准备数据
         categories = ['减重效果', '成功率', '稳定性', '效率']
         
@@ -1215,30 +1248,21 @@ class ExperimentVisualizer:
         for method in methods:
             method_data = analysis[method]
             
-            # 减重效果（归一化）
             max_loss = max([analysis[m]['mean_weight_loss'] for m in methods])
             weight_score = method_data['mean_weight_loss'] / max_loss if max_loss > 0 else 0
-            
-            # 成功率
             success_score = method_data['success_rate']
-            
-            # 稳定性（用标准差的倒数）
             min_std = min([analysis[m]['std_weight_loss'] for m in methods])
             stability_score = min_std / method_data['std_weight_loss'] if method_data['std_weight_loss'] > 0 else 1
-            
-            # 效率（假设用平均减重速度）
-            efficiency_score = np.random.random()  # 示例值
+            efficiency_score = np.random.random()
             
             data.append([weight_score, success_score, stability_score, efficiency_score])
         
         # 设置角度
         angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
-        data = [d + [d[0]] for d in data]  # 闭合图形
+        data = [d + [d[0]] for d in data]
         angles += angles[:1]
         
         # 绘制
-        ax = plt.subplot(2, 3, 4, projection='polar')
-        
         for i, (method, values) in enumerate(zip(methods, data)):
             ax.plot(angles, values, 'o-', linewidth=2, label=method)
             ax.fill(angles, values, alpha=0.25)
