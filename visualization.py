@@ -218,55 +218,72 @@ class WeightLossVisualizer:
         
     def create_dashboard(self, tracker: DataTracker, 
                         save_path: Optional[str] = None,
-                        show: bool = True) -> plt.Figure:
+                        show: bool = True) -> Dict[str, plt.Figure]:
         """创建综合仪表板"""
-        fig = plt.figure(figsize=(16, 10))
-        gs = fig.add_gridspec(3, 3, hspace=0.3, wspace=0.3)
-        
         df = tracker.get_dataframe()
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
-        # 1. 体重变化（主图）
-        ax1 = fig.add_subplot(gs[0, :2])
+        # 1. 体重变化
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         self._plot_weight_progress(ax1, df)
+        figures['weight_progress'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_weight_progress.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 2. 身体成分
-        ax2 = fig.add_subplot(gs[0, 2])
+        fig2, ax2 = plt.subplots(figsize=(8, 8))
         self._plot_body_composition(ax2, df)
+        figures['body_composition'] = fig2
+        if base_path:
+            fig2.savefig(f"{base_path}_body_composition.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 3. 营养摄入
-        ax3 = fig.add_subplot(gs[1, 0])
+        fig3, ax3 = plt.subplots(figsize=(8, 6))
         self._plot_nutrition(ax3, df)
+        figures['nutrition'] = fig3
+        if base_path:
+            fig3.savefig(f"{base_path}_nutrition.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 4. 运动情况
-        ax4 = fig.add_subplot(gs[1, 1])
+        fig4, ax4 = plt.subplots(figsize=(8, 6))
         self._plot_exercise(ax4, df)
+        figures['exercise'] = fig4
+        if base_path:
+            fig4.savefig(f"{base_path}_exercise.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 5. 适应度进化
-        ax5 = fig.add_subplot(gs[1, 2])
+        fig5, ax5 = plt.subplots(figsize=(8, 6))
         self._plot_fitness_evolution(ax5, df)
+        figures['fitness_evolution'] = fig5
+        if base_path:
+            fig5.savefig(f"{base_path}_fitness_evolution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 6. 代谢适应
-        ax6 = fig.add_subplot(gs[2, 0])
+        fig6, ax6 = plt.subplots(figsize=(8, 6))
         self._plot_metabolic_adaptation(ax6, df)
+        figures['metabolic_adaptation'] = fig6
+        if base_path:
+            fig6.savefig(f"{base_path}_metabolic_adaptation.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 7. 睡眠和恢复
-        ax7 = fig.add_subplot(gs[2, 1])
+        fig7, ax7 = plt.subplots(figsize=(8, 6))
         self._plot_sleep_recovery(ax7, df)
+        figures['sleep_recovery'] = fig7
+        if base_path:
+            fig7.savefig(f"{base_path}_sleep_recovery.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 8. 统计摘要
-        ax8 = fig.add_subplot(gs[2, 2])
+        fig8, ax8 = plt.subplots(figsize=(8, 6))
         self._plot_summary_stats(ax8, tracker.get_summary_stats())
-        
-        # 设置总标题
-        fig.suptitle('减肥优化综合仪表板', fontsize=18, fontweight='bold')
-        
-        if save_path:
-            fig.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
+        figures['summary_stats'] = fig8
+        if base_path:
+            fig8.savefig(f"{base_path}_summary_stats.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         if show:
             plt.show()
         
-        return fig
+        return figures
     
     def _plot_weight_progress(self, ax, df):
         """绘制体重进展（包含平台期检测）"""
@@ -696,11 +713,13 @@ class OptimizationVisualizer(WeightLossVisualizer):
         
         return fig
     
-    def plot_optimization_results(self, results: Dict, save_path: Optional[str] = None):
+    def plot_optimization_results(self, results: Dict, save_path: Optional[str] = None) -> Dict[str, plt.Figure]:
         """绘制优化结果"""
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 12))
+        figures = {}
+        base_path = save_path.rsplit('.', 1)[0] if save_path else None
         
         # 1. 适应度进化曲线
+        fig1, ax1 = plt.subplots(figsize=(10, 6))
         iterations = range(1, len(results['best_fitness_history']) + 1)
         ax1.plot(iterations, results['best_fitness_history'], 'b-', label='最佳适应度', linewidth=2)
         ax1.plot(iterations, results['avg_fitness_history'], 'r--', label='平均适应度', linewidth=1)
@@ -709,9 +728,13 @@ class OptimizationVisualizer(WeightLossVisualizer):
         ax1.set_title('适应度进化曲线')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
+        figures['fitness_evolution'] = fig1
+        if base_path:
+            fig1.savefig(f"{base_path}_fitness_evolution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 2. 体重预测vs实际
         if 'weight_history' in results:
+            fig2, ax2 = plt.subplots(figsize=(10, 6))
             weeks = range(len(results['weight_history']))
             ax2.plot(weeks, results['weight_history'], 'o-', label='实际体重')
             if 'predicted_weights' in results:
@@ -721,45 +744,46 @@ class OptimizationVisualizer(WeightLossVisualizer):
             ax2.set_title('体重变化')
             ax2.legend()
             ax2.grid(True, alpha=0.3)
+            figures['weight_changes'] = fig2
+            if base_path:
+                fig2.savefig(f"{base_path}_weight_changes.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 3. 方案参数演化
         if 'best_solutions_history' in results:
+            fig3, ax3 = plt.subplots(figsize=(10, 6))
             solutions = results['best_solutions_history']
             weeks = range(len(solutions))
-            
-            # 提取热量数据
             calories = [s.calories if hasattr(s, 'calories') else s[0] for s in solutions]
             ax3.plot(weeks, calories, 'g-', linewidth=2)
             ax3.set_xlabel('周')
             ax3.set_ylabel('推荐热量 (kcal)')
             ax3.set_title('热量摄入调整')
             ax3.grid(True, alpha=0.3)
+            figures['calorie_adjustment'] = fig3
+            if base_path:
+                fig3.savefig(f"{base_path}_calorie_adjustment.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
         # 4. 营养素比例变化
         if 'best_solutions_history' in results:
+            fig4, ax4 = plt.subplots(figsize=(10, 6))
             solutions = results['best_solutions_history']
             weeks = range(len(solutions))
-            
             protein = [s.protein_ratio if hasattr(s, 'protein_ratio') else s[1] for s in solutions]
             carbs = [s.carb_ratio if hasattr(s, 'carb_ratio') else s[2] for s in solutions]
             fat = [s.fat_ratio if hasattr(s, 'fat_ratio') else s[3] for s in solutions]
-            
             ax4.stackplot(weeks, protein, carbs, fat, 
-                         labels=['蛋白质', '碳水', '脂肪'],
-                         colors=['#FF6B6B', '#4ECDC4', '#45B7D1'])
+                        labels=['蛋白质', '碳水', '脂肪'],
+                        colors=['#FF6B6B', '#4ECDC4', '#45B7D1'])
             ax4.set_xlabel('周')
             ax4.set_ylabel('营养素比例')
             ax4.set_title('营养素分配变化')
             ax4.legend(loc='upper right')
             ax4.set_ylim([0, 1])
+            figures['nutrition_distribution'] = fig4
+            if base_path:
+                fig4.savefig(f"{base_path}_nutrition_distribution.png", dpi=self.theme.styles['dpi'], bbox_inches='tight')
         
-        plt.suptitle('差分进化优化结果分析', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path:
-            fig.savefig(save_path, dpi=self.theme.styles['dpi'], bbox_inches='tight')
-        
-        return fig
+        return figures
     
     def plot_optimization_progress(self, 
                                   population_history: List,
