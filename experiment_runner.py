@@ -749,18 +749,32 @@ class EnhancedExperimentRunner:
         }
     
     def _de_optimized_method(self, subject: PersonProfile, weeks: int) -> Dict:
-        """DE优化方案"""
+        """DE优化方案 - 修复版"""
         config = copy.deepcopy(self.config)
-        config.algorithm.max_iterations = weeks
+        # ✅ 保持原有的优化迭代次数，不要用weeks覆盖
+        # config.algorithm.max_iterations 保持配置文件中的值（默认12或更多）
         
         optimizer = DifferentialEvolution(copy.deepcopy(subject), config)
+        
+        # 第一步：优化找到最佳方案（这里会运行max_iterations次）
         best_solution, opt_results = optimizer.optimize()
         
+        # 第二步：模拟执行这个方案weeks周
+        model = MetabolicModel(config)
+        sim_person = copy.deepcopy(subject)
+        weekly_results = []
+        
+        for week in range(weeks):
+            week_result = model.simulate_week(sim_person, best_solution, week)
+            sim_person = model.update_person_state(sim_person, best_solution, week)
+            weekly_results.append(week_result)
+        
         return {
-            'final_weight': opt_results['final_person_state'].weight,
-            'total_weight_loss': subject.weight - opt_results['final_person_state'].weight,
+            'final_weight': sim_person.weight,
+            'total_weight_loss': subject.weight - sim_person.weight,
             'best_solution': best_solution,
-            'optimization_results': opt_results
+            'optimization_results': opt_results,
+            'weekly_results': weekly_results
         }
     
     def _de_plateau_breakthrough(self, subject: PersonProfile, weeks: int) -> Dict:

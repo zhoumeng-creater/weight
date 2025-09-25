@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class AlgorithmConfig:
     """差分进化算法配置"""
     # 基础参数
-    population_size: int = 20
-    max_iterations: int = 12
+    population_size: int = 200
+    max_iterations: int = 1200
     scaling_factor: float = 0.8
     crossover_rate: float = 0.9
     
