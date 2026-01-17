@@ -87,10 +87,10 @@ class DifferentialEvolution:
             return np.random.uniform(*self.config.algorithm.crossover_rate_range)
         return self.config.algorithm.crossover_rate
     
-    def evaluate_population(self, population: List[Solution], week: int):
+    def evaluate_population(self, population: List[Solution], week: int, force: bool = False):
         """评估种群适应度"""
         for solution in population:
-            if solution.fitness is None:  # 避免重复评估
+            if force or solution.fitness is None:
                 # 模拟一周的执行
                 results = self.metabolic_model.simulate_week(
                     self.person, solution, week
@@ -156,6 +156,9 @@ class DifferentialEvolution:
         while not self.check_termination(iteration, best_solution.fitness):
             logger.info(f"\n--- 第 {iteration + 1} 周 ---")
             
+            # Re-evaluate population with current person state to avoid stale fitness.
+            self.evaluate_population(population, week=iteration+1, force=True)
+
             new_population = []
             
             for i, target in enumerate(population):
@@ -182,8 +185,8 @@ class DifferentialEvolution:
             # 更新最佳方案
             current_best = min(population, key=lambda x: x.fitness)
             if current_best.fitness < best_solution.fitness:
-                best_solution = current_best
-                logger.info(f"发现更优方案! 适应度: {best_solution.fitness:.3f}")
+                logger.info(f"发现更优方案! 适应度: {current_best.fitness:.3f}")
+            best_solution = current_best
             
             # 记录历史
             self.best_fitness_history.append(best_solution.fitness)

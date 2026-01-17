@@ -459,6 +459,9 @@ class EnhancedExperimentRunner:
                 while not self.check_termination(iteration, best_solution.fitness):
                     logger.info(f"\n--- 第 {iteration + 1} 周 ---")
                     
+                    # Re-evaluate population with current person state to avoid stale fitness.
+                    self.evaluate_population(population, week=iteration+1, force=True)
+
                     new_population = []
                     
                     for i, target in enumerate(population):
@@ -492,8 +495,8 @@ class EnhancedExperimentRunner:
                     # 更新最佳方案
                     current_best = min(population, key=lambda x: x.fitness)
                     if current_best.fitness < best_solution.fitness:
-                        best_solution = current_best
-                        logger.info(f"发现更优方案! 适应度: {best_solution.fitness:.3f}")
+                        logger.info(f"发现更优方案! 适应度: {current_best.fitness:.3f}")
+                    best_solution = current_best
                     
                     # 记录历史
                     self.best_fitness_history.append(best_solution.fitness)
@@ -631,13 +634,12 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        target_calories = tdee * 0.8  # 20%赤字
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
+            target_calories = tdee * 0.8  # 20%赤字
             # 生成固定方案
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories  # 设置热量
@@ -659,12 +661,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             # 每4周减少5%热量
             reduction = 1 - (week // 4) * 0.05
             reduction = max(reduction, 0.7)  # 最多减少30%
@@ -691,12 +692,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             # 循环：低-低-中-高
             cycle_position = week % 4
             if cycle_position < 2:
@@ -728,12 +728,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             # 生成随机方案
             solution_vector = generator.generate_random_solution(tdee)
             solution = Solution(solution_vector)
@@ -751,16 +750,68 @@ class EnhancedExperimentRunner:
     def _de_optimized_method(self, subject: PersonProfile, weeks: int) -> Dict:
         """DE优化方案"""
         config = copy.deepcopy(self.config)
+        reopt_interval = getattr(config.experiment, "de_reoptimize_interval_weeks", 0)
+        if reopt_interval and reopt_interval > 0:
+            return self._run_de_with_reoptimization(
+                subject, weeks, reopt_interval, config
+            )
+
         config.algorithm.max_iterations = weeks
-        
+
         optimizer = DifferentialEvolution(copy.deepcopy(subject), config)
         best_solution, opt_results = optimizer.optimize()
-        
+
         return {
             'final_weight': opt_results['final_person_state'].weight,
             'total_weight_loss': subject.weight - opt_results['final_person_state'].weight,
             'best_solution': best_solution,
             'optimization_results': opt_results
+        }
+
+    def _run_de_with_reoptimization(self, subject: PersonProfile, weeks: int,
+                                    interval_weeks: int, config: ConfigManager) -> Dict:
+        """Run DE with periodic reoptimization."""
+        model = MetabolicModel(config)
+        current_subject = copy.deepcopy(subject)
+        optimization_segments = []
+        weekly_results = []
+        best_solution = None
+        total_iterations = 0
+        week_index = 0
+
+        while week_index < weeks:
+            segment_weeks = min(interval_weeks, weeks - week_index)
+            segment_config = copy.deepcopy(config)
+            segment_config.algorithm.max_iterations = min(
+                segment_weeks, segment_config.algorithm.max_iterations
+            )
+
+            optimizer = DifferentialEvolution(copy.deepcopy(current_subject), segment_config)
+            best_solution, opt_results = optimizer.optimize()
+            optimization_segments.append(opt_results)
+            total_iterations += opt_results.get('total_iterations', 0)
+
+            for offset in range(segment_weeks):
+                week = week_index + offset
+                week_result = model.simulate_week(current_subject, best_solution, week)
+                current_subject = model.update_person_state(current_subject, best_solution, week)
+                weekly_results.append(week_result)
+
+            week_index += segment_weeks
+
+        optimization_results = {
+            'segments': optimization_segments,
+            'final_person_state': current_subject,
+            'initial_weight': subject.initial_weight,
+            'total_iterations': total_iterations
+        }
+
+        return {
+            'final_weight': current_subject.weight,
+            'total_weight_loss': subject.weight - current_subject.weight,
+            'best_solution': best_solution,
+            'optimization_results': optimization_results,
+            'weekly_results': weekly_results
         }
     
     def _de_plateau_breakthrough(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -771,9 +822,10 @@ class EnhancedExperimentRunner:
         generator = SolutionGenerator()
         
         # 生成初始方案
-        bmr = MetabolicModel().calculate_bmr(subject)
-        tdee = bmr * subject.activity_level
-        initial_solution = generator.generate_from_template("balanced", tdee)
+        model = AdvancedMetabolicModel()
+        base_bmr = model.calculate_bmr(subject)
+        base_tdee = base_bmr * subject.activity_level
+        initial_solution = generator.generate_from_template("balanced", base_tdee)
         
         # 生成突破方案
         breakthrough_solutions = generator.generate_plateau_breaking_solutions(
@@ -781,15 +833,20 @@ class EnhancedExperimentRunner:
         )
         
         # 选择最优突破方案
-        model = AdvancedMetabolicModel()
         best_result = None
         best_weight_loss = 0
         
         for solution_vector in breakthrough_solutions:
-            solution = Solution(solution_vector)
             test_subject = copy.deepcopy(subject)
+            calorie_ratio = solution_vector[0] / base_tdee if base_tdee > 0 else 1.0
             
             for week in range(weeks):
+                week_bmr = model.calculate_bmr(test_subject)
+                week_tdee = week_bmr * test_subject.activity_level
+                weekly_vector = solution_vector.copy()
+                weekly_vector[0] = week_tdee * calorie_ratio
+                solution = Solution(weekly_vector)
+
                 model.simulate_week(test_subject, solution, week)
                 test_subject = model.update_person_state(test_subject, solution, week)
             
@@ -813,12 +870,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             solution_vector = generator.generate_from_template("endurance", tdee)
             # 增加运动频率
             solution_vector[4] = min(solution_vector[4] + 2, 6)  # 有氧
@@ -842,12 +898,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             # 前2周维持，后续恢复减脂
             if week < 2:
                 calories_factor = 1.0  # 维持热量
@@ -876,12 +931,11 @@ class EnhancedExperimentRunner:
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
-        bmr = model.calculate_bmr(current_subject)
-        tdee = bmr * current_subject.activity_level
-        
         results = []
         
         for week in range(weeks):
+            bmr = model.calculate_bmr(current_subject)
+            tdee = bmr * current_subject.activity_level
             # 高碳日和低碳日交替
             if week % 2 == 0:
                 template = "low_carb"

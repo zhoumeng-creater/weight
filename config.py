@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 class AlgorithmConfig:
     """差分进化算法配置"""
     # 基础参数
-    population_size: int = 20
-    max_iterations: int = 12
+    population_size: int = 200
+    max_iterations: int = 1200
     scaling_factor: float = 0.8
     crossover_rate: float = 0.9
     
@@ -148,6 +148,8 @@ class ExperimentConfig:
     benchmark_duration_weeks: int = 16
     plateau_observation_weeks: int = 8
     long_term_tracking_weeks: int = 52
+    # 0 disables periodic DE reoptimization
+    de_reoptimize_interval_weeks: int = 0
     
     # 判定标准
     success_weight_loss_threshold: float = 5.0  # kg - 成功减重阈值
