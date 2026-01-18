@@ -98,9 +98,12 @@ class EnhancedExperimentRunner:
         self.subject_generator = VirtualSubjectGenerator(seed=self.config.system.random_seed)
         
         # 初始化不同的模型
+        self.primary_model = (AdvancedMetabolicModel(self.config)
+                              if self.config.metabolic.use_advanced_model
+                              else MetabolicModel(self.config))
         self.models = {
-            'basic': MetabolicModel(),
-            'advanced': AdvancedMetabolicModel()
+            'basic': MetabolicModel(self.config),
+            'advanced': AdvancedMetabolicModel(self.config)
         }
         
         # 使用统一的数据追踪器
@@ -554,10 +557,7 @@ class EnhancedExperimentRunner:
             
             def _apply_bounds(self, solution_vector):
                 """应用边界约束"""
-                bounds = self.solution_generator.handle_bounds()
-                for i in range(len(solution_vector)):
-                    solution_vector[i] = np.clip(solution_vector[i], bounds[i][0], bounds[i][1])
-                return solution_vector
+                return self.solution_generator.handle_bounds(solution_vector)
         
         return AblatedDifferentialEvolution(subject, config, disabled_component)
     
@@ -573,10 +573,15 @@ class EnhancedExperimentRunner:
         subjects = self.subject_generator.generate_standard_subjects(30)
         
         results = []
+        model = self.primary_model
         
         for subject in tqdm(subjects, desc="长期追踪"):
             # 使用DE算法优化
-            optimizer = DifferentialEvolution(copy.deepcopy(subject), self.config)
+            optimizer = DifferentialEvolution(
+                copy.deepcopy(subject),
+                self.config,
+                metabolic_model=model
+            )
             
             # 长期追踪
             tracking_data = {
@@ -597,12 +602,12 @@ class EnhancedExperimentRunner:
                     best_solution, _ = optimizer.optimize()
                 
                 # 模拟执行
-                week_result = self.models['advanced'].simulate_week(
+                week_result = model.simulate_week(
                     current_subject, best_solution, week
                 )
                 
                 # 更新状态
-                current_subject = self.models['advanced'].update_person_state(
+                current_subject = model.update_person_state(
                     current_subject, best_solution, week
                 )
                 
@@ -637,7 +642,7 @@ class EnhancedExperimentRunner:
     
     def _fixed_deficit_method(self, subject: PersonProfile, weeks: int) -> Dict:
         """固定热量赤字方法"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -667,7 +672,7 @@ class EnhancedExperimentRunner:
     
     def _step_reduction_method(self, subject: PersonProfile, weeks: int) -> Dict:
         """阶梯式减少方法"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -701,7 +706,7 @@ class EnhancedExperimentRunner:
     
     def _cyclic_diet_method(self, subject: PersonProfile, weeks: int) -> Dict:
         """循环饮食方法"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -740,7 +745,7 @@ class EnhancedExperimentRunner:
     
     def _random_method(self, subject: PersonProfile, weeks: int) -> Dict:
         """随机方案（对照）"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -777,7 +782,11 @@ class EnhancedExperimentRunner:
 
         config.algorithm.max_iterations = weeks
 
-        optimizer = DifferentialEvolution(copy.deepcopy(subject), config)
+        optimizer = DifferentialEvolution(
+            copy.deepcopy(subject),
+            config,
+            metabolic_model=self.primary_model
+        )
         best_solution, opt_results = optimizer.optimize()
         weekly_results = self._replay_de_weekly_results(
             subject, opt_results.get('best_solutions_history', []), config
@@ -796,7 +805,7 @@ class EnhancedExperimentRunner:
     def _run_de_with_reoptimization(self, subject: PersonProfile, weeks: int,
                                     interval_weeks: int, config: ConfigManager) -> Dict:
         """Run DE with periodic reoptimization."""
-        model = MetabolicModel(config)
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         optimization_segments = []
         weekly_results = []
@@ -811,7 +820,11 @@ class EnhancedExperimentRunner:
                 segment_weeks, segment_config.algorithm.max_iterations
             )
 
-            optimizer = DifferentialEvolution(copy.deepcopy(current_subject), segment_config)
+            optimizer = DifferentialEvolution(
+                copy.deepcopy(current_subject),
+                segment_config,
+                metabolic_model=self.primary_model
+            )
             best_solution, opt_results = optimizer.optimize()
             optimization_segments.append(opt_results)
             total_iterations += opt_results.get('total_iterations', 0)
@@ -846,7 +859,7 @@ class EnhancedExperimentRunner:
                                   solutions: List[Solution],
                                   config: ConfigManager) -> List[Dict]:
         """Rebuild weekly results from a sequence of DE best solutions."""
-        model = MetabolicModel(config)
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         results = []
         for week, solution in enumerate(solutions):
@@ -907,7 +920,7 @@ class EnhancedExperimentRunner:
         generator = SolutionGenerator()
         
         # 生成初始方案
-        model = AdvancedMetabolicModel()
+        model = self.primary_model
         base_bmr = model.calculate_bmr(subject)
         base_tdee = base_bmr * subject.activity_level
         initial_solution = generator.generate_from_template("balanced", base_tdee)
@@ -959,7 +972,7 @@ class EnhancedExperimentRunner:
     
     def _increase_exercise(self, subject: PersonProfile, weeks: int) -> Dict:
         """增加运动量策略"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -990,7 +1003,7 @@ class EnhancedExperimentRunner:
     
     def _diet_break(self, subject: PersonProfile, weeks: int) -> Dict:
         """饮食休息策略"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         
@@ -1026,7 +1039,7 @@ class EnhancedExperimentRunner:
     
     def _carb_cycling(self, subject: PersonProfile, weeks: int) -> Dict:
         """碳水循环策略"""
-        model = MetabolicModel()
+        model = self.primary_model
         current_subject = copy.deepcopy(subject)
         generator = SolutionGenerator()
         

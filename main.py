@@ -10,15 +10,15 @@ import os
 import sys
 from datetime import datetime
 import numpy as np
+from typing import Optional
 
 # 导入项目模块
-from metabolic_model import PersonProfile
+from metabolic_model import PersonProfile, MetabolicModel, AdvancedMetabolicModel
 from config import ConfigManager, load_preset
 from solution_generator import SolutionGenerator, SolutionConstraints
 from de_algorithm import DifferentialEvolution
 from visualization import WeightLossVisualizer, DataTracker, OptimizationVisualizer, ReportGenerator, DataTracker
 from fitness_evaluator import AdaptiveFitnessEvaluator
-from metabolic_model import AdvancedMetabolicModel
 from virtual_subjects import VirtualSubjectGenerator  # 如果需要生成测试数据
 
 # 替换原有的字体设置代码
@@ -188,7 +188,7 @@ def create_visualizations(results, tracker, output_dir):
         print(f"⚠ 动画生成失败: {e}")
 
 
-def track_results(person, results):
+def track_results(person, results, config: Optional[ConfigManager] = None):
     """将优化结果记录到数据追踪器"""
     tracker = DataTracker()
     tracker.metadata['start_date'] = datetime.now()
@@ -217,7 +217,11 @@ def track_results(person, results):
         weeks_on_diet=person.weeks_on_diet
     )
     
-    metabolic_model = AdvancedMetabolicModel()
+    config = config or ConfigManager()
+    if config.metabolic.use_advanced_model:
+        metabolic_model = AdvancedMetabolicModel(config)
+    else:
+        metabolic_model = MetabolicModel(config)
     
     for i, solution in enumerate(results['best_solutions_history']):
         # 使用代谢模型模拟一周
@@ -245,7 +249,7 @@ def track_results(person, results):
             'solution': solution.to_vector().tolist()
         }
         
-        tracker.add_record(i, week_data)
+        tracker.add_record(i, **week_data)
         
         # 更新人体状态
         current_person = metabolic_model.update_person_state(
@@ -279,43 +283,80 @@ def generate_report(tracker, best_solution, results, output_dir):
     return report_path
 
 
-def check_plateau_and_suggest(results, config):
+def _extract_weight_series(tracker) -> list:
+    """Extract weight history from a tracker if available."""
+    if tracker is None:
+        return []
+    weights = tracker.data.get('weight', [])
+    if weights:
+        return weights
+    if hasattr(tracker, 'get_dataframe'):
+        df = tracker.get_dataframe()
+        if 'weight' in df:
+            return df['weight'].tolist()
+    return []
+
+
+def _find_latest_plateau_end(deltas, window_weeks, threshold):
+    """Return the end index (in deltas) of the latest plateau window."""
+    if window_weeks <= 0 or len(deltas) < window_weeks:
+        return None
+    for end_idx in range(len(deltas) - 1, window_weeks - 2, -1):
+        window = deltas[end_idx - window_weeks + 1:end_idx + 1]
+        if all(abs(d) < threshold for d in window):
+            return end_idx
+    return None
+
+
+def check_plateau_and_suggest(results, config, tracker=None):
     """检查是否存在平台期并提供建议"""
-    if len(results['best_fitness_history']) < 3:
+    weights = _extract_weight_series(tracker)
+    plateau_weeks = config.experiment.plateau_detection_weeks
+    plateau_threshold = config.experiment.plateau_detection_threshold
+    breakthrough_threshold = config.experiment.breakthrough_threshold
+
+    if len(weights) < plateau_weeks + 1:
         return
     
-    # 检查最近的改善情况
-    recent_improvements = []
-    for i in range(len(results['best_fitness_history'])-3, len(results['best_fitness_history'])):
-        if i > 0:
-            improvement = results['best_fitness_history'][i-1] - results['best_fitness_history'][i]
-            recent_improvements.append(improvement)
-    
-    # 如果改善很小，可能是平台期
-    if all(imp < 0.01 for imp in recent_improvements):
-        print("\n⚠ 检测到可能的减肥平台期！")
-        print("\n=== 平台期突破建议 ===")
-        
-        # 使用方案生成器生成突破方案
-        constraint_config = config.get_constraint_config()
-        constraints = SolutionConstraints(**constraint_config)
-        generator = SolutionGenerator(constraints)
-        
-        best_solution = results['best_solution']
-        plateau_solutions = generator.generate_plateau_breaking_solutions(
-            best_solution.to_vector(),
-            num_solutions=3
+    deltas = [weights[i] - weights[i - 1] for i in range(1, len(weights))]
+    recent_deltas = deltas[-plateau_weeks:]
+    is_plateau = all(abs(d) < plateau_threshold for d in recent_deltas)
+
+    if not is_plateau:
+        latest_plateau_end = _find_latest_plateau_end(
+            deltas, plateau_weeks, plateau_threshold
         )
-        
-        print("\n推荐的平台期突破方案：")
-        for i, sol_vector in enumerate(plateau_solutions, 1):
-            from solution_generator import Solution
-            sol = Solution(sol_vector)
-            print(f"\n方案 {i}:")
-            print(f"  热量: {sol.calories:.0f} kcal")
-            print(f"  营养素: P {sol.protein_ratio:.0%} / C {sol.carb_ratio:.0%} / F {sol.fat_ratio:.0%}")
-            print(f"  运动: 有氧{sol.cardio_freq}次×{sol.cardio_duration}分, 力量{sol.strength_freq}次")
-            print(f"  睡眠: {sol.sleep_hours:.1f}小时")
+        if latest_plateau_end is None:
+            return
+        for delta in deltas[latest_plateau_end + 1:]:
+            if delta <= -breakthrough_threshold:
+                print("\n✓ 检测到平台期突破。")
+                return
+        return
+    
+    print("\n⚠ 检测到可能的减肥平台期！")
+    print("\n=== 平台期突破建议 ===")
+    
+    # 使用方案生成器生成突破方案
+    constraint_config = config.get_constraint_config()
+    constraints = SolutionConstraints(**constraint_config)
+    generator = SolutionGenerator(constraints)
+    
+    best_solution = results['best_solution']
+    plateau_solutions = generator.generate_plateau_breaking_solutions(
+        best_solution.to_vector(),
+        num_solutions=3
+    )
+    
+    print("\n推荐的平台期突破方案：")
+    for i, sol_vector in enumerate(plateau_solutions, 1):
+        from solution_generator import Solution
+        sol = Solution(sol_vector)
+        print(f"\n方案 {i}:")
+        print(f"  热量: {sol.calories:.0f} kcal")
+        print(f"  营养素: P {sol.protein_ratio:.0%} / C {sol.carb_ratio:.0%} / F {sol.fat_ratio:.0%}")
+        print(f"  运动: 有氧{sol.cardio_freq}次×{sol.cardio_duration}分, 力量{sol.strength_freq}次")
+        print(f"  睡眠: {sol.sleep_hours:.1f}小时")
 
 
 def main():
@@ -377,7 +418,7 @@ def main():
     best_solution, results = run_optimization(person, config)
     
     # 4. 追踪和记录结果
-    tracker = track_results(person, results)
+    tracker = track_results(person, results, config)
     
     # 保存追踪数据
     tracker_file = os.path.join(args.output, f'tracking_data_{timestamp}.json')
@@ -397,7 +438,7 @@ def main():
     print(f"✓ 配置已保存: {config_file}")
     
     # 8. 检查平台期并提供建议
-    check_plateau_and_suggest(results, config)
+    check_plateau_and_suggest(results, config, tracker)
     
     # 9. 高级功能演示（如果启用）
     if args.advanced:

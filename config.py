@@ -94,6 +94,7 @@ class MetabolicConfig:
     """代谢模型配置"""
     # BMR计算方法
     bmr_formula: str = "mifflin"  # "mifflin", "harris", "katch"
+    use_advanced_model: bool = True
     
     # 代谢适应
     enable_metabolic_adaptation: bool = True

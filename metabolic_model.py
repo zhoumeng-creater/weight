@@ -284,8 +284,8 @@ class MetabolicModel:
 class AdvancedMetabolicModel(MetabolicModel):
     """高级代谢模型（包含更多生理细节）"""
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, config: Optional[ConfigManager] = None):
+        super().__init__(config)
         
         # 激素影响参数
         self.LEPTIN_SENSITIVITY = 0.1  # 瘦素敏感度

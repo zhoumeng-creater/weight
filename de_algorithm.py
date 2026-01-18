@@ -6,7 +6,7 @@
 import numpy as np
 from typing import List, Tuple, Dict, Optional
 import logging
-from metabolic_model import MetabolicModel, PersonProfile
+from metabolic_model import MetabolicModel, AdvancedMetabolicModel, PersonProfile
 from fitness_evaluator import FitnessEvaluator
 from solution_generator import Solution, SolutionGenerator
 from config import ConfigManager
@@ -17,11 +17,17 @@ logger = logging.getLogger(__name__)
 class DifferentialEvolution:
     """差分进化算法实现 - 只负责核心算法逻辑"""
     
-    def __init__(self, person: PersonProfile, config: ConfigManager):
+    def __init__(self, person: PersonProfile, config: ConfigManager,
+                 metabolic_model: Optional[MetabolicModel] = None):
         self.person = person
         self.config = config
         # 传递配置给MetabolicModel
-        self.metabolic_model = MetabolicModel(config)  # ✅ 传递config
+        if metabolic_model is not None:
+            self.metabolic_model = metabolic_model
+        elif self.config.metabolic.use_advanced_model:
+            self.metabolic_model = AdvancedMetabolicModel(config)
+        else:
+            self.metabolic_model = MetabolicModel(config)
         self.fitness_evaluator = FitnessEvaluator(config=config)  # ✅ 传递config
         self.solution_generator = SolutionGenerator(config=config)  # ✅ 传递config
         
@@ -221,3 +227,5 @@ class DifferentialEvolution:
         }
         
         return best_solution, results
+
+
