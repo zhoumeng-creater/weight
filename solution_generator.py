@@ -192,21 +192,208 @@ class SolutionGenerator:
         
         return vector
     
-    def normalize_solution_vector(self, vector: np.ndarray) -> np.ndarray:
-        """规范化方案向量（确保营养素比例和为1）"""
-        # 确保营养素比例和为1
-        protein = vector[1]
-        carb = vector[2]
-        fat = vector[3]
-        total = protein + carb + fat
+    def normalize_solution_vector(self, vector: np.ndarray,
+                                  person_weight: Optional[float] = None) -> np.ndarray:
+        """规范化方案向量（裁剪->归一->微调）"""
+        normalized = self.handle_bounds(vector.copy())
+        normalized = self._adjust_calories_for_protein(normalized, person_weight)
         
-        if total > 0:
-            vector[1] = protein / total
-            vector[2] = carb / total
-            vector[3] = fat / total
+        macros = self._project_macros(
+            normalized[1:4], normalized[0], person_weight, strict=False
+        )
+        if macros is not None:
+            normalized[1:4] = macros
+        else:
+            total = normalized[1] + normalized[2] + normalized[3]
+            if total > 0:
+                normalized[1] /= total
+                normalized[2] /= total
+                normalized[3] /= total
         
-        # 再次确保在约束范围内
-        return self.handle_bounds(vector)
+        return normalized
+
+    def validate_and_repair(self, solution_vector: np.ndarray,
+                            person_weight: Optional[float] = None,
+                            max_attempts: int = 3,
+                            fallback_tdee: Optional[float] = None) -> Optional[np.ndarray]:
+        """Validate and repair a solution vector using shared constraints."""
+        candidate = np.array(solution_vector, dtype=float)
+        
+        for _ in range(max_attempts):
+            repaired = self._repair_once(candidate, person_weight)
+            if repaired is not None and self.validate_solution(repaired, person_weight):
+                return repaired
+            
+            if fallback_tdee is None:
+                break
+            
+            candidate = self.generate_random_solution(fallback_tdee)
+        
+        return None
+
+    def _repair_once(self, vector: np.ndarray,
+                     person_weight: Optional[float] = None) -> Optional[np.ndarray]:
+        """Attempt a single repair pass."""
+        repaired = self.normalize_solution_vector(vector, person_weight)
+        repaired = self._adjust_exercise_to_limit(repaired)
+        repaired = self.handle_bounds(repaired)
+        repaired = self._adjust_calories_for_protein(repaired, person_weight)
+        
+        macros = self._project_macros(
+            repaired[1:4], repaired[0], person_weight, strict=True
+        )
+        if macros is None:
+            macros = self._project_macros(
+                repaired[1:4], repaired[0], None, strict=True
+            )
+            if macros is None:
+                return None
+        
+        repaired[1:4] = macros
+        return repaired
+
+    def _project_macros(self, macros: np.ndarray, calories: float,
+                        person_weight: Optional[float] = None,
+                        strict: bool = True) -> Optional[np.ndarray]:
+        """Project macros to a bounded simplex while honoring constraints."""
+        lower, upper = self._get_macro_bounds(calories, person_weight)
+        if lower is None or upper is None:
+            if strict:
+                return None
+            lower, upper = self._get_macro_bounds(calories, None)
+            if lower is None or upper is None:
+                return None
+        
+        return self._project_bounded_simplex(macros, lower, upper, target=1.0)
+
+    def _get_macro_bounds(self, calories: float,
+                          person_weight: Optional[float]) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
+        """Get macro bounds, optionally tightened by protein g/kg."""
+        min_protein = self.constraints.min_protein_ratio
+        max_protein = self.constraints.max_protein_ratio
+        min_carb = self.constraints.min_carb_ratio
+        max_carb = self.constraints.max_carb_ratio
+        min_fat = self.constraints.min_fat_ratio
+        max_fat = self.constraints.max_fat_ratio
+        
+        if person_weight is not None and calories > 0:
+            min_protein_gkg = self.constraints.min_protein_per_kg * person_weight * 4 / calories
+            max_protein_gkg = self.constraints.max_protein_per_kg * person_weight * 4 / calories
+            min_protein = max(min_protein, min_protein_gkg)
+            max_protein = min(max_protein, max_protein_gkg)
+        
+        if min_protein > max_protein:
+            return None, None
+        
+        lower = np.array([min_protein, min_carb, min_fat], dtype=float)
+        upper = np.array([max_protein, max_carb, max_fat], dtype=float)
+        
+        if lower.sum() > 1.0 or upper.sum() < 1.0:
+            return None, None
+        
+        return lower, upper
+
+    def _adjust_calories_for_protein(self, vector: np.ndarray,
+                                     person_weight: Optional[float]) -> np.ndarray:
+        """Adjust calories into a feasible range for protein g/kg."""
+        if person_weight is None or person_weight <= 0:
+            return vector
+        
+        min_protein_ratio = self.constraints.min_protein_ratio
+        max_protein_ratio = self.constraints.max_protein_ratio
+        min_calories = self.constraints.min_calories
+        max_calories = self.constraints.max_calories
+        
+        min_calories_for_protein = (self.constraints.min_protein_per_kg * person_weight * 4) / max_protein_ratio
+        max_calories_for_protein = (self.constraints.max_protein_per_kg * person_weight * 4) / min_protein_ratio
+        
+        feasible_min = max(min_calories, min_calories_for_protein)
+        feasible_max = min(max_calories, max_calories_for_protein)
+        if feasible_min <= feasible_max:
+            vector[0] = np.clip(vector[0], feasible_min, feasible_max)
+        
+        return vector
+
+    def _adjust_exercise_to_limit(self, vector: np.ndarray) -> np.ndarray:
+        """Reduce exercise volume to satisfy weekly limits."""
+        cardio_freq = int(round(vector[4]))
+        cardio_duration = int(round(vector[5]))
+        strength_freq = int(round(vector[6]))
+        
+        cardio_freq = int(np.clip(
+            cardio_freq, self.constraints.min_cardio_freq, self.constraints.max_cardio_freq
+        ))
+        strength_freq = int(np.clip(
+            strength_freq, self.constraints.min_strength_freq, self.constraints.max_strength_freq
+        ))
+        cardio_duration = min(
+            self.constraints.cardio_duration_options,
+            key=lambda x: abs(x - cardio_duration)
+        )
+        
+        def total_hours(cf, cd, sf):
+            return cf * cd / 60 + sf * 1.0
+        
+        safety = 0
+        while total_hours(cardio_freq, cardio_duration, strength_freq) > self.constraints.max_weekly_exercise_hours:
+            if cardio_freq > self.constraints.min_cardio_freq:
+                cardio_freq -= 1
+            elif strength_freq > self.constraints.min_strength_freq:
+                strength_freq -= 1
+            else:
+                lower_options = [o for o in self.constraints.cardio_duration_options if o < cardio_duration]
+                if lower_options:
+                    cardio_duration = max(lower_options)
+                else:
+                    break
+            safety += 1
+            if safety > 20:
+                break
+        
+        vector[4] = cardio_freq
+        vector[5] = cardio_duration
+        vector[6] = strength_freq
+        return vector
+
+    def _project_bounded_simplex(self, values: np.ndarray, lower: np.ndarray,
+                                 upper: np.ndarray, target: float = 1.0,
+                                 max_iter: int = 100, tol: float = 1e-6) -> Optional[np.ndarray]:
+        """Project values onto a bounded simplex."""
+        values = np.array(values, dtype=float)
+        lower = np.array(lower, dtype=float)
+        upper = np.array(upper, dtype=float)
+        
+        if target < lower.sum() - tol or target > upper.sum() + tol:
+            return None
+        
+        projected = np.clip(values, lower, upper)
+        diff = target - projected.sum()
+        
+        for _ in range(max_iter):
+            if abs(diff) <= tol:
+                break
+            
+            if diff > 0:
+                capacity = upper - projected
+            else:
+                capacity = projected - lower
+            
+            eligible = capacity > tol
+            if not np.any(eligible):
+                break
+            
+            total_capacity = capacity[eligible].sum()
+            if total_capacity <= 0:
+                break
+            
+            adjustment = diff * (capacity / total_capacity)
+            projected = np.clip(projected + adjustment, lower, upper)
+            diff = target - projected.sum()
+        
+        if abs(target - projected.sum()) > 1e-3:
+            return None
+        
+        return projected
     
     def validate_solution(self, solution: np.ndarray, person_weight: Optional[float] = None) -> bool:
         """验证方案是否满足所有约束条件"""

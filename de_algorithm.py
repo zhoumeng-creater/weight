@@ -168,10 +168,14 @@ class DifferentialEvolution:
                 # 交叉
                 trial = self.crossover(target, mutant)
                 
-                # 验证约束
-                if not self.solution_generator.validate_solution(trial.to_vector(), self.person.weight):
+                # 验证约束并修正
+                repaired_vector = self.solution_generator.validate_and_repair(
+                    trial.to_vector(), self.person.weight
+                )
+                if repaired_vector is None:
                     new_population.append(target)
                     continue
+                trial = Solution(repaired_vector)
                 
                 # 评估试验方案
                 self.evaluate_population([trial], week=iteration+1)

@@ -105,6 +105,7 @@ class EnhancedExperimentRunner:
         
         # 使用统一的数据追踪器
         self.data_tracker = DataTracker()
+        self.fitness_evaluator = FitnessEvaluator(config=self.config)
         
     def run_experiment_A1_benchmark(self, 
                                    n_subjects: Optional[int] = None, 
@@ -483,7 +484,13 @@ class EnhancedExperimentRunner:
                         trial_vector = self._apply_component_constraints(
                             trial_vector, self.disabled_component
                         )
-                        trial = Solution(trial_vector)
+                        repaired_vector = self.solution_generator.validate_and_repair(
+                            trial_vector, self.person.weight
+                        )
+                        if repaired_vector is None:
+                            new_population.append(target)
+                            continue
+                        trial = Solution(repaired_vector)
                         
                         # 评估和选择
                         self.evaluate_population([trial], week=iteration+1)
@@ -643,16 +650,19 @@ class EnhancedExperimentRunner:
             # 生成固定方案
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories  # 设置热量
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _step_reduction_method(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -674,16 +684,19 @@ class EnhancedExperimentRunner:
             
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _cyclic_diet_method(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -710,16 +723,19 @@ class EnhancedExperimentRunner:
             
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _random_method(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -735,16 +751,19 @@ class EnhancedExperimentRunner:
             tdee = bmr * current_subject.activity_level
             # 生成随机方案
             solution_vector = generator.generate_random_solution(tdee)
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _de_optimized_method(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -760,12 +779,18 @@ class EnhancedExperimentRunner:
 
         optimizer = DifferentialEvolution(copy.deepcopy(subject), config)
         best_solution, opt_results = optimizer.optimize()
+        weekly_results = self._replay_de_weekly_results(
+            subject, opt_results.get('best_solutions_history', []), config
+        )
+        metrics = self._summarize_weekly_metrics(weekly_results)
 
         return {
             'final_weight': opt_results['final_person_state'].weight,
             'total_weight_loss': subject.weight - opt_results['final_person_state'].weight,
             'best_solution': best_solution,
-            'optimization_results': opt_results
+            'optimization_results': opt_results,
+            'weekly_results': weekly_results,
+            'metrics': metrics
         }
 
     def _run_de_with_reoptimization(self, subject: PersonProfile, weeks: int,
@@ -794,6 +819,7 @@ class EnhancedExperimentRunner:
             for offset in range(segment_weeks):
                 week = week_index + offset
                 week_result = model.simulate_week(current_subject, best_solution, week)
+                week_result = self._add_weekly_metrics(week_result, best_solution, current_subject)
                 current_subject = model.update_person_state(current_subject, best_solution, week)
                 weekly_results.append(week_result)
 
@@ -805,13 +831,72 @@ class EnhancedExperimentRunner:
             'initial_weight': subject.initial_weight,
             'total_iterations': total_iterations
         }
+        metrics = self._summarize_weekly_metrics(weekly_results)
 
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
             'best_solution': best_solution,
             'optimization_results': optimization_results,
-            'weekly_results': weekly_results
+            'weekly_results': weekly_results,
+            'metrics': metrics
+        }
+
+    def _replay_de_weekly_results(self, subject: PersonProfile,
+                                  solutions: List[Solution],
+                                  config: ConfigManager) -> List[Dict]:
+        """Rebuild weekly results from a sequence of DE best solutions."""
+        model = MetabolicModel(config)
+        current_subject = copy.deepcopy(subject)
+        results = []
+        for week, solution in enumerate(solutions):
+            week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
+            results.append(week_result)
+            current_subject = model.update_person_state(current_subject, solution, week)
+        return results
+
+    def _prepare_solution(self, generator: SolutionGenerator, solution_vector: np.ndarray,
+                          subject: PersonProfile, tdee: float) -> Solution:
+        """Validate and repair a baseline solution vector."""
+        repaired = generator.validate_and_repair(
+            solution_vector, subject.weight, max_attempts=3, fallback_tdee=tdee
+        )
+        if repaired is None:
+            repaired = generator.normalize_solution_vector(solution_vector, subject.weight)
+        return Solution(repaired)
+
+    def _add_weekly_metrics(self, week_result: Dict, solution: Solution,
+                            person: PersonProfile) -> Dict:
+        """Attach shared metrics to a weekly result."""
+        energy_deficit = week_result.get('energy_deficit')
+        if energy_deficit is not None:
+            week_result['sustainability_score'] = self.fitness_evaluator.calculate_sustainability_score(
+                solution, person, energy_deficit
+            )
+        week_result['muscle_retention_rate'] = 1 - week_result.get('muscle_loss_rate', 0)
+        return week_result
+
+    def _summarize_weekly_metrics(self, weekly_results: List[Dict]) -> Dict:
+        """Summarize weekly metrics for analysis."""
+        if not weekly_results:
+            return {}
+        total_fat_loss = sum(w.get('fat_loss', 0) for w in weekly_results)
+        total_muscle_loss = sum(w.get('muscle_loss', 0) for w in weekly_results)
+        fat_loss_rates = [w.get('fat_loss_rate') for w in weekly_results if 'fat_loss_rate' in w]
+        muscle_retention_rates = [
+            w.get('muscle_retention_rate') for w in weekly_results if 'muscle_retention_rate' in w
+        ]
+        sustainability_scores = [
+            w.get('sustainability_score') for w in weekly_results if 'sustainability_score' in w
+        ]
+
+        return {
+            'total_fat_loss': total_fat_loss,
+            'total_muscle_loss': total_muscle_loss,
+            'mean_fat_loss_rate': np.mean(fat_loss_rates) if fat_loss_rates else None,
+            'mean_muscle_retention_rate': np.mean(muscle_retention_rates) if muscle_retention_rates else None,
+            'mean_sustainability_score': np.mean(sustainability_scores) if sustainability_scores else None
         }
     
     def _de_plateau_breakthrough(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -835,29 +920,37 @@ class EnhancedExperimentRunner:
         # 选择最优突破方案
         best_result = None
         best_weight_loss = 0
+        best_weekly_results = None
         
         for solution_vector in breakthrough_solutions:
             test_subject = copy.deepcopy(subject)
             calorie_ratio = solution_vector[0] / base_tdee if base_tdee > 0 else 1.0
+            weekly_results = []
             
             for week in range(weeks):
                 week_bmr = model.calculate_bmr(test_subject)
                 week_tdee = week_bmr * test_subject.activity_level
                 weekly_vector = solution_vector.copy()
                 weekly_vector[0] = week_tdee * calorie_ratio
-                solution = Solution(weekly_vector)
+                solution = self._prepare_solution(generator, weekly_vector, test_subject, week_tdee)
 
-                model.simulate_week(test_subject, solution, week)
+                week_result = model.simulate_week(test_subject, solution, week)
+                week_result = self._add_weekly_metrics(week_result, solution, test_subject)
                 test_subject = model.update_person_state(test_subject, solution, week)
+                weekly_results.append(week_result)
             
             weight_loss = subject.weight - test_subject.weight
             if weight_loss > best_weight_loss:
                 best_weight_loss = weight_loss
                 best_result = test_subject
+                best_weekly_results = weekly_results
         
+        metrics = self._summarize_weekly_metrics(best_weekly_results or [])
         return {
             'final_weight': best_result.weight if best_result else subject.weight,
-            'total_weight_loss': best_weight_loss
+            'total_weight_loss': best_weight_loss,
+            'weekly_results': best_weekly_results or [],
+            'metrics': metrics
         }
     
     def _continue_same_plan(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -880,16 +973,19 @@ class EnhancedExperimentRunner:
             solution_vector[4] = min(solution_vector[4] + 2, 6)  # 有氧
             solution_vector[6] = min(solution_vector[6] + 1, 5)  # 力量
             
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _diet_break(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -913,16 +1009,19 @@ class EnhancedExperimentRunner:
             
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _carb_cycling(self, subject: PersonProfile, weeks: int) -> Dict:
@@ -944,16 +1043,19 @@ class EnhancedExperimentRunner:
                 template = "balanced"
             
             solution_vector = generator.generate_from_template(template, tdee)
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
+            week_result = self._add_weekly_metrics(week_result, solution, current_subject)
             current_subject = model.update_person_state(current_subject, solution, week)
             results.append(week_result)
         
+        metrics = self._summarize_weekly_metrics(results)
         return {
             'final_weight': current_subject.weight,
             'total_weight_loss': subject.weight - current_subject.weight,
-            'weekly_results': results
+            'weekly_results': results,
+            'metrics': metrics
         }
     
     def _run_with_model(self, subject: PersonProfile, model, duration: int, deficit: float) -> List:
@@ -970,7 +1072,7 @@ class EnhancedExperimentRunner:
         for week in range(duration):
             solution_vector = generator.generate_from_template("balanced", tdee)
             solution_vector[0] = target_calories
-            solution = Solution(solution_vector)
+            solution = self._prepare_solution(generator, solution_vector, current_subject, tdee)
             
             week_result = model.simulate_week(current_subject, solution, week)
             current_subject = model.update_person_state(current_subject, solution, week)
@@ -1039,6 +1141,17 @@ class EnhancedExperimentRunner:
         
         for method_name, method_results in results.items():
             weight_losses = [r['total_weight_loss'] for r in method_results]
+            metrics_list = []
+            for result in method_results:
+                metrics = result.get('metrics')
+                if not metrics:
+                    metrics = self._summarize_weekly_metrics(result.get('weekly_results', []))
+                if metrics:
+                    metrics_list.append(metrics)
+
+            def _collect_metric(metrics_items, key):
+                values = [m.get(key) for m in metrics_items if m.get(key) is not None]
+                return float(np.mean(values)) if values else None
             
             analysis[method_name] = {
                 'mean_weight_loss': np.mean(weight_losses),
@@ -1047,6 +1160,15 @@ class EnhancedExperimentRunner:
                 'min_weight_loss': np.min(weight_losses),
                 'success_rate': sum(1 for w in weight_losses if w > self.config.experiment.success_weight_loss_threshold) / len(weight_losses)
             }
+
+            if metrics_list:
+                analysis[method_name].update({
+                    'mean_total_fat_loss': _collect_metric(metrics_list, 'total_fat_loss'),
+                    'mean_total_muscle_loss': _collect_metric(metrics_list, 'total_muscle_loss'),
+                    'mean_fat_loss_rate': _collect_metric(metrics_list, 'mean_fat_loss_rate'),
+                    'mean_muscle_retention_rate': _collect_metric(metrics_list, 'mean_muscle_retention_rate'),
+                    'mean_sustainability_score': _collect_metric(metrics_list, 'mean_sustainability_score')
+                })
         
         # 统计检验（DE vs 其他方法）
         if 'de_optimized' in results:
@@ -1073,6 +1195,18 @@ class EnhancedExperimentRunner:
         for strategy_name, strategy_results in results.items():
             successes = sum(1 for r in strategy_results if r['breakthrough_success'])
             weight_changes = [r['weight_change'] for r in strategy_results]
+            metrics_list = []
+            for result in strategy_results:
+                final_state = result.get('final_state', {})
+                metrics = final_state.get('metrics')
+                if not metrics:
+                    metrics = self._summarize_weekly_metrics(final_state.get('weekly_results', []))
+                if metrics:
+                    metrics_list.append(metrics)
+
+            def _collect_metric(metrics_items, key):
+                values = [m.get(key) for m in metrics_items if m.get(key) is not None]
+                return float(np.mean(values)) if values else None
             
             analysis[strategy_name] = {
                 'success_rate': successes / len(strategy_results),
@@ -1080,6 +1214,15 @@ class EnhancedExperimentRunner:
                 'std_weight_change': np.std(weight_changes),
                 'successful_cases': successes
             }
+
+            if metrics_list:
+                analysis[strategy_name].update({
+                    'mean_total_fat_loss': _collect_metric(metrics_list, 'total_fat_loss'),
+                    'mean_total_muscle_loss': _collect_metric(metrics_list, 'total_muscle_loss'),
+                    'mean_fat_loss_rate': _collect_metric(metrics_list, 'mean_fat_loss_rate'),
+                    'mean_muscle_retention_rate': _collect_metric(metrics_list, 'mean_muscle_retention_rate'),
+                    'mean_sustainability_score': _collect_metric(metrics_list, 'mean_sustainability_score')
+                })
         
         if 'de_plateau_breaker' in results:
             analysis['statistical_tests'] = {}
