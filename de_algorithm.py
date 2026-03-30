@@ -133,7 +133,10 @@ class DifferentialEvolution:
             
             # 如果最近几代改善都小于阈值，则停止
             if all(imp < self.config.algorithm.min_improvement for imp in recent_improvements):
-                logger.info(f"触发早停条件，连续{self.config.algorithm.patience}代改善小于{self.config.algorithm.min_improvement}")
+                logger.info(
+                    f"触发早停条件，连续{self.config.algorithm.patience}代改善小于"
+                    f"{self.config.algorithm.min_improvement}"
+                )
                 return True
         
         return False
@@ -163,7 +166,7 @@ class DifferentialEvolution:
             logger.info(f"\n--- 第 {iteration + 1} 周 ---")
             
             # Re-evaluate population with current person state to avoid stale fitness.
-            self.evaluate_population(population, week=iteration+1, force=True)
+            self.evaluate_population(population, week=iteration + 1, force=True)
 
             new_population = []
             
@@ -184,7 +187,7 @@ class DifferentialEvolution:
                 trial = Solution(repaired_vector)
                 
                 # 评估试验方案
-                self.evaluate_population([trial], week=iteration+1)
+                self.evaluate_population([trial], week=iteration + 1)
                 
                 # 选择
                 selected = self.selection(target, trial)
@@ -208,7 +211,7 @@ class DifferentialEvolution:
             
             # 更新人体状态（模拟代谢适应）
             self.person = self.metabolic_model.update_person_state(
-                self.person, best_solution, week=iteration+1
+                self.person, best_solution, week=iteration + 1
             )
             
             iteration += 1
@@ -227,5 +230,3 @@ class DifferentialEvolution:
         }
         
         return best_solution, results
-
-

@@ -772,7 +772,7 @@ class EnhancedExperimentRunner:
         }
     
     def _de_optimized_method(self, subject: PersonProfile, weeks: int) -> Dict:
-        """DE优化方案"""
+        """DE优化方案 - 修复版"""
         config = copy.deepcopy(self.config)
         reopt_interval = getattr(config.experiment, "de_reoptimize_interval_weeks", 0)
         if reopt_interval and reopt_interval > 0:
@@ -792,7 +792,6 @@ class EnhancedExperimentRunner:
             subject, opt_results.get('best_solutions_history', []), config
         )
         metrics = self._summarize_weekly_metrics(weekly_results)
-
         return {
             'final_weight': opt_results['final_person_state'].weight,
             'total_weight_loss': subject.weight - opt_results['final_person_state'].weight,
