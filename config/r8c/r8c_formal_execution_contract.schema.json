@@ -1,0 +1,627 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wgt-v11.invalid/schema/r8c_formal_execution_contract.schema.json",
+  "title": "Fail-closed R8C formal execution and candidate resource contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "created_date",
+    "authorization",
+    "upstream",
+    "schedule",
+    "method_runtime",
+    "launch",
+    "resources",
+    "failure_and_recovery",
+    "persistence",
+    "permissions",
+    "fail_closed_gate"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "WGT-V11-R8C-FORMAL-EXECUTION-CONTRACT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R8C_FAIL_CLOSED_RESOURCE_AND_LAUNCH_FREEZE"
+    },
+    "status": {
+      "const": "TARGET_HOST_UNMEASURED"
+    },
+    "created_date": {
+      "const": "2026-07-26"
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "author_text",
+        "authorized_scope",
+        "resource_purchase_or_remote_host_provisioning_authorized",
+        "formal_effect_execution_authorized",
+        "effect_analysis_authorized",
+        "results_writing_authorized"
+      ],
+      "properties": {
+        "author_text": {
+          "const": "R8C_CORRECTIVE_PROTOCOL_AUTHORIZED"
+        },
+        "authorized_scope": {
+          "const": "FREEZE_A_FAIL_CLOSED_R8C_RESOURCE_AND_PENDING_EXECUTION_ENVELOPE_WITHOUT_FORMAL_LAUNCH"
+        },
+        "resource_purchase_or_remote_host_provisioning_authorized": {
+          "const": false
+        },
+        "formal_effect_execution_authorized": {
+          "const": false
+        },
+        "effect_analysis_authorized": {
+          "const": false
+        },
+        "results_writing_authorized": {
+          "const": false
+        }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "r5",
+        "r5a",
+        "corrective_protocol"
+      ],
+      "properties": {
+        "r5": {
+          "$ref": "#/$defs/binding"
+        },
+        "r5a": {
+          "$ref": "#/$defs/binding"
+        },
+        "corrective_protocol": {
+          "$ref": "#/$defs/binding"
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_format",
+        "sha256",
+        "e2_full_reuse_rows",
+        "e2_full_reuse_sha256",
+        "task_namespace",
+        "e1_e2",
+        "e3",
+        "totals",
+        "e2_full_reuse"
+      ],
+      "properties": {
+        "id": {
+          "const": "WGT-V11-R8C-FORMAL-SCHEDULE-01"
+        },
+        "canonical_format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "const": "734ee0b20daf7855e566e6747ab61b74373db386ed9d5dec117f0612845ef8ba"
+        },
+        "e2_full_reuse_rows": {
+          "const": 310
+        },
+        "e2_full_reuse_sha256": {
+          "const": "d235c1c53d7e504400ad37674bebba4a01145a934964039454776c9f09ba0c9e"
+        },
+        "task_namespace": {
+          "const": "r8c"
+        },
+        "e1_e2": {
+          "$ref": "#/$defs/workloadTotalsE1E2"
+        },
+        "e3": {
+          "$ref": "#/$defs/workloadTotalsE3"
+        },
+        "totals": {
+          "$ref": "#/$defs/workloadTotalsAll"
+        },
+        "e2_full_reuse": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "method_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "population_size",
+        "archive_capacity",
+        "logical_threads_per_worker",
+        "blas_openmp_threads_per_worker",
+        "gpu_allowed_for_e1_e2",
+        "gpu_allowed_for_this_formal_scope",
+        "paired_initialization",
+        "method_rng",
+        "formal_e3_planning",
+        "formal_e3_execution"
+      ],
+      "properties": {
+        "population_size": {
+          "const": 100
+        },
+        "archive_capacity": {
+          "const": 100
+        },
+        "logical_threads_per_worker": {
+          "const": 1
+        },
+        "blas_openmp_threads_per_worker": {
+          "const": 1
+        },
+        "gpu_allowed_for_e1_e2": {
+          "const": false
+        },
+        "gpu_allowed_for_this_formal_scope": {
+          "const": false
+        },
+        "paired_initialization": {
+          "type": "string"
+        },
+        "method_rng": {
+          "type": "string"
+        },
+        "formal_e3_planning": {
+          "type": "string"
+        },
+        "formal_e3_execution": {
+          "type": "string"
+        }
+      }
+    },
+    "launch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "working_directory",
+        "contract_path",
+        "request_path",
+        "output_root",
+        "exact_command",
+        "command_identity_frozen",
+        "command_executable_now",
+        "formal_launch_prohibited",
+        "current_confirmation_state",
+        "one_time_consumption_required",
+        "overwrite_allowed"
+      ],
+      "properties": {
+        "working_directory": {
+          "const": "."
+        },
+        "contract_path": {
+          "const": "config/r8c/r8c_formal_execution_contract.json"
+        },
+        "request_path": {
+          "const": "config/r8c/r8c_execution_request.json"
+        },
+        "output_root": {
+          "const": "runs/r8c-formal"
+        },
+        "exact_command": {
+          "const": "python tools/run_v11_r8c_formal.py --contract config/r8c/r8c_formal_execution_contract.json --request config/r8c/r8c_execution_request.json --output-root runs/r8c-formal"
+        },
+        "command_identity_frozen": {
+          "const": true
+        },
+        "command_executable_now": {
+          "const": false
+        },
+        "formal_launch_prohibited": {
+          "const": true
+        },
+        "current_confirmation_state": {
+          "const": "PENDING_SOURCE_IDENTITY_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION"
+        },
+        "one_time_consumption_required": {
+          "const": true
+        },
+        "overwrite_allowed": {
+          "const": false
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualification_status",
+        "candidate_profile_frozen",
+        "selected_exact_host_frozen",
+        "local_validation_host",
+        "candidate_target",
+        "parallelism",
+        "decision_rule",
+        "timeouts_seconds",
+        "max_total_cpu_seconds",
+        "scratch",
+        "output",
+        "monitor"
+      ],
+      "properties": {
+        "qualification_status": {
+          "const": "TARGET_HOST_UNMEASURED"
+        },
+        "candidate_profile_frozen": {
+          "const": true
+        },
+        "selected_exact_host_frozen": {
+          "const": false
+        },
+        "local_validation_host": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cpu",
+            "physical_cores",
+            "logical_processors",
+            "installed_memory_gib",
+            "role"
+          ],
+          "properties": {
+            "cpu": {
+              "const": "Intel Core i7-13700HX"
+            },
+            "physical_cores": {
+              "const": 16
+            },
+            "logical_processors": {
+              "const": 24
+            },
+            "installed_memory_gib": {
+              "const": 32
+            },
+            "role": {
+              "const": "LOCAL_EQUIVALENCE_AND_RESULT_BLIND_ENGINEERING_PILOT_ONLY__NOT_FORMAL_TARGET_QUALIFICATION"
+            }
+          }
+        },
+        "candidate_target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "processor_reference",
+            "physical_package_reference_cores",
+            "physical_package_reference_threads",
+            "offered_instance_description",
+            "normalized_compute_allocation",
+            "memory_gib",
+            "provider",
+            "instance_type",
+            "host_fingerprint",
+            "remote_measurement_completed",
+            "interpretation"
+          ],
+          "properties": {
+            "processor_reference": {
+              "const": "AMD EPYC 9754"
+            },
+            "physical_package_reference_cores": {
+              "const": 128
+            },
+            "physical_package_reference_threads": {
+              "const": 256
+            },
+            "offered_instance_description": {
+              "const": "64-core, 80 GiB"
+            },
+            "normalized_compute_allocation": {
+              "const": "UNVERIFIED_64_VCPU_QUOTA"
+            },
+            "memory_gib": {
+              "const": 80
+            },
+            "provider": {
+              "type": "null"
+            },
+            "instance_type": {
+              "type": "null"
+            },
+            "host_fingerprint": {
+              "type": "null"
+            },
+            "remote_measurement_completed": {
+              "const": false
+            },
+            "interpretation": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "parallelism": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_workers",
+            "logical_threads_per_worker",
+            "blas_openmp_threads_per_worker",
+            "max_worker_peak_rss_bytes",
+            "candidate_pool_peak_rss_bytes",
+            "worker_count_qualified_on_target"
+          ],
+          "properties": {
+            "candidate_workers": {
+              "const": 32
+            },
+            "logical_threads_per_worker": {
+              "const": 1
+            },
+            "blas_openmp_threads_per_worker": {
+              "const": 1
+            },
+            "max_worker_peak_rss_bytes": {
+              "const": 2147483648
+            },
+            "candidate_pool_peak_rss_bytes": {
+              "const": 68719476736
+            },
+            "worker_count_qualified_on_target": {
+              "const": false
+            }
+          }
+        },
+        "decision_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "estimated_e1_e2_wall_hours_lte_36",
+            "estimated_e1_e2_wall_hours_gt_36_lte_48",
+            "estimated_e1_e2_wall_hours_gt_48",
+            "target_wall_hours",
+            "headroom_fraction_at_36_hours",
+            "current_decision"
+          ],
+          "properties": {
+            "estimated_e1_e2_wall_hours_lte_36": {
+              "const": "GO_ELIGIBLE_ONLY_AFTER_EXACT_TARGET_MEASUREMENT_AND_CONTRACT_SUPERSESSION"
+            },
+            "estimated_e1_e2_wall_hours_gt_36_lte_48": {
+              "const": "HOLD_OPTIMIZE_CONTENTION_AND_RETEST"
+            },
+            "estimated_e1_e2_wall_hours_gt_48": {
+              "const": "NO_GO"
+            },
+            "target_wall_hours": {
+              "const": 48
+            },
+            "headroom_fraction_at_36_hours": {
+              "const": 0.25
+            },
+            "current_decision": {
+              "const": "NO_GO_TARGET_HOST_UNMEASURED"
+            }
+          }
+        },
+        "timeouts_seconds": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "max_total_cpu_seconds": {
+          "const": 5529600
+        },
+        "scratch": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "output": {
+          "$ref": "#/$defs/nonEmptyObject"
+        },
+        "monitor": {
+          "$ref": "#/$defs/nonEmptyObject"
+        }
+      }
+    },
+    "failure_and_recovery": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "persistence": {
+      "$ref": "#/$defs/nonEmptyObject"
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_benchmark_effect_execution",
+        "public_synthetic_weight_effect_execution",
+        "participant_data",
+        "hidden_instance_or_seed",
+        "effect_analysis",
+        "results_writing",
+        "remote_git_mutation",
+        "release_or_distribution"
+      ],
+      "properties": {
+        "public_benchmark_effect_execution": {
+          "const": false
+        },
+        "public_synthetic_weight_effect_execution": {
+          "const": false
+        },
+        "participant_data": {
+          "const": false
+        },
+        "hidden_instance_or_seed": {
+          "const": false
+        },
+        "effect_analysis": {
+          "const": false
+        },
+        "results_writing": {
+          "const": false
+        },
+        "remote_git_mutation": {
+          "const": false
+        },
+        "release_or_distribution": {
+          "const": false
+        }
+      }
+    },
+    "fail_closed_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "request_status",
+        "source_identity_binding_location",
+        "target_host_status",
+        "formal_launch_status",
+        "prohibition_reasons",
+        "transition_rule",
+        "launch_before_superseding_gate_closure"
+      ],
+      "properties": {
+        "request_id": {
+          "const": "WGT-V11-R8C-EXECUTION-REQUEST-20260726-01"
+        },
+        "request_status": {
+          "const": "PENDING_SOURCE_IDENTITY_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION"
+        },
+        "source_identity_binding_location": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_host_status": {
+          "const": "TARGET_HOST_UNMEASURED"
+        },
+        "formal_launch_status": {
+          "const": "PROHIBITED"
+        },
+        "prohibition_reasons": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "transition_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launch_before_superseding_gate_closure": {
+          "const": "PROHIBITED"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "workloadTotalsE1E2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_sequences",
+        "CFE",
+        "atomic_model_steps"
+      ],
+      "properties": {
+        "method_sequences": {
+          "const": 5030
+        },
+        "CFE": {
+          "const": 851000000
+        },
+        "atomic_model_steps": {
+          "const": 1971000000
+        }
+      }
+    },
+    "workloadTotalsE3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_sequences",
+        "CFE",
+        "atomic_model_steps",
+        "scenarios"
+      ],
+      "properties": {
+        "method_sequences": {
+          "const": 672
+        },
+        "CFE": {
+          "const": 74882496
+        },
+        "atomic_model_steps": {
+          "const": 449294976
+        },
+        "scenarios": {
+          "const": [
+            "NOMINAL",
+            "PARAMETER_MISMATCH_EVAL_EE_PLUS_10_PERCENT",
+            "INFEASIBLE_REQUIRED_DEFICIT_1500_OVER_ACTION_CAP_1000_KCAL_DAY"
+          ]
+        }
+      }
+    },
+    "workloadTotalsAll": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_sequences",
+        "CFE",
+        "atomic_model_steps"
+      ],
+      "properties": {
+        "method_sequences": {
+          "const": 5702
+        },
+        "CFE": {
+          "const": 925882496
+        },
+        "atomic_model_steps": {
+          "const": 2420294976
+        }
+      }
+    },
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/wgt/r9-supporting-descriptive-implementation-v1.0.1.schema.json",
+  "title": "WGT V11 PRE-R10 Supporting Descriptive Implementation Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "implementation_id",
+    "schema_version",
+    "status",
+    "analysis_status",
+    "authorization",
+    "input_binding",
+    "r5_binding",
+    "procedure",
+    "cost_available_sets",
+    "output_artifacts",
+    "implementation_source_artifacts"
+  ],
+  "properties": {
+    "implementation_id": {
+      "const": "WGT-V11-R9-SUPPORTING-DESCRIPTIVE-v1.0.1-result-aware-authorized-pre-R10"
+    },
+    "schema_version": {
+      "const": "1.0.1"
+    },
+    "status": {
+      "const": "RESULT_AWARE_AUTHOR_APPROVED_PRE_R10_FROZEN"
+    },
+    "analysis_status": {
+      "const": "PRE_R10_SUPPORTING_DESCRIPTIVE_RESULT_AWARE__NO_NEW_CONFIRMATORY_INFERENCE"
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "author_text",
+        "token",
+        "r10_authorized"
+      ],
+      "properties": {
+        "author_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "token": {
+          "const": "PRE_R10_FAST_PUBLICATION_ROUTE_AUTHORIZED_NO_R10"
+        },
+        "r10_authorized": {
+          "const": false
+        }
+      }
+    },
+    "input_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_root",
+        "export_manifest_sha256",
+        "raw_run_manifest_sha256",
+        "minus_01_included",
+        "e3_included",
+        "source_input_modified_or_deleted"
+      ],
+      "properties": {
+        "input_root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "raw_run_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "minus_01_included": {
+          "const": false
+        },
+        "e3_included": {
+          "const": false
+        },
+        "source_input_modified_or_deleted": {
+          "const": false
+        }
+      }
+    },
+    "r5_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "procedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparison_order",
+        "comparison_count",
+        "new_confirmatory_hypotheses",
+        "new_confidence_intervals",
+        "new_sign_flip_tests",
+        "new_p_values",
+        "new_holm_families",
+        "retroactive_c4_decision",
+        "failure_direction",
+        "hard_violation_missing_bounds",
+        "formal_cost_gate_allowed"
+      ],
+      "properties": {
+        "comparison_order": {
+          "const": "reuse_r5_registered_30_pair_order"
+        },
+        "comparison_count": {
+          "const": 30
+        },
+        "new_confirmatory_hypotheses": {
+          "const": 0
+        },
+        "new_confidence_intervals": {
+          "const": 0
+        },
+        "new_sign_flip_tests": {
+          "const": 0
+        },
+        "new_p_values": {
+          "const": 0
+        },
+        "new_holm_families": {
+          "const": 0
+        },
+        "retroactive_c4_decision": {
+          "const": false
+        },
+        "failure_direction": {
+          "const": "comparator_rate_minus_proposed_rate"
+        },
+        "hard_violation_missing_bounds": {
+          "const": "missing_as_zero_lower_and_missing_as_one_upper"
+        },
+        "formal_cost_gate_allowed": {
+          "const": false
+        }
+      }
+    },
+    "cost_available_sets": {
+      "const": [
+        "ALL_COMPLETED_TASK_PAIRS",
+        "EQUAL_CHARGED_WORK_TASK_PAIRS",
+        "BOTH_ALL_EVENTS_ACCEPTED_TASK_PAIRS"
+      ]
+    },
+    "output_artifacts": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "implementation_source_artifacts": {
+      "type": "object",
+      "minProperties": 5,
+      "additionalProperties": {
+        "$ref": "#/$defs/fileCommitment"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bytes",
+        "sha256"
+      ],
+      "properties": {
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

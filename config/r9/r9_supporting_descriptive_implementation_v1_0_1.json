@@ -1,0 +1,73 @@
+{
+  "implementation_id": "WGT-V11-R9-SUPPORTING-DESCRIPTIVE-v1.0.1-result-aware-authorized-pre-R10",
+  "schema_version": "1.0.1",
+  "status": "RESULT_AWARE_AUTHOR_APPROVED_PRE_R10_FROZEN",
+  "analysis_status": "PRE_R10_SUPPORTING_DESCRIPTIVE_RESULT_AWARE__NO_NEW_CONFIRMATORY_INFERENCE",
+  "authorization": {
+    "author_text": "R9_RESULT_AWARE_ANALYSIS_AUTHORIZED",
+    "token": "PRE_R10_FAST_PUBLICATION_ROUTE_AUTHORIZED_NO_R10",
+    "r10_authorized": false
+  },
+  "input_binding": {
+    "input_root": "data/processed/event-export-v1",
+    "export_manifest_sha256": "9b9761360294b6194aea05d09504223c49fafee26f9e343e5fd7e5667d0b9e94",
+    "raw_run_manifest_sha256": "33ab590adf809ca2b1f87c1ef225a18d43f50dbc40d7f3c2e2da7a379b1768d3",
+    "minus_01_included": false,
+    "e3_included": false,
+    "source_input_modified_or_deleted": false
+  },
+  "r5_binding": {
+    "path": "config/r5/r5_freeze_contract.json",
+    "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+  },
+  "procedure": {
+    "comparison_order": "reuse_r5_registered_30_pair_order",
+    "comparison_count": 30,
+    "new_confirmatory_hypotheses": 0,
+    "new_confidence_intervals": 0,
+    "new_sign_flip_tests": 0,
+    "new_p_values": 0,
+    "new_holm_families": 0,
+    "retroactive_c4_decision": false,
+    "failure_direction": "comparator_rate_minus_proposed_rate",
+    "hard_violation_missing_bounds": "missing_as_zero_lower_and_missing_as_one_upper",
+    "formal_cost_gate_allowed": false
+  },
+  "cost_available_sets": [
+    "ALL_COMPLETED_TASK_PAIRS",
+    "EQUAL_CHARGED_WORK_TASK_PAIRS",
+    "BOTH_ALL_EVENTS_ACCEPTED_TASK_PAIRS"
+  ],
+  "output_artifacts": [
+    "README.md",
+    "method_outcome_summary.csv",
+    "pairwise_failure_summary.csv",
+    "pairwise_hard_violation_summary.csv",
+    "pairwise_cost_summary.csv",
+    "paired_cost_values.csv",
+    "supporting_cluster_effects.csv",
+    "supporting_analysis_manifest.json"
+  ],
+  "implementation_source_artifacts": {
+    "src/analysis/r9_supporting_descriptive.py": {
+      "bytes": 65992,
+      "sha256": "627d9eb924c31aaeb95de0d5839ba7010060fca69ad22d301153b776e43b4af7"
+    },
+    "tools/run_v11_r9_supporting_descriptive.py": {
+      "bytes": 3104,
+      "sha256": "bcdb9acf0905c879b470e1c969ffa812f70ad165d3688084b2291c038d41124f"
+    },
+    "tests/test_v11_r9_supporting_descriptive.py": {
+      "bytes": 3513,
+      "sha256": "a0ce981724ebb5d2871bfd2dfbcf8d0c7cd52e023dcbfe1b5de4006c22170807"
+    },
+    "config/r9/r9_supporting_descriptive_implementation_v1_0_1.schema.json": {
+      "bytes": 4892,
+      "sha256": "30a5495dda922897297b915fcae175473cc1eb87cbe07ac4aa61bcf88fb68d14"
+    },
+    "src/analysis/r9_inference.py": {
+      "bytes": 58124,
+      "sha256": "0eb39fa4c9e19c11db31faacb76d33ab621546b8fc03a0478744ef92572bc3c9"
+    }
+  }
+}

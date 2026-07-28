@@ -1,0 +1,533 @@
+{
+  "contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+  "schema_version": "1.0.0",
+  "protocol_stage": "R5",
+  "status": "RESULT_BLIND_DESIGN_FROZEN__NO_EFFECT_EXECUTION_AUTHORITY",
+  "frozen_date": "2026-07-25",
+  "author_authorization_text": "R5_FREEZE_AUTHORIZED",
+  "material_passport": {
+    "origin_skill": "academic-research-suite/experiment-agent",
+    "origin_mode": "plan",
+    "verification_status": "RESULT_BLIND_CONTRACT_VALIDATED",
+    "version_label": "v11_r5_freeze_v1"
+  },
+  "result_awareness_boundary": {
+    "legacy_g5c_effects_read_or_analyzed": false,
+    "development_pilot_effects_read_or_analyzed": false,
+    "v11_effect_execution_performed": false,
+    "participant_level_data_accessed": false,
+    "hidden_seed_or_instance_accessed_or_generated": false,
+    "results_section_written": false,
+    "effect_direction_assumed": false
+  },
+  "upstream_bindings": {
+    "implementation_git_root": ".",
+    "branch": "dev",
+    "r4_base_commit": "c40da5960b129a4dcec0b426e556a42272f4a028",
+    "r4_base_tree": "2dff77a621e8077eb52f2837eae19deaebb446b3",
+    "r4_benchmark_registry": {
+      "path": "config/r4/benchmark_registry.json",
+      "sha256": "e912e62d05c0ffc4ca73feb0ac99669a0d8bf6fafdb257c0138d4803c4ec77b6"
+    },
+    "r4_comparator_manifest": {
+      "path": "config/r4/comparator_manifest.json",
+      "sha256": "3d547d66cd8fb707ac3d7a2c2cafe2e2ff525b188b57d5f810dfa70809d9216b"
+    },
+    "dependency_lock": {
+      "path": "requirements-r4-benchmark.lock",
+      "sha256": "67479ba5980fa02248bf0f30aa9f25c0b9013956c6639a1e2b5f7ff87e643be3"
+    },
+    "randomness_module": {
+      "path": "src/evaluation/randomness.py",
+      "sha256": "1ad83dc550d283a841a69f396878487c803d5283320fbede3a7357f8bb540c5c",
+      "derivation_domain": "WGT-V11-RNG-v1"
+    },
+    "r3_model_qualification_status": "MODEL_QUALIFICATION_FAILED_POINT_MODEL_NOT_QUALIFIED_ONE_TIME_CONSUMED",
+    "weight_case_name": "illustrative_mechanistic_simulation"
+  },
+  "common_configuration": {
+    "population_size": 100,
+    "archive_capacity": 100,
+    "budget_unit": "joint_candidate_evaluation_CFE",
+    "checkpoint_fractions": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "transfer_checkpoint_fractions": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2
+    ],
+    "cfe_accounting": "Initialization, warm-start reevaluation, duplicates, cache hits and numerical evaluator failures are charged; repair failure before evaluator entry is zero CFE and typed.",
+    "unused_budget_transfer_allowed": false,
+    "silent_retry_allowed": false,
+    "method_specific_budget_allowed": false,
+    "post_result_sample_extension_allowed": false
+  },
+  "endpoint_contract": {
+    "analysis_sets": {
+      "FAS_SIM": "Every scheduled unit-method-replicate, including rejection, no-feasible, timeout, numerical failure and method-specific failure.",
+      "VAS_SIM": "Runs with numerically valid continuous endpoints; no-feasible is nHV zero, timeout uses the last valid archive at the common cutoff, and numerical failure is not imputed as a continuous value.",
+      "PPS_SIM": "Runs without a major infrastructure deviation; sensitivity analysis only."
+    },
+    "nhv": {
+      "static_and_cdf_reference_front_points": 10000,
+      "static_and_cdf_reference_front_source": "problem-specific analytic Pareto-front parameterization evaluated independently of every compared method",
+      "normalization": "Per problem/event, use the analytic reference-front objective minima and maxima; divide by max(range,1e-12), clip to [0,1.1], use reference point 1.1 in every objective, and divide HV by 1.1^m.",
+      "rolling_and_e3_transform": "For each nonnegative objective use phi(f)=f/(1+f), reference point all ones, and no observed-method union.",
+      "empty_feasible_archive_value": 0.0,
+      "observed_method_union_reference_allowed": false,
+      "reference_failure_policy": "A missing, nonfinite or empty analytic reference set blocks the affected suite before effect execution; it is never replaced from observed method outputs."
+    },
+    "endpoint_ids": {
+      "ANYTIME_NHV_AUC": "Trapezoidal area over the 21 fixed CFE fractions; static is one problem run and dynamic/rolling is the equal-weight event mean.",
+      "FINAL_NHV": "nHV at 100 percent of the fixed CFE; dynamic/rolling is the equal-weight event mean.",
+      "TRANSFER_EARLY_AUC": "Mean normalized trapezoidal area over 0 to 20 percent CFE after changes; event zero is excluded.",
+      "NEGATIVE_TRANSFER_RATE": "Fraction of post-initial events whose paired early-AUC difference is below -0.01.",
+      "FAILURE_RATE": "Typed non-ACCEPTED proportion in FAS-Sim with every terminal code retained.",
+      "POST_EXECUTION_HARD_VIOLATION_RATE": "Executed events with a model-internal hard-constraint violation divided by all executed events.",
+      "E3_ACCEPTED_FEASIBLE_EVENT_RATE": "Accepted and feasible weekly events divided by 26.",
+      "E3_MASS_TARGET_ABS_ERROR_AUC": "Weekly trapezoidal AUC of abs(model-predicted mass-target mass)/max(initial mass,1 kg).",
+      "COST": "CFE, atomic model steps, wall time, CPU time, peak RSS, output bytes and execution-transition count."
+    },
+    "practical_effect_thresholds": {
+      "ANYTIME_NHV_AUC": 0.02,
+      "FINAL_NHV": 0.02,
+      "TRANSFER_EARLY_AUC": 0.03,
+      "mechanism_attribution_TRANSFER": 0.01,
+      "failure_or_rejection_absolute_risk_margin": 0.02,
+      "post_execution_hard_violation_absolute_risk_margin": 0.01,
+      "paired_wall_time_ratio_upper_margin": 1.5,
+      "paired_peak_rss_ratio_upper_margin": 2.0
+    }
+  },
+  "statistics_contract": {
+    "top_level_units": {
+      "E1_E2_static_dynamic": "problem_id; profile and paired replicate are fixed nested units",
+      "E1_E2_rolling": "public generator template by index; paired replicate and event are nested",
+      "E3": "public virtual_subject_id by scenario_id; paired replicate and week are nested"
+    },
+    "aggregation": "Average within paired replicate, then within fixed profile/template/scenario stratum, then macro-average top-level units with equal weight; never weight by candidate, event, week or raw run count.",
+    "paired_effect_direction": "For higher-is-better endpoints use proposed minus comparator; for lower-is-better failure/cost endpoints orient the sign so positive favors the proposed method.",
+    "confidence_interval": {
+      "method": "paired stratified cluster bootstrap at the highest independent unit",
+      "replicates": 20000,
+      "level": 0.95,
+      "interval": "percentile",
+      "seed_u64": "18411052415373205191"
+    },
+    "permutation_test": {
+      "method": "two-sided paired sign-flip preserving every nested seed/profile/event value within a top-level cluster",
+      "replicates": 100000,
+      "p_value": "(b+1)/(B+1)",
+      "seed_u64": "12682445017195329024"
+    },
+    "multiplicity": {
+      "procedure": "Holm step-down",
+      "familywise_alpha": 0.05,
+      "families": [
+        {
+          "family_id": "E1_PRIMARY_ANYTIME",
+          "hypothesis_count": 15,
+          "definition": "Five result-blind comparator contrasts in each of static, CDF and rolling on ANYTIME_NHV_AUC."
+        },
+        {
+          "family_id": "E2_DYNAMIC_TRANSFER",
+          "hypothesis_count": 7,
+          "definition": "FULL versus the seven registered dynamic-identifiable variants on TRANSFER_EARLY_AUC."
+        },
+        {
+          "family_id": "E2_ROLLING_TRANSFER",
+          "hypothesis_count": 8,
+          "definition": "FULL versus every other registered variant on TRANSFER_EARLY_AUC."
+        }
+      ],
+      "e3_confirmatory_p_values_allowed": false
+    },
+    "missing_and_failure_rules": {
+      "no_feasible_nhv": 0.0,
+      "timeout_continuous_endpoint": "last valid archive at the common hard cutoff plus a timeout indicator",
+      "numerical_failure_continuous_endpoint": "missing in VAS-Sim; report FAS-Sim risk and [0,1] worst/best bounds",
+      "failure_removal_allowed": false,
+      "unpaired_fallback_allowed": false,
+      "optional_stopping_allowed": false
+    },
+    "reporting": [
+      "point estimate",
+      "effect size",
+      "95 percent confidence interval",
+      "raw top-level cluster distribution",
+      "Holm-adjusted and unadjusted p values where confirmatory",
+      "failure rejection infeasibility and timeout rates",
+      "CFE atomic steps wall time CPU time peak RSS and bytes",
+      "positive null negative and cost-ineligible outcomes"
+    ],
+    "p_value_only_conclusion_allowed": false
+  },
+  "seed_contract": {
+    "paired_master_seed_derivation": "First 8 bytes big-endian of SHA256(UTF-8('WGT-V11-R5-PAIRED-MASTER-v1\\0' || decimal replicate index)).",
+    "paired_master_seeds_u64": [
+      "1814705672717120344",
+      "11510044127855585889",
+      "2013063862857590834",
+      "9940308221477475016",
+      "10545341458691982268",
+      "30948576425451958",
+      "7493590094546507899",
+      "3295734562444817625",
+      "14507337277246372461",
+      "1039750163339046496"
+    ],
+    "paired_master_seed_table_sha256": "ddbe68251add06059a42d2485a42cb29f22b1c21f9061094ccf60ba2556f35db",
+    "use_prefix_counts": {
+      "E1_STATIC": 10,
+      "E1_DYNAMIC": 5,
+      "E1_ROLLING": 5,
+      "E2_DYNAMIC": 5,
+      "E2_ROLLING": 5,
+      "E3": 3
+    },
+    "stream_pairing": {
+      "shared_without_method_id": [
+        "instance",
+        "initialization",
+        "observation",
+        "execution"
+      ],
+      "method_isolated_with_method_id": [
+        "algorithm"
+      ],
+      "rule": "The paired replicate label and environment are common across methods; optimizer/operator streams include method_id and are independently domain-separated."
+    },
+    "rolling_public_generator": {
+      "generator_id": "WGT-F23-RRGEN-01",
+      "version": "1.0.0",
+      "generator_sha256": "d553e237df7f18a8cfe9f02931e32dc185368b7504a3247a106f0571f9ad8dd2",
+      "split": "development",
+      "public_master_seed_hex": "7d717dd3458bd5c78201839faf6ef4abc7628e94e7672bbb79743298da835c2f",
+      "templates": [
+        "RR-SMOOTH",
+        "RR-SHOCK",
+        "RR-REJECTION",
+        "RR-INTERMITTENT"
+      ],
+      "indices_per_template": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "instance_count": 32,
+      "instance_table_sha256": "bef8cc047cd267292cb06f606f152c5ccbdac2b3b7d8f52cabc464f239a3fe9b",
+      "hidden": false
+    },
+    "rolling_public_instances": [
+      {"template": "RR-SMOOTH", "index": 0, "derived_seed_u64": "3535406168758015110"},
+      {"template": "RR-SMOOTH", "index": 1, "derived_seed_u64": "10122398629764602443"},
+      {"template": "RR-SMOOTH", "index": 2, "derived_seed_u64": "9203738631321579433"},
+      {"template": "RR-SMOOTH", "index": 3, "derived_seed_u64": "6701719236628629756"},
+      {"template": "RR-SMOOTH", "index": 4, "derived_seed_u64": "12717881577067472576"},
+      {"template": "RR-SMOOTH", "index": 5, "derived_seed_u64": "10504268353107329870"},
+      {"template": "RR-SMOOTH", "index": 6, "derived_seed_u64": "8618407832436977344"},
+      {"template": "RR-SMOOTH", "index": 7, "derived_seed_u64": "5289129200709820222"},
+      {"template": "RR-SHOCK", "index": 0, "derived_seed_u64": "4370069893008699867"},
+      {"template": "RR-SHOCK", "index": 1, "derived_seed_u64": "16619021027687515290"},
+      {"template": "RR-SHOCK", "index": 2, "derived_seed_u64": "10235442303336465865"},
+      {"template": "RR-SHOCK", "index": 3, "derived_seed_u64": "10907979557309178497"},
+      {"template": "RR-SHOCK", "index": 4, "derived_seed_u64": "17140741585409995957"},
+      {"template": "RR-SHOCK", "index": 5, "derived_seed_u64": "3791057632447442933"},
+      {"template": "RR-SHOCK", "index": 6, "derived_seed_u64": "9498705565236647053"},
+      {"template": "RR-SHOCK", "index": 7, "derived_seed_u64": "16692816714068597830"},
+      {"template": "RR-REJECTION", "index": 0, "derived_seed_u64": "8225209381346558465"},
+      {"template": "RR-REJECTION", "index": 1, "derived_seed_u64": "17946567946754097656"},
+      {"template": "RR-REJECTION", "index": 2, "derived_seed_u64": "1677350007393849090"},
+      {"template": "RR-REJECTION", "index": 3, "derived_seed_u64": "14660512743360917876"},
+      {"template": "RR-REJECTION", "index": 4, "derived_seed_u64": "9134219043145654832"},
+      {"template": "RR-REJECTION", "index": 5, "derived_seed_u64": "18016217110752097318"},
+      {"template": "RR-REJECTION", "index": 6, "derived_seed_u64": "978107919292819561"},
+      {"template": "RR-REJECTION", "index": 7, "derived_seed_u64": "14865539292690383245"},
+      {"template": "RR-INTERMITTENT", "index": 0, "derived_seed_u64": "4942842524073898337"},
+      {"template": "RR-INTERMITTENT", "index": 1, "derived_seed_u64": "5044120116429458565"},
+      {"template": "RR-INTERMITTENT", "index": 2, "derived_seed_u64": "8254371387120923636"},
+      {"template": "RR-INTERMITTENT", "index": 3, "derived_seed_u64": "5299777274593122405"},
+      {"template": "RR-INTERMITTENT", "index": 4, "derived_seed_u64": "15683849174733358428"},
+      {"template": "RR-INTERMITTENT", "index": 5, "derived_seed_u64": "17143935211648792862"},
+      {"template": "RR-INTERMITTENT", "index": 6, "derived_seed_u64": "15636242849686485380"},
+      {"template": "RR-INTERMITTENT", "index": 7, "derived_seed_u64": "13456300543681562651"}
+    ],
+    "e3_public_subject_derivation": "First 8 bytes big-endian of SHA256(UTF-8('WGT-V11-R5-E3-PUBLIC-SUBJECT-v1\\0' || decimal subject index)).",
+    "e3_public_subject_table_sha256": "fcf818f780146772946192b6eb30afe8dcb94e53774f7889cb849301d9369928",
+    "e3_public_subjects": [
+      {"subject_id": "VS-000", "seed_u64": "1198773463880775798"},
+      {"subject_id": "VS-001", "seed_u64": "3603933269877878136"},
+      {"subject_id": "VS-002", "seed_u64": "17080443396804730046"},
+      {"subject_id": "VS-003", "seed_u64": "7390124963704745544"},
+      {"subject_id": "VS-004", "seed_u64": "9234882481171758316"},
+      {"subject_id": "VS-005", "seed_u64": "7195286313286325698"},
+      {"subject_id": "VS-006", "seed_u64": "8411248901729083755"},
+      {"subject_id": "VS-007", "seed_u64": "9906583270209057167"},
+      {"subject_id": "VS-008", "seed_u64": "2398719589979475313"},
+      {"subject_id": "VS-009", "seed_u64": "2411018592510814007"},
+      {"subject_id": "VS-010", "seed_u64": "14703942009428850206"},
+      {"subject_id": "VS-011", "seed_u64": "9403871204347584863"},
+      {"subject_id": "VS-012", "seed_u64": "17090376362706085313"},
+      {"subject_id": "VS-013", "seed_u64": "2954489579414998280"},
+      {"subject_id": "VS-014", "seed_u64": "4104000258291922738"},
+      {"subject_id": "VS-015", "seed_u64": "17613855585818145752"},
+      {"subject_id": "VS-016", "seed_u64": "14349498237441037305"},
+      {"subject_id": "VS-017", "seed_u64": "9942285718792173047"},
+      {"subject_id": "VS-018", "seed_u64": "12609201133635620656"},
+      {"subject_id": "VS-019", "seed_u64": "15985830750375515839"},
+      {"subject_id": "VS-020", "seed_u64": "14118186886375554889"},
+      {"subject_id": "VS-021", "seed_u64": "5218377415477140744"},
+      {"subject_id": "VS-022", "seed_u64": "954213975187225924"},
+      {"subject_id": "VS-023", "seed_u64": "16159531877187310112"},
+      {"subject_id": "VS-024", "seed_u64": "11263643202628897103"},
+      {"subject_id": "VS-025", "seed_u64": "992189382034892417"},
+      {"subject_id": "VS-026", "seed_u64": "152194739032120249"},
+      {"subject_id": "VS-027", "seed_u64": "337680636043673151"},
+      {"subject_id": "VS-028", "seed_u64": "8575570749230984469"},
+      {"subject_id": "VS-029", "seed_u64": "15684143619783819477"},
+      {"subject_id": "VS-030", "seed_u64": "14903222188847240477"},
+      {"subject_id": "VS-031", "seed_u64": "932892838314422030"}
+    ],
+    "method_blinding_seed_u64": "16161841258169750501",
+    "seed_filtering_allowed": false,
+    "replacement_seed_after_algorithm_failure_allowed": false
+  },
+  "experiment_design": {
+    "E1_STATIC": {
+      "role": "RQ1 supporting static external comparison",
+      "problems": "LIRCMOP1..LIRCMOP14",
+      "top_level_unit_count": 14,
+      "paired_replicates": 10,
+      "events": 1,
+      "cfe_per_event": 50000,
+      "atomic_steps_per_cfe": 1,
+      "methods": [
+        "F22_MG_STATIC",
+        "MATCHED_FIXED_DE_PARETO",
+        "MATCHED_JDE_STYLE_PARETO",
+        "MATCHED_SHADE_STYLE_PARETO",
+        "JMETALPY_1_7_GDE3_STANDARD_PARETO_DE",
+        "JMETALPY_1_7_NSGAII_STATIC_CMOEA"
+      ],
+      "primary_endpoint": "ANYTIME_NHV_AUC"
+    },
+    "E1_DYNAMIC": {
+      "role": "RQ1 primary dynamic external comparison",
+      "problems": "CDF1..CDF15",
+      "profiles": ["CDF-HARSH", "CDF-MILD"],
+      "top_level_unit_count": 15,
+      "paired_replicates": 5,
+      "events": 60,
+      "cfe_per_event": 5000,
+      "atomic_steps_per_cfe": 1,
+      "methods": [
+        "DT-RAMDE_TS2_FULL",
+        "MATCHED_FIXED_DE_PARETO",
+        "MATCHED_JDE_STYLE_PARETO",
+        "MATCHED_SHADE_STYLE_PARETO",
+        "JMETALPY_1_7_GDE3_STANDARD_PARETO_DE",
+        "JMETALPY_1_7_NSGAII_DYNAMIC_RESTART_BRIDGE"
+      ],
+      "primary_endpoint": "ANYTIME_NHV_AUC"
+    },
+    "E1_ROLLING": {
+      "role": "RQ1 primary public rolling external comparison",
+      "problems": "WGT-RR-CMOP four public development templates index 0..7",
+      "top_level_unit_count": 32,
+      "paired_replicates": 5,
+      "events": 20,
+      "cfe_per_event": 5000,
+      "atomic_steps_per_cfe": 6,
+      "methods": [
+        "DT-RAMDE_TS2_FULL",
+        "MATCHED_FIXED_DE_PARETO",
+        "MATCHED_JDE_STYLE_PARETO",
+        "MATCHED_SHADE_STYLE_PARETO",
+        "JMETALPY_1_7_GDE3_STANDARD_PARETO_DE",
+        "JMETALPY_1_7_NSGAII_DYNAMIC_RESTART_BRIDGE"
+      ],
+      "primary_endpoint": "ANYTIME_NHV_AUC"
+    },
+    "E2_DYNAMIC": {
+      "role": "RQ2 dynamic mechanism and negative-transfer support",
+      "top_level_unit_count": 15,
+      "profiles": ["CDF-HARSH", "CDF-MILD"],
+      "paired_replicates": 5,
+      "events": 60,
+      "cfe_per_event": 5000,
+      "atomic_steps_per_cfe": 1,
+      "methods": [
+        "FULL",
+        "NO_CROSS_EVENT_MEMORY",
+        "NO_REJECTION_CREDIT",
+        "NO_MEMORY_RESET_GATE",
+        "NO_LINEAGE_CREDIT",
+        "CROSS_EVENT_WARM_START_ONLY",
+        "CROSS_EVENT_MEMORY_ONLY",
+        "SHADE_ONLY"
+      ],
+      "excluded_as_non_identifiable_without_execution_feedback": [
+        "NO_EXECUTION_FEEDBACK"
+      ],
+      "primary_endpoint": "TRANSFER_EARLY_AUC",
+      "reuse_from": "E1_DYNAMIC/DT-RAMDE_TS2_FULL"
+    },
+    "E2_ROLLING": {
+      "role": "RQ2 primary mechanism and negative-transfer analysis",
+      "top_level_unit_count": 32,
+      "paired_replicates": 5,
+      "events": 20,
+      "cfe_per_event": 5000,
+      "atomic_steps_per_cfe": 6,
+      "methods": [
+        "FULL",
+        "NO_CROSS_EVENT_MEMORY",
+        "NO_EXECUTION_FEEDBACK",
+        "NO_REJECTION_CREDIT",
+        "NO_MEMORY_RESET_GATE",
+        "NO_LINEAGE_CREDIT",
+        "CROSS_EVENT_WARM_START_ONLY",
+        "CROSS_EVENT_MEMORY_ONLY",
+        "SHADE_ONLY"
+      ],
+      "primary_endpoint": "TRANSFER_EARLY_AUC",
+      "reuse_from": "E1_ROLLING/DT-RAMDE_TS2_FULL"
+    },
+    "E3": {
+      "role": "RQ3 supportive illustrative mechanistic simulation only",
+      "top_level_unit": "virtual_subject_by_scenario",
+      "public_virtual_subjects": 32,
+      "scenarios": [
+        "NOMINAL",
+        "PARAMETER_MISMATCH_EVAL_EE_PLUS_10_PERCENT",
+        "MODEL_FORM_MISMATCH_HALL_LINEARIZED_EVALUATION",
+        "OBSERVATION_NOISE_GAUSSIAN_SD_0_5_KG",
+        "MISSINGNESS_EVERY_FOURTH_POSTBASELINE_WEEK",
+        "IMPLEMENTATION_DEVIATION_75_PERCENT_INTAKE_ACTIVITY_FREQUENCY",
+        "ENERGY_SURPLUS_PLUS_250_KCAL_DAY",
+        "OUT_OF_DOMAIN_STATE_FAT_50KG_LEAN_35KG",
+        "INFEASIBLE_REQUIRED_DEFICIT_1500_OVER_ACTION_CAP_1000_KCAL_DAY"
+      ],
+      "top_level_unit_count": 288,
+      "paired_replicates": 3,
+      "events": 26,
+      "cfe_per_event_stochastic_search": 5000,
+      "cfe_per_event_deterministic_policy": 1,
+      "atomic_steps_per_cfe": 6,
+      "methods": [
+        "DT-RAMDE_TS2_FULL",
+        "CONVENTIONAL_ROLLING_PLANNER_NO_CROSS_EVENT_CREDIT",
+        "FIXED_ENERGY_DEFICIT_POLICY"
+      ],
+      "primary_endpoints": [
+        "E3_ACCEPTED_FEASIBLE_EVENT_RATE",
+        "E3_MASS_TARGET_ABS_ERROR_AUC"
+      ],
+      "confirmatory_p_values_allowed": false,
+      "execution_readiness": "R6_RESULT_BLIND_ENGINEERING_ADAPTER_REQUIRED_BEFORE_R7"
+    }
+  },
+  "workload_budget": {
+    "unique_workloads": [
+      {"id": "E1_STATIC", "method_sequences": 840, "CFE": 42000000, "atomic_model_steps": 42000000},
+      {"id": "E1_DYNAMIC", "method_sequences": 900, "CFE": 270000000, "atomic_model_steps": 270000000},
+      {"id": "E1_ROLLING", "method_sequences": 960, "CFE": 96000000, "atomic_model_steps": 576000000},
+      {"id": "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE", "method_sequences": 1050, "CFE": 315000000, "atomic_model_steps": 315000000},
+      {"id": "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE", "method_sequences": 1280, "CFE": 128000000, "atomic_model_steps": 768000000},
+      {"id": "E3", "method_sequences": 2016, "CFE": 224647488, "atomic_model_steps": 1347884928}
+    ],
+    "total_unique_method_sequences": 7046,
+    "total_CFE": 1075647488,
+    "total_atomic_model_steps": 3318884928,
+    "full_run_reuse_rule": "The exact E1 FULL raw run is referenced by E2 through its immutable run ID and hash; it is not rerun, duplicated as a sample, or double-counted in resource totals."
+  },
+  "resource_budget": {
+    "freeze_hardware": {
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "physical_cores": 16,
+      "logical_processors": 24,
+      "ram_gib_rounded": 32,
+      "os": "Windows 11 Professional 64-bit",
+      "gpu_allowed": false
+    },
+    "parallelism": {
+      "max_workers": 12,
+      "logical_threads_per_worker": 1,
+      "blas_openmp_threads_per_worker": 1,
+      "max_worker_peak_rss_gib": 2.0,
+      "max_pool_peak_rss_gib": 24.0
+    },
+    "timeouts_seconds": {
+      "per_static_sequence": 3600,
+      "per_dynamic_sequence": 21600,
+      "per_rolling_sequence": 10800,
+      "per_e3_sequence": 10800,
+      "global_formal_wall": 1209600
+    },
+    "max_total_cpu_hours": 4032,
+    "scratch": {
+      "required_root": "runs",
+      "onedrive_path_allowed": false,
+      "minimum_free_gib_at_r7_start": 210,
+      "stop_dispatch_below_free_gib": 30
+    },
+    "output": {
+      "format": "chunked UTF-8 canonical JSONL compressed with gzip; immutable raw chunks plus SHA-256 manifest",
+      "max_total_gib": 180,
+      "raw_evaluations_required": true,
+      "silent_truncation_allowed": false
+    },
+    "breach_policy": "Stop new dispatch, checkpoint and terminate active work safely, preserve all logs, mark the batch INCOMPLETE_RESOURCE_CEILING, and require a result-blind versioned amendment before any restart.",
+    "retry_policy": "No automatic retry. A proven method-independent infrastructure failure may rerun the entire paired method block with identical unit and seeds only after an author-approved deviation record; algorithm-specific failure remains a result."
+  },
+  "change_control": {
+    "after_any_effect_visibility": "Any endpoint, sample, seed, budget, method, reference or threshold change is exploratory unless isolation from effect direction is proven and a versioned author-approved amendment reruns every affected method.",
+    "r6_runtime_only_amendment": "R6 may motivate a result-blind resource/logging amendment from runtime, storage or stability evidence, but may not inspect method effects or change scientific endpoints to favor a method.",
+    "results_driven_extension_allowed": false
+  },
+  "permissions": {
+    "r5_contract_validation_allowed": true,
+    "synthetic_known_answer_tests_allowed": true,
+    "r6_engineering_pilot_allowed": false,
+    "formal_effect_execution_allowed": false,
+    "participant_data_access_allowed": false,
+    "hidden_generation_allowed": false,
+    "results_analysis_allowed": false,
+    "results_writing_allowed": false,
+    "remote_mutation_or_release_allowed": false
+  },
+  "next_gate": {
+    "id": "V11_R6_ISOLATED_RESULT_BLIND_ENGINEERING_PILOT_AUTHORIZATION",
+    "authorized": false,
+    "separate_author_confirmation_required": true,
+    "effect_evidence_allowed": false
+  }
+}

@@ -1,0 +1,890 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-FORMAL-EXECUTION-CONTRACT-SCHEMA-01",
+  "title": "R8C staged E1+E2 formal execution contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "created_date",
+    "authorization",
+    "upstream",
+    "schedule",
+    "method_runtime",
+    "launch",
+    "resources",
+    "failure_and_recovery",
+    "persistence",
+    "permissions",
+    "fail_closed_gate"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "WGT-V11-R8C-E1E2-FORMAL-EXECUTION-CONTRACT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R8C_E1E2_FAIL_CLOSED_TARGET_QUALIFICATION_PENDING"
+    },
+    "status": {
+      "const": "TARGET_HOST_UNMEASURED"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "author_text",
+        "authorized_scope",
+        "resource_purchase_or_remote_host_provisioning_authorized",
+        "formal_effect_execution_authorized",
+        "effect_analysis_authorized",
+        "results_writing_authorized"
+      ],
+      "properties": {
+        "author_text": {
+          "type": "string"
+        },
+        "authorized_scope": {
+          "const": "PREPARE_AND_QUALIFY_E1E2_ONLY_EXECUTION_WITHOUT_STARTING_FORMAL_EFFECT_TASKS"
+        },
+        "resource_purchase_or_remote_host_provisioning_authorized": {
+          "const": false
+        },
+        "formal_effect_execution_authorized": {
+          "const": false
+        },
+        "effect_analysis_authorized": {
+          "const": false
+        },
+        "results_writing_authorized": {
+          "const": false
+        }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "r5",
+        "r5a",
+        "corrective_protocol",
+        "checkpoint_persistence",
+        "rng_implementation_amendment",
+        "compact_runtime_amendment",
+        "timeout_semantics_amendment",
+        "lircmop_reference_amendment",
+        "cdf_operational_authority_amendment",
+        "reference_catalog",
+        "linux_runtime_lock"
+      ],
+      "properties": {
+        "r5": {
+          "$ref": "#/$defs/upstream"
+        },
+        "r5a": {
+          "$ref": "#/$defs/upstream"
+        },
+        "corrective_protocol": {
+          "$ref": "#/$defs/upstream"
+        },
+        "checkpoint_persistence": {
+          "$ref": "#/$defs/checkpoint_persistence_upstream"
+        },
+        "rng_implementation_amendment": {
+          "$ref": "#/$defs/rng_implementation_amendment_upstream"
+        },
+        "compact_runtime_amendment": {
+          "$ref": "#/$defs/compact_runtime_amendment_upstream"
+        },
+        "timeout_semantics_amendment": {
+          "$ref": "#/$defs/timeout_semantics_amendment_upstream"
+        },
+        "lircmop_reference_amendment": {
+          "$ref": "#/$defs/lircmop_reference_amendment_upstream"
+        },
+        "cdf_operational_authority_amendment": {
+          "$ref": "#/$defs/cdf_operational_authority_amendment_upstream"
+        },
+        "reference_catalog": {
+          "$ref": "#/$defs/reference_catalog_upstream"
+        },
+        "linux_runtime_lock": {
+          "$ref": "#/$defs/linux_runtime_lock_upstream"
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_format",
+        "sha256",
+        "e2_full_reuse_rows",
+        "e2_full_reuse_sha256",
+        "task_namespace",
+        "totals",
+        "workload_order",
+        "e3_dispatched",
+        "e2_full_reuse"
+      ],
+      "properties": {
+        "id": {
+          "const": "WGT-V11-R8C-E1E2-FORMAL-SCHEDULE-01"
+        },
+        "canonical_format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "const": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d"
+        },
+        "e2_full_reuse_rows": {
+          "const": 310
+        },
+        "e2_full_reuse_sha256": {
+          "const": "d235c1c53d7e504400ad37674bebba4a01145a934964039454776c9f09ba0c9e"
+        },
+        "task_namespace": {
+          "const": "r8c"
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method_sequences",
+            "CFE",
+            "atomic_model_steps"
+          ],
+          "properties": {
+            "method_sequences": {
+              "const": 5030
+            },
+            "CFE": {
+              "const": 851000000
+            },
+            "atomic_model_steps": {
+              "const": 1971000000
+            }
+          }
+        },
+        "workload_order": {
+          "const": [
+            "E1_STATIC",
+            "E1_DYNAMIC",
+            "E1_ROLLING",
+            "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+            "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+          ]
+        },
+        "e3_dispatched": {
+          "const": false
+        },
+        "e2_full_reuse": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "method_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "population_size",
+        "archive_capacity",
+        "logical_threads_per_worker",
+        "blas_openmp_threads_per_worker",
+        "gpu_allowed_for_e1_e2",
+        "gpu_allowed_for_this_formal_scope",
+        "paired_initialization",
+        "method_rng"
+      ],
+      "properties": {
+        "population_size": {
+          "const": 100
+        },
+        "archive_capacity": {
+          "const": 100
+        },
+        "logical_threads_per_worker": {
+          "const": 1
+        },
+        "blas_openmp_threads_per_worker": {
+          "const": 1
+        },
+        "gpu_allowed_for_e1_e2": {
+          "const": false
+        },
+        "gpu_allowed_for_this_formal_scope": {
+          "const": false
+        },
+        "paired_initialization": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method_rng": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "launch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "working_directory",
+        "contract_path",
+        "request_path",
+        "request_consumption_marker",
+        "output_root",
+        "exact_command",
+        "command_identity_frozen",
+        "command_executable_now",
+        "formal_launch_prohibited",
+        "current_confirmation_state",
+        "one_time_consumption_required",
+        "overwrite_allowed"
+      ],
+      "properties": {
+        "working_directory": {
+          "const": "$PROJECT_ROOT"
+        },
+        "contract_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_formal_execution_contract.json"
+        },
+        "request_path": {
+          "const": "PENDING_TARGET_QUALIFICATION"
+        },
+        "request_consumption_marker": {
+          "const": "PENDING_TARGET_QUALIFICATION"
+        },
+        "output_root": {
+          "const": "PENDING_TARGET_QUALIFICATION"
+        },
+        "exact_command": {
+          "const": "PENDING_TARGET_QUALIFICATION"
+        },
+        "command_identity_frozen": {
+          "const": false
+        },
+        "command_executable_now": {
+          "const": false
+        },
+        "formal_launch_prohibited": {
+          "const": true
+        },
+        "current_confirmation_state": {
+          "const": "PENDING_FINAL_CODE_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION"
+        },
+        "one_time_consumption_required": {
+          "const": true
+        },
+        "overwrite_allowed": {
+          "const": false
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualification_status",
+        "candidate_profile_frozen",
+        "selected_exact_host_frozen",
+        "candidate_target",
+        "parallelism",
+        "decision_rule",
+        "timeouts_seconds",
+        "max_total_cpu_seconds",
+        "scratch",
+        "output",
+        "monitor"
+      ],
+      "properties": {
+        "qualification_status": {
+          "const": "TARGET_HOST_UNMEASURED"
+        },
+        "candidate_profile_frozen": {
+          "const": true
+        },
+        "selected_exact_host_frozen": {
+          "const": false
+        },
+        "candidate_target": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "processor_reference",
+            "offered_instance_description",
+            "normalized_compute_allocation",
+            "memory_gib",
+            "provider",
+            "instance_type",
+            "host_fingerprint_sha256",
+            "remote_measurement_completed"
+          ],
+          "properties": {
+            "memory_gib": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "host_fingerprint_sha256": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "remote_measurement_completed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "parallelism": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "logical_threads_per_worker",
+            "blas_openmp_threads_per_worker",
+            "max_worker_peak_rss_bytes",
+            "worker_count_qualified_on_target"
+          ],
+          "properties": {
+            "candidate_workers": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_workers": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "logical_threads_per_worker": {
+              "const": 1
+            },
+            "blas_openmp_threads_per_worker": {
+              "const": 1
+            },
+            "max_worker_peak_rss_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "candidate_pool_peak_rss_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_pool_peak_rss_bytes": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "worker_count_qualified_on_target": {
+              "type": "boolean"
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "candidate_workers",
+                "candidate_pool_peak_rss_bytes"
+              ]
+            },
+            {
+              "required": [
+                "max_workers",
+                "max_pool_peak_rss_bytes"
+              ]
+            }
+          ]
+        },
+        "decision_rule": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "timeouts_seconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "per_static_sequence",
+            "per_dynamic_sequence",
+            "per_rolling_sequence",
+            "global_formal_wall"
+          ],
+          "properties": {
+            "per_static_sequence": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "per_dynamic_sequence": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "per_rolling_sequence": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "global_formal_wall": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "max_total_cpu_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "scratch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_root",
+            "onedrive_path_allowed",
+            "minimum_free_bytes_at_start",
+            "stop_dispatch_below_free_bytes"
+          ],
+          "properties": {
+            "required_root": {
+              "type": "string",
+              "minLength": 1
+            },
+            "onedrive_path_allowed": {
+              "const": false
+            },
+            "minimum_free_bytes_at_start": {
+              "const": 34359738368
+            },
+            "stop_dispatch_below_free_bytes": {
+              "const": 8589934592
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_total_bytes",
+            "control_plane_reserve_bytes",
+            "max_inflight_write_bytes_per_worker",
+            "raw_evaluations_required",
+            "format",
+            "silent_truncation"
+          ],
+          "properties": {
+            "max_total_bytes": {
+              "const": 12884901888
+            },
+            "control_plane_reserve_bytes": {
+              "const": 67108864
+            },
+            "max_inflight_write_bytes_per_worker": {
+              "const": 8388608
+            },
+            "raw_evaluations_required": {
+              "const": false
+            },
+            "format": {
+              "const": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT"
+            },
+            "silent_truncation": {
+              "const": false
+            }
+          }
+        },
+        "monitor": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "failure_and_recovery": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "automatic_retries",
+        "resume_policy"
+      ],
+      "properties": {
+        "automatic_retries": {
+          "const": 0
+        },
+        "resume_policy": {
+          "const": "PROHIBITED_WITHOUT_AUTHOR_APPROVED_RESULT_BLIND_DEVIATION_RECORD"
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "task_attempts",
+        "analysis_during_r8c"
+      ],
+      "properties": {
+        "task_attempts": {
+          "const": 1
+        },
+        "analysis_during_r8c": {
+          "const": false
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_benchmark_effect_execution",
+        "public_synthetic_weight_effect_execution",
+        "participant_data",
+        "hidden_instance_or_seed",
+        "effect_analysis",
+        "results_writing",
+        "remote_git_mutation",
+        "release_or_distribution"
+      ],
+      "properties": {
+        "public_benchmark_effect_execution": {
+          "const": false
+        },
+        "public_synthetic_weight_effect_execution": {
+          "const": false
+        },
+        "participant_data": {
+          "const": false
+        },
+        "hidden_instance_or_seed": {
+          "const": false
+        },
+        "effect_analysis": {
+          "const": false
+        },
+        "results_writing": {
+          "const": false
+        },
+        "remote_git_mutation": {
+          "const": false
+        },
+        "release_or_distribution": {
+          "const": false
+        }
+      }
+    },
+    "fail_closed_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "request_status",
+        "target_host_status",
+        "formal_launch_status",
+        "prohibition_reasons",
+        "transition_rule",
+        "launch_before_superseding_gate_closure"
+      ],
+      "properties": {
+        "request_id": {
+          "const": "WGT-V11-R8C-E1E2-EXECUTION-REQUEST-20260726-01"
+        },
+        "request_status": {
+          "const": "PENDING_FINAL_CODE_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION"
+        },
+        "target_host_status": {
+          "const": "TARGET_HOST_UNMEASURED"
+        },
+        "formal_launch_status": {
+          "const": "PROHIBITED"
+        },
+        "prohibition_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "transition_rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "launch_before_superseding_gate_closure": {
+          "const": "PROHIBITED"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "checkpoint_persistence_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "WGT-V11-R8C-E1E2-CHECKPOINT-PERSISTENCE-CONTRACT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.json"
+        },
+        "sha256": {
+          "const": "ef2420f2cb1eabc1e898b6288068e57051acab1494ff1cc169b04eafaf1e5b3a"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.schema.json"
+        },
+        "schema_sha256": {
+          "const": "4811661e6e580b1866b72b87e4928b8313ce235cb9dcae4dd81d591fd9d1108a"
+        }
+      }
+    },
+    "rng_implementation_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-RNG-IMPLEMENTATION-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_rng_implementation_amendment.json"
+        },
+        "sha256": {
+          "const": "744a29f29a1108e44bfbe25ddac2b7e16ce4867958ab23418842fd5fba4f84bd"
+        }
+      }
+    },
+    "compact_runtime_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.json"
+        },
+        "sha256": {
+          "const": "e8f8564a64e93614eb9db00e38b48a2f8cc8dd7f57b52e164f66ea1352315ff1"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "49969b9eb35eb224f6d6f4eeceb8fe130ded399f3aaa99c8572f866157b399c5"
+        }
+      }
+    },
+    "timeout_semantics_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.json"
+        },
+        "sha256": {
+          "const": "a94aed1613540ff119fcc47550c933dda4821c55789c09a98697eba32394d9fc"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "c497577f737940647883d89a2bac093907724f4d068d591b21bd8e998653fbd7"
+        }
+      }
+    },
+    "lircmop_reference_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.json"
+        },
+        "sha256": {
+          "const": "6e711a4832036fb83d7b3ae3c79cb237c2e8b096255d1894c0b886c2209bca27"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "951d29f855a08e72835d5116a0621c2d21036ff0c2d67fa6ccba8ef0b9d97311"
+        }
+      }
+    },
+    "cdf_operational_authority_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.json"
+        },
+        "sha256": {
+          "const": "aab6a99eee16ac24ce316449f08ed0d4a6a7fb9caf1f4e22ef3c0b204c9c96f3"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "cb04a8be2be06dd6ec00370ca1a7aa45a3f0fcc3ad2910754319bf6d16c1a8ee"
+        }
+      }
+    },
+    "reference_catalog_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "manifest_path",
+        "manifest_sha256",
+        "manifest_schema_path",
+        "manifest_schema_sha256",
+        "artifact_path",
+        "artifact_sha256",
+        "artifact_bytes",
+        "artifact_lines"
+      ],
+      "properties": {
+        "catalog_id": {
+          "const": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01"
+        },
+        "manifest_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.json"
+        },
+        "manifest_sha256": {
+          "const": "ee58c00544a4f0d069c7407dd03dc40d26bdd71e3b5b9e6b87f0322d44f66b8a"
+        },
+        "manifest_schema_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.schema.json"
+        },
+        "manifest_schema_sha256": {
+          "const": "a8768c8dbd53c71a89899bc8860fd1eab7163bf0840618991950f59e1a88298e"
+        },
+        "artifact_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl"
+        },
+        "artifact_sha256": {
+          "const": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f"
+        },
+        "artifact_bytes": {
+          "const": 3507565
+        },
+        "artifact_lines": {
+          "const": 2294
+        }
+      }
+    },
+    "linux_runtime_lock_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "locked_package_count",
+        "target_interpreter",
+        "target_platform"
+      ],
+      "properties": {
+        "path": {
+          "const": "requirements-r8c-linux-x86_64.lock"
+        },
+        "sha256": {
+          "const": "288dc0e9cdaa38d61ede8abffb8bbad17f76b43adb0f19be1adcdbaeb1a25dd6"
+        },
+        "bytes": {
+          "const": 3728
+        },
+        "locked_package_count": {
+          "const": 35
+        },
+        "target_interpreter": {
+          "const": "CPython 3.12"
+        },
+        "target_platform": {
+          "const": "Linux x86_64 manylinux2014-compatible"
+        }
+      }
+    }
+  }
+}

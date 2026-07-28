@@ -1,0 +1,178 @@
+{
+  "amendment_id": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_RESULT_BLIND_BENCHMARK_AND_REFERENCE_CORRECTION",
+  "status": "FROZEN_RESULT_BLIND_CORRECTIVE_IMPLEMENTATION_NOT_EXECUTION_AUTHORITY",
+  "created_date": "2026-07-26",
+  "trigger": {
+    "finding": "HISTORICAL_JMETALPY_LIRCMOP_EQUATIONS_DIVERGE_FROM_VERSION_OF_RECORD_TABLE_8",
+    "resolution": "PRESERVE_HISTORICAL_R4_BINDING_AND_USE_A_NEW_PAPER_FAITHFUL_R8C_BINDING",
+    "effect_outputs_inspected": false,
+    "observed_method_outputs_used": false,
+    "changes_research_question": false
+  },
+  "historical_freeze": {
+    "r5_contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+    "r5_contract_path": "config/r5/r5_freeze_contract.json",
+    "r5_contract_sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554",
+    "r4_benchmark_registry_path": "config/r4/benchmark_registry.json",
+    "r4_benchmark_registry_sha256": "e912e62d05c0ffc4ca73feb0ac99669a0d8bf6fafdb257c0138d4803c4ec77b6",
+    "historical_suite_id": "LIR-CMOP-JMETALPY-1.7.0",
+    "historical_evaluator_class": "benchmark_adapters.r4_evaluators.LIRCMOPEvaluator",
+    "historical_formal_factory_preserved": true,
+    "config_r4_modified_by_this_amendment": false,
+    "config_r5_modified_by_this_amendment": false
+  },
+  "paper_equation_binding": {
+    "citation": "Fan et al., Soft Computing 23, 12491-12510 (2019)",
+    "doi": "10.1007/s00500-019-03794-x",
+    "version_of_record_date": "2019-02-04",
+    "authoritative_equation_location": "https://link.springer.com/article/10.1007/s00500-019-03794-x/tables/8",
+    "covered_problem_ids": [
+      "LIRCMOP1",
+      "LIRCMOP2",
+      "LIRCMOP3",
+      "LIRCMOP4",
+      "LIRCMOP5",
+      "LIRCMOP6",
+      "LIRCMOP7",
+      "LIRCMOP8",
+      "LIRCMOP9",
+      "LIRCMOP10",
+      "LIRCMOP11",
+      "LIRCMOP12",
+      "LIRCMOP13",
+      "LIRCMOP14"
+    ],
+    "corrective_suite_id": "LIR-CMOP-PAPER-2019-TABLE-8",
+    "corrective_evaluator_class": "benchmark_adapters.lircmop_paper.LIRCMOPPaperEvaluator",
+    "paper_feasible_constraint_convention": "C_PAPER_GTE_0",
+    "project_feasible_constraint_convention": "C_PROJECT_LTE_0",
+    "boundary_transform": "C_PROJECT_EQUALS_NEGATIVE_C_PAPER",
+    "decision_bounds": "[0,1]^30",
+    "scalar_batch_operation_order": "ORDERED_SCALAR_REFERENCE_KERNEL"
+  },
+  "reference_representation": {
+    "representation_version": "WGT-V11-REFERENCE-IDENTITY-1.0.0",
+    "normalization_source": "INDEPENDENT_EXACT_EXTREMA",
+    "arbitrary_continuous_pf_point_count_required": false,
+    "historical_10000_point_target_retained_as_provenance_only": true,
+    "exact_extrema_required": true,
+    "finite_pf_store_all_unique_points": true,
+    "finite_pf_order": "LEXICOGRAPHIC",
+    "finite_pf_completeness_assertion": "ALL_UNIQUE_TRUE_PARETO_POINTS",
+    "observed_method_union_reference_allowed": false,
+    "method_output_derived_extrema_allowed": false,
+    "cdf13_identity_required_fields": [
+      "profile",
+      "event_id",
+      "master_seed_u64",
+      "time_vector",
+      "evaluator_binding_sha256"
+    ],
+    "cdf13_time_vector_source": "CDFEvaluator.release_metadata(event_id).current_time_vector",
+    "reference_values_materialized_by_this_amendment": true,
+    "reference_catalog_frozen": true,
+    "r9_must_fail_closed_if_exact_reference_artifacts_drift": true
+  },
+  "reference_catalog_binding": {
+    "catalog_id": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01",
+    "manifest": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.json",
+      "bytes": 4893,
+      "sha256": "ee58c00544a4f0d069c7407dd03dc40d26bdd71e3b5b9e6b87f0322d44f66b8a"
+    },
+    "manifest_schema": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.schema.json",
+      "bytes": 7252,
+      "sha256": "a8768c8dbd53c71a89899bc8860fd1eab7163bf0840618991950f59e1a88298e"
+    },
+    "artifact": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl",
+      "bytes": 3507565,
+      "lines": 2294,
+      "sha256": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f"
+    },
+    "identity_scope": {
+      "expected_total": 2294,
+      "actual_total": 2294,
+      "lircmop_static": 14,
+      "cdf_non_cdf13": 1680,
+      "cdf13_seed_time": 600,
+      "finite_front_records": 369,
+      "continuous_front_records": 1925,
+      "unique_evaluator_bindings": 44,
+      "evaluator_binding_set_sha256": "07858376417dee3bfc1f366c229c1ad50b2e75398fb58eb484a1a48432c1d949"
+    },
+    "representation": "CONTINUOUS_EXTREMA_PLUS_CERTIFICATE_OR_COMPLETE_FINITE_FRONT",
+    "arbitrary_dense_pf_samples_stored": false,
+    "observed_method_outputs_used": false
+  },
+  "implementation_bindings": {
+    "paper_evaluator": {
+      "path": "src/benchmark_adapters/lircmop_paper.py",
+      "bytes": 9605,
+      "sha256": "c7189603cbbc2ade48540985b644a8439e40f8bc17a8f0a27adac747ddbc7f14"
+    },
+    "static_suite_registry": {
+      "path": "src/benchmark_adapters/public_cmop.py",
+      "bytes": 19186,
+      "sha256": "ff2c1c9083d9fc79065fe929435c2c7311f5254b3ba643ca996a7c1989d08035"
+    },
+    "corrective_factory": {
+      "path": "src/formal_execution/adapters.py",
+      "bytes": 8258,
+      "sha256": "c21bf8ffb3298c78e6b2f5e7e452442102dbfc49a89dd72605a5cfd48054f953"
+    },
+    "reference_derivation": {
+      "path": "src/analysis/reference_catalog.py",
+      "bytes": 50877,
+      "sha256": "5ae6e64a43c494f2ade144a10ddc57506be48d69ccc5aa22bf320b1dac65e6f0"
+    },
+    "reference_artifacts": {
+      "path": "src/analysis/reference_fronts.py",
+      "bytes": 13318,
+      "sha256": "c76b0bdbe0180219bb062fc726d5edc2e72ecdaeb26a335239586ac196d00254"
+    },
+    "analytic_scale": {
+      "path": "src/analysis/checkpoint_metrics.py",
+      "bytes": 13121,
+      "sha256": "713c6f1341a97ed9e572074916b8e8df8df1897aec6a9091e2d622cdda60d70a"
+    }
+  },
+  "verification": {
+    "test_file": "tests/test_v11_lircmop_paper_reference_amendment.py",
+    "test_file_sha256": "e5a29066cda58bac2cfd64231b26b77db5fed4389f0363995ea37fec68a454a2",
+    "all_14_problem_known_answers": true,
+    "all_14_problem_scalar_batch_byte_equivalence": true,
+    "corrective_and_historical_factory_identity_separation": true,
+    "exact_extrema_to_existing_nhv_scale_conversion": true,
+    "finite_pf_uniqueness_and_extrema": true,
+    "cdf13_seed_time_vector_and_evaluator_identity": true,
+    "joint_reference_catalog_hash_bytes_lines_and_schema": true,
+    "schema_authority_and_sample_count_drift_rejected": true
+  },
+  "validation_rule": {
+    "amendment_and_schema_must_validate": true,
+    "all_implementation_bindings_must_match_bytes_and_sha256": true,
+    "historical_r4_and_r5_contracts_must_remain_unmodified": true,
+    "corrective_static_factory_must_use_paper_binding": true,
+    "historical_static_factory_must_use_jmetalpy_binding": true,
+    "reference_scale_must_not_require_a_fabricated_sample_count": true,
+    "reference_catalog_hash_bytes_lines_and_schema_must_match": true,
+    "all_2294_reference_identities_must_be_present_once": true,
+    "any_bound_source_or_test_drift": "FAIL_CLOSED",
+    "qualified_execution_contract_must_bind_this_amendment_before_launch": true
+  },
+  "effect_boundary": {
+    "effect_outputs_inspected": false,
+    "effect_outputs_written": false,
+    "changes_algorithms_seeds_samples_endpoints_or_cfe": false,
+    "authorizes_formal_effect_execution": false,
+    "authorizes_effect_analysis": false,
+    "authorizes_results_writing": false,
+    "requires_separate_target_qualification": true,
+    "requires_separate_source_bound_verbatim_request": true
+  }
+}

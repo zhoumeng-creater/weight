@@ -1,0 +1,185 @@
+{
+  "manifest_id": "WGT-V11-R4-COMPARATOR-MANIFEST-01",
+  "protocol_stage": "R4",
+  "status": "EXECUTABLE_BINDING_CLOSED_NO_EFFECT_AUTHORITY",
+  "effect_estimation_allowed": false,
+  "shared_contract": {
+    "objective_constraint_evaluator": "EventProblemAdapter.evaluate through the project SharedEvaluator only",
+    "constraint_convention": "c_le_0_feasible",
+    "repair_policy": "Project midpoint repair for DE boundary violations; bounded SBX and polynomial mutation for NSGA-II; every produced candidate is evaluated only after bounds validation",
+    "budget_unit": "joint_candidate_evaluation_CFE",
+    "atomic_step_accounting": "Every evaluator entry charges one CFE and the adapter-declared atomic model steps; initialization, warm-start re-evaluation, duplicate points, cache hits, and numerical failures are charged",
+    "information_boundary": "Each event uses one immutable InformationSnapshot; prohibited future, hidden, participant, and cross-method result fields remain unavailable",
+    "paired_seed_policy": "The future R5 run contract must supply paired problem/environment seeds across methods and an independent method RNG seed; R4 classes accept explicit seeds and never choose seeds from results",
+    "failure_policy": "Repair failure is typed before evaluator entry; numerical failure is charged, typed, marked infeasible, and excluded; no-feasible, safety rejection, timeout, and budget exhaustion remain typed",
+    "archive_policy": "Shared normalized constraint-domination and feasible nondominated archive with a common capacity",
+    "selector_policy": "Static and CDF report the feasible nondominated archive; WGT-RR uses equal-weight augmented Tchebycheff on f/(1+f), rho=1e-6, then candidate_id tie-break",
+    "resource_policy_stage": "R5"
+  },
+  "methods": [
+    {
+      "category": "matched_fixed_de_pareto",
+      "method_id": "MATCHED_FIXED_DE_PARETO",
+      "implementation": "comparators.matched_de.MatchedParetoDE",
+      "constructor": {
+        "mode": "fixed",
+        "fixed_f": 0.5,
+        "fixed_cr": 0.9
+      },
+      "source_kind": "project_matched",
+      "upstream": null,
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "Matched DE/rand/1/bin Pareto chassis; no parameter adaptation or cross-event state."
+    },
+    {
+      "category": "matched_jde_style_pareto",
+      "method_id": "MATCHED_JDE_STYLE_PARETO",
+      "implementation": "comparators.matched_de.MatchedParetoDE",
+      "constructor": {
+        "mode": "jde",
+        "jde_tau_f": 0.1,
+        "jde_tau_cr": 0.1,
+        "f_range": [
+          0.1,
+          1.0
+        ]
+      },
+      "source_kind": "project_matched",
+      "upstream": null,
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "Only jDE-style F/CR self-adaptation differs from the matched fixed chassis."
+    },
+    {
+      "category": "matched_shade_style_pareto",
+      "method_id": "MATCHED_SHADE_STYLE_PARETO",
+      "implementation": "comparators.matched_de.MatchedParetoDE",
+      "constructor": {
+        "mode": "shade",
+        "memory_size": 5,
+        "success_rule": "WGT-SHADE-CMO-SUCCESS-01"
+      },
+      "source_kind": "project_matched",
+      "upstream": null,
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "Only within-event SHADE-style F/CR memory differs from the matched fixed chassis."
+    },
+    {
+      "category": "standard_pareto_de_no_cross_event",
+      "method_id": "JMETALPY_1_7_GDE3_STANDARD_PARETO_DE",
+      "implementation": "comparators.jmetal_bridge.JMetalComparator",
+      "constructor": {
+        "mode": "gde3",
+        "F": 0.5,
+        "CR": 0.9,
+        "K": 0.5
+      },
+      "source_kind": "external_search_project_bridge",
+      "upstream": {
+        "distribution": "jmetalpy",
+        "release": "1.7.0",
+        "tag_commit": "3d5d0072876f84db32d1336e38e06b90319d01ee",
+        "wheel_sha256": "57a86bb939695459b0f7deb4723abbbdf4c28fb83bf8036cfdaf20b17b6778e9",
+        "license": "MIT"
+      },
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "Upstream GDE3 search with the project midpoint boundary rule, evaluator, constraint direction, ledger, final archive, and selector."
+    },
+    {
+      "category": "external_non_de_static_cmoea",
+      "method_id": "JMETALPY_1_7_NSGAII_STATIC_CMOEA",
+      "implementation": "comparators.jmetal_bridge.JMetalComparator",
+      "constructor": {
+        "mode": "nsgaii_static",
+        "SBX_probability": 0.9,
+        "SBX_distribution_index": 20,
+        "mutation_probability": "1/D",
+        "mutation_distribution_index": 20
+      },
+      "source_kind": "external_search_project_bridge",
+      "upstream": {
+        "distribution": "jmetalpy",
+        "release": "1.7.0",
+        "tag_commit": "3d5d0072876f84db32d1336e38e06b90319d01ee",
+        "wheel_sha256": "57a86bb939695459b0f7deb4723abbbdf4c28fb83bf8036cfdaf20b17b6778e9",
+        "license": "MIT"
+      },
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "External non-DE static CMOEA category; only event zero is accepted."
+    },
+    {
+      "category": "external_dynamic_constrained_moea",
+      "method_id": "JMETALPY_1_7_NSGAII_DYNAMIC_RESTART_BRIDGE",
+      "implementation": "comparators.jmetal_bridge.JMetalComparator",
+      "constructor": {
+        "mode": "nsgaii_dynamic_restart",
+        "response": "retain_shifted_half_population_then_random_refill",
+        "SBX_probability": 0.9,
+        "SBX_distribution_index": 20,
+        "mutation_probability": "1/D",
+        "mutation_distribution_index": 20
+      },
+      "source_kind": "external_search_project_bridge",
+      "upstream": {
+        "distribution": "jmetalpy",
+        "release": "1.7.0",
+        "tag_commit": "3d5d0072876f84db32d1336e38e06b90319d01ee",
+        "wheel_sha256": "57a86bb939695459b0f7deb4723abbbdf4c28fb83bf8036cfdaf20b17b6778e9",
+        "license": "MIT"
+      },
+      "cross_event_state": true,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "Budget-bounded dynamic response bridge around upstream NSGA-II. It is explicitly not the upstream asynchronous DynamicNSGAII class."
+    },
+    {
+      "category": "domain_fixed_energy_deficit",
+      "method_id": "FIXED_ENERGY_DEFICIT_POLICY",
+      "implementation": "comparators.domain_baselines.FixedEnergyDeficitBaseline",
+      "constructor": {
+        "intake_adjustment_kcal_per_day": -500,
+        "activity_adjustment_kcal_per_day": 0
+      },
+      "source_kind": "domain_policy",
+      "upstream": null,
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "E3 reference policy only; no claim that a larger simulated deficit is a better real-world outcome."
+    },
+    {
+      "category": "domain_conventional_rolling_planner",
+      "method_id": "CONVENTIONAL_ROLLING_PLANNER_NO_CROSS_EVENT_CREDIT",
+      "implementation": "comparators.domain_baselines.ConventionalRollingPlannerBaseline",
+      "constructor": {
+        "inner_search": "matched_SHADE_Pareto_chassis",
+        "fresh_search_each_event": true,
+        "warm_start": false,
+        "execution_credit": false
+      },
+      "source_kind": "domain_policy",
+      "upstream": null,
+      "cross_event_state": false,
+      "shared_evaluator": true,
+      "shared_ledger": true,
+      "effect_execution_allowed": false,
+      "notes": "E3 conventional receding-horizon comparator without cross-event memory or credit."
+    }
+  ]
+}

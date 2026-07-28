@@ -1,0 +1,128 @@
+{
+  "catalog_id": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01",
+  "schema_version": "1.0.0",
+  "created_date": "2026-07-26",
+  "status": "FROZEN_RESULT_BLIND_REFERENCE_INPUT_NOT_EXECUTION_AUTHORITY",
+  "authority_amendments": {
+    "lircmop": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01",
+    "cdf": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01"
+  },
+  "identity_scope": {
+    "expected_total": 2294,
+    "actual_total": 2294,
+    "lircmop_static": 14,
+    "cdf_non_cdf13": 1680,
+    "cdf13_seed_time": 600,
+    "finite_front_records": 369,
+    "continuous_front_records": 1925,
+    "cdf13_master_seeds_u64": [
+      "1814705672717120344",
+      "11510044127855585889",
+      "2013063862857590834",
+      "9940308221477475016",
+      "10545341458691982268"
+    ],
+    "cdf_profiles": [
+      "CDF-HARSH",
+      "CDF-MILD"
+    ],
+    "cdf_events_per_sequence": 60,
+    "unique_evaluator_bindings": 44,
+    "evaluator_binding_set_sha256": "07858376417dee3bfc1f366c229c1ad50b2e75398fb58eb484a1a48432c1d949"
+  },
+  "representation": {
+    "continuous_front": "OBJECTIVE_EXTREMA_PLUS_DERIVATION_OR_ROOT_CERTIFICATE",
+    "finite_front": "ALL_UNIQUE_TRUE_PARETO_POINTS",
+    "finite_front_order": "LEXICOGRAPHIC",
+    "float_encoding": "PYTHON_FLOAT_HEX_BINARY64",
+    "record_encoding": "CANONICAL_JSON_UTF8_ONE_RECORD_PER_LF",
+    "arbitrary_dense_pf_samples_stored": false,
+    "historical_10000_point_target": "PROVENANCE_ONLY_NOT_MATERIALIZED",
+    "method_output_derived_reference_allowed": false
+  },
+  "catalog_artifact": {
+    "path": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl",
+    "bytes": 3507565,
+    "lines": 2294,
+    "sha256": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f"
+  },
+  "source_bindings": {
+    "cdf_paper": {
+      "doi": "10.1007/s11047-020-09799-y",
+      "version_of_record_url": "https://link.springer.com/article/10.1007/s11047-020-09799-y"
+    },
+    "cdf_author_oracle": {
+      "repository": "https://bitbucket.org/Pag1c18/cmlsga",
+      "commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+      "path": "MLSGA/Fit_Functions.cpp",
+      "bytes": 461394,
+      "sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a"
+    },
+    "cdf_authority_audit": {
+      "path": "config/r8c_e1e2/cdf_operational_authority_audit.md",
+      "bytes": 10139,
+      "sha256": "510fea74f825b1000548de1fc8993ae08d879c7144c4584a360096df479d1300"
+    },
+    "cdf_corrective_evaluator": {
+      "path": "src/benchmark_adapters/cdf_operational.py",
+      "bytes": 4229,
+      "sha256": "c416598a2dd2a0eb3fc911fd7e9fbc6b543b882afd1e24ba65060024982a36a1"
+    },
+    "historical_evaluator": {
+      "path": "src/benchmark_adapters/r4_evaluators.py",
+      "bytes": 24754,
+      "sha256": "dd88d155d90747d21118ce5ae0130a7ea778d09f4b7db0a1806994280e4757ba"
+    },
+    "lircmop_paper_evaluator": {
+      "path": "src/benchmark_adapters/lircmop_paper.py",
+      "bytes": 9605,
+      "sha256": "c7189603cbbc2ade48540985b644a8439e40f8bc17a8f0a27adac747ddbc7f14"
+    },
+    "reference_derivation": {
+      "path": "src/analysis/reference_catalog.py",
+      "bytes": 50877,
+      "sha256": "5ae6e64a43c494f2ade144a10ddc57506be48d69ccc5aa22bf320b1dac65e6f0"
+    },
+    "reference_identity_model": {
+      "path": "src/analysis/reference_fronts.py",
+      "bytes": 13318,
+      "sha256": "c76b0bdbe0180219bb062fc726d5edc2e72ecdaeb26a335239586ac196d00254"
+    },
+    "analytic_scale": {
+      "path": "src/analysis/checkpoint_metrics.py",
+      "bytes": 13121,
+      "sha256": "713c6f1341a97ed9e572074916b8e8df8df1897aec6a9091e2d622cdda60d70a"
+    },
+    "generator": {
+      "path": "tools/generate_v11_r8c_reference_catalog.py",
+      "bytes": 9703,
+      "sha256": "2491145bd9af9b29e6d30b07d14e5a8d176dfbab2c1ded62e54ef28e193d6b72"
+    }
+  },
+  "verification": {
+    "all_records_reloaded_and_self_hash_validated": true,
+    "all_identity_sha256_unique": true,
+    "finite_front_completeness_model_validated": true,
+    "source_equation_witness_tests_required": true,
+    "cdf5_independent_global_minimum_crosscheck_required": true,
+    "cdf11_dense_domination_crosscheck_required": true,
+    "cdf8_cdf13_cdf15_endpoint_witnesses_required": true,
+    "manifest_schema_validation_required": true
+  },
+  "effect_boundary": {
+    "effect_outputs_inspected": false,
+    "effect_outputs_written": false,
+    "observed_method_outputs_used": false,
+    "changes_algorithms_seeds_samples_endpoints_or_cfe": false,
+    "authorizes_formal_execution": false,
+    "authorizes_effect_analysis": false,
+    "authorizes_results_writing": false
+  },
+  "validation_rule": {
+    "catalog_file_hash_bytes_lines_must_match": true,
+    "all_bound_source_hashes_and_bytes_must_match": true,
+    "all_2294_identities_must_be_present_once": true,
+    "cdf13_identity_must_bind_seed_and_full_time_vector": true,
+    "any_drift": "FAIL_CLOSED"
+  }
+}

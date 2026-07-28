@@ -1,0 +1,131 @@
+{
+  "implementation_id": "WGT-V11-R9-INFERENCE-v1.0.1-result-aware-authorized",
+  "schema_version": "1.0.1",
+  "status": "RESULT_AWARE_AUTHOR_APPROVED_FROZEN",
+  "authorization": {
+    "date": "2026-07-27",
+    "text": "PUBLIC_RELEASE_AUTHORITY_RECORD_REDACTED",
+    "token": "R9_RESULT_AWARE_CONFIRMATORY_INFERENCE_AUTHORIZED"
+  },
+  "provenance": {
+    "result_visibility": "EFFECTS_ALREADY_VISIBLE",
+    "claim": "AUTHOR_APPROVED_POST_VISIBILITY_SOFTWARE_IMPLEMENTATION",
+    "supersedes_nonconforming_implementation": "WGT-V11-R9-INFERENCE-v1.0.0-result-aware-authorized",
+    "correction": "Implements the already-frozen F24 detail omitted by v1.0.0: rolling instances are resampled within fixed templates and paired algorithm seeds are resampled within selected top-level clusters and fixed strata.",
+    "endpoint_change": false,
+    "sample_change": false,
+    "threshold_change": false,
+    "method_change": false
+  },
+  "r5_binding": {
+    "path": "config/r5/r5_freeze_contract.json",
+    "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+  },
+  "input_binding": {
+    "input_root": "data/processed/event-export-v1",
+    "export_manifest_sha256": "9b9761360294b6194aea05d09504223c49fafee26f9e343e5fd7e5667d0b9e94",
+    "raw_run_manifest_sha256": "33ab590adf809ca2b1f87c1ef225a18d43f50dbc40d7f3c2e2da7a379b1768d3",
+    "schedule_sha256": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d",
+    "reference_catalog_sha256": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f",
+    "artifacts": {
+      "README.md": {
+        "bytes": 1349,
+        "sha256": "183be07268407377d4c32eee8d3d5266720a45065a5dd9a8f0ef965051b08a38"
+      },
+      "e2_negative_transfer.csv": {
+        "bytes": 428329,
+        "sha256": "15cc5611f294d00200ab992d38ce8b859e3dda0b7f84e46d152d1451f9abeb6b"
+      },
+      "event_diagnostics.jsonl.gz": {
+        "bytes": 6902284,
+        "sha256": "9c955430f74feac2df56501148d9455e10ca950006d7fb2896460b126fc69691"
+      },
+      "failure_cost.csv": {
+        "bytes": 1170600,
+        "sha256": "06c787dbf6d39e5e1c02d5db664c972b1bdd8cf790f7a2fb7ab3cfc84ff87ad5"
+      },
+      "post_execution_hard_violation.csv": {
+        "bytes": 772939,
+        "sha256": "d6125dfa14bb9dd2d9a3cafb6f6e57f651322caaee855e7988e30e76542bc4e6"
+      },
+      "task_endpoints.csv": {
+        "bytes": 806648,
+        "sha256": "decddcec677c3023fcf0f24270210d7a630f3881a1caeecb608e26b739494f5d"
+      }
+    }
+  },
+  "implementation_source_artifacts": {
+    "src/analysis/r9_inference.py": {
+      "bytes": 58124,
+      "sha256": "0eb39fa4c9e19c11db31faacb76d33ab621546b8fc03a0478744ef92572bc3c9"
+    },
+    "tools/run_v11_r9_inference.py": {
+      "bytes": 2911,
+      "sha256": "2b369daa2fefc44b4b397394ca31060fa19a02094b2969c541b5afdf52f3d5d5"
+    },
+    "tests/test_v11_r9_inference.py": {
+      "bytes": 6660,
+      "sha256": "3102b0c94319eedc5ee014e4c8007c1b6ba88093692839730b95f7d9bd18ee9f"
+    },
+    "config/r9/r9_inference_implementation_v1_0_1.schema.json": {
+      "bytes": 6305,
+      "sha256": "4f27a2f5eea8e4bf2f881cb1e5fa06e67d2077c6d00b85ed61dada5342311a44"
+    }
+  },
+  "procedure": {
+    "aggregation": "Pair within replicate and fixed stratum, average nested differences within the highest independent unit, then macro-average top-level units with equal weight.",
+    "bootstrap_replicates": 20000,
+    "bootstrap_level": 0.95,
+    "bootstrap_seed_u64": "18411052415373205191",
+    "bootstrap_percentile_method": "linear",
+    "rolling_bootstrap_stratification": "resample instances within each fixed rolling template",
+    "nested_seed_bootstrap": "paired seeds resampled within each selected cluster and fixed profile/template stratum",
+    "sign_flip_replicates": 100000,
+    "sign_flip_seed_u64": "12682445017195329024",
+    "sign_flip_p_value": "(b+1)/(B+1)",
+    "holm_familywise_alpha": 0.05,
+    "rng_consumption_order": "one PCG64 stream per procedure; hypotheses consume sequentially",
+    "continuous_endpoint_bounds": [0.0, 1.0],
+    "missing_policy": "Numerical-failure continuous endpoints are missing in VAS-Sim, are never imputed for confirmatory inference, and receive endpoint-[0,1] FAS worst/best bounds.",
+    "effect_direction": "proposed minus comparator"
+  },
+  "hypothesis_order": [
+    "E1_STATIC__F22_MG_STATIC__VS__MATCHED_FIXED_DE_PARETO__ANYTIME_NHV_AUC",
+    "E1_STATIC__F22_MG_STATIC__VS__MATCHED_JDE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_STATIC__F22_MG_STATIC__VS__MATCHED_SHADE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_STATIC__F22_MG_STATIC__VS__JMETALPY_1_7_GDE3_STANDARD_PARETO_DE__ANYTIME_NHV_AUC",
+    "E1_STATIC__F22_MG_STATIC__VS__JMETALPY_1_7_NSGAII_STATIC_CMOEA__ANYTIME_NHV_AUC",
+    "E1_DYNAMIC__DT-RAMDE_TS2_FULL__VS__MATCHED_FIXED_DE_PARETO__ANYTIME_NHV_AUC",
+    "E1_DYNAMIC__DT-RAMDE_TS2_FULL__VS__MATCHED_JDE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_DYNAMIC__DT-RAMDE_TS2_FULL__VS__MATCHED_SHADE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_DYNAMIC__DT-RAMDE_TS2_FULL__VS__JMETALPY_1_7_GDE3_STANDARD_PARETO_DE__ANYTIME_NHV_AUC",
+    "E1_DYNAMIC__DT-RAMDE_TS2_FULL__VS__JMETALPY_1_7_NSGAII_DYNAMIC_RESTART_BRIDGE__ANYTIME_NHV_AUC",
+    "E1_ROLLING__DT-RAMDE_TS2_FULL__VS__MATCHED_FIXED_DE_PARETO__ANYTIME_NHV_AUC",
+    "E1_ROLLING__DT-RAMDE_TS2_FULL__VS__MATCHED_JDE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_ROLLING__DT-RAMDE_TS2_FULL__VS__MATCHED_SHADE_STYLE_PARETO__ANYTIME_NHV_AUC",
+    "E1_ROLLING__DT-RAMDE_TS2_FULL__VS__JMETALPY_1_7_GDE3_STANDARD_PARETO_DE__ANYTIME_NHV_AUC",
+    "E1_ROLLING__DT-RAMDE_TS2_FULL__VS__JMETALPY_1_7_NSGAII_DYNAMIC_RESTART_BRIDGE__ANYTIME_NHV_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__NO_CROSS_EVENT_MEMORY__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__NO_REJECTION_CREDIT__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__NO_MEMORY_RESET_GATE__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__NO_LINEAGE_CREDIT__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__CROSS_EVENT_WARM_START_ONLY__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__CROSS_EVENT_MEMORY_ONLY__TRANSFER_EARLY_AUC",
+    "E2_DYNAMIC__DT-RAMDE_TS2_FULL__VS__SHADE_ONLY__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__NO_CROSS_EVENT_MEMORY__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__NO_EXECUTION_FEEDBACK__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__NO_REJECTION_CREDIT__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__NO_MEMORY_RESET_GATE__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__NO_LINEAGE_CREDIT__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__CROSS_EVENT_WARM_START_ONLY__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__CROSS_EVENT_MEMORY_ONLY__TRANSFER_EARLY_AUC",
+    "E2_ROLLING__DT-RAMDE_TS2_FULL__VS__SHADE_ONLY__TRANSFER_EARLY_AUC"
+  ],
+  "permissions": {
+    "r9_inference_allowed": true,
+    "e3_allowed": false,
+    "raw_mutation_allowed": false,
+    "input_mutation_allowed": false,
+    "r10_results_writing_allowed": false
+  }
+}

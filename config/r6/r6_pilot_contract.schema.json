@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/wgt-v11-r6-pilot-contract.schema.json",
+  "title": "WGT V11 R6 isolated engineering pilot contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "protocol_stage",
+    "status",
+    "frozen_date",
+    "author_authorization_text",
+    "execution_authority",
+    "upstream",
+    "pilot_schedule",
+    "budget",
+    "resource_controls",
+    "output_contract",
+    "permissions",
+    "acceptance",
+    "formal_input_gap",
+    "next_gate",
+    "official_command"
+  ],
+  "properties": {
+    "contract_id": {"const": "WGT-V11-R6-ISOLATED-RESULT-BLIND-ENGINEERING-PILOT-01"},
+    "schema_version": {"const": "1.0.0"},
+    "protocol_stage": {"const": "R6"},
+    "status": {"type": "string", "minLength": 1},
+    "frozen_date": {"type": "string", "format": "date"},
+    "author_authorization_text": {"const": "R6_PILOT_AUTHORIZED"},
+    "execution_authority": {"const": "development_only_not_effect_evidence"},
+    "upstream": {
+      "type": "object",
+      "required": [
+        "r5_contract_id",
+        "r5_contract_path",
+        "r5_contract_sha256",
+        "r5_base_commit",
+        "r5_base_tree",
+        "r3_model_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "r5_contract_id": {"type": "string"},
+        "r5_contract_path": {"type": "string"},
+        "r5_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "r5_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "r5_base_tree": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "r3_model_status": {"type": "string"}
+      }
+    },
+    "pilot_schedule": {
+      "type": "object",
+      "required": [
+        "repetitions_per_fixture",
+        "algorithm_seed",
+        "development_fixture_seed",
+        "static_public_correctness",
+        "illustrative_e3"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "repetitions_per_fixture": {"const": 2},
+        "algorithm_seed": {"type": "integer", "minimum": 0},
+        "development_fixture_seed": {"type": "integer", "minimum": 0},
+        "static_public_correctness": {"$ref": "#/$defs/workload"},
+        "illustrative_e3": {
+          "allOf": [
+            {"$ref": "#/$defs/workload"},
+            {
+              "type": "object",
+              "required": ["baseline_rule", "target_rule", "scenarios"],
+              "properties": {
+                "baseline_rule": {"type": "string"},
+                "target_rule": {"type": "string"},
+                "scenarios": {
+                  "type": "array",
+                  "minItems": 9,
+                  "maxItems": 9,
+                  "uniqueItems": true,
+                  "items": {"type": "string"}
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "required": [
+        "scheduled_worker_processes",
+        "total_cfe",
+        "total_atomic_model_steps",
+        "unused_budget_transfer_allowed",
+        "method_specific_budget_allowed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "scheduled_worker_processes": {"const": 20},
+        "total_cfe": {"const": 728},
+        "total_atomic_model_steps": {"const": 4328},
+        "unused_budget_transfer_allowed": {"const": false},
+        "method_specific_budget_allowed": {"const": false}
+      }
+    },
+    "resource_controls": {"$ref": "#/$defs/freeformObject"},
+    "output_contract": {"$ref": "#/$defs/freeformObject"},
+    "permissions": {"$ref": "#/$defs/booleanObject"},
+    "acceptance": {"$ref": "#/$defs/freeformObject"},
+    "formal_input_gap": {"$ref": "#/$defs/freeformObject"},
+    "next_gate": {"$ref": "#/$defs/freeformObject"},
+    "official_command": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "workload": {
+      "type": "object",
+      "required": [
+        "fixture_id",
+        "events",
+        "cfe_per_event",
+        "atomic_steps_per_cfe"
+      ],
+      "properties": {
+        "fixture_id": {"type": "string", "minLength": 1},
+        "events": {"type": "integer", "minimum": 1},
+        "cfe_per_event": {"type": "integer", "minimum": 1},
+        "atomic_steps_per_cfe": {"type": "integer", "minimum": 1}
+      }
+    },
+    "booleanObject": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "boolean"}
+    },
+    "freeformObject": {
+      "type": "object",
+      "minProperties": 1
+    }
+  }
+}

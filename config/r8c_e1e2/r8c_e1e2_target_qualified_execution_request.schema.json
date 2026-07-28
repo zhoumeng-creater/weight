@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-EXECUTION-REQUEST-SCHEMA-01",
+  "title": "R8C E1+E2 target-qualified one-time execution request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "request_id",
+    "scope",
+    "companion_scope",
+    "contracts",
+    "frozen_exact_command",
+    "author_confirmation_text",
+    "author_exact_command_confirmed",
+    "formal_effect_execution_requested",
+    "participant_data_requested",
+    "hidden_generation_requested",
+    "results_analysis_requested",
+    "results_writing_requested",
+    "remote_git_mutation_requested",
+    "release_or_distribution_requested"
+  ],
+  "properties": {
+    "request_id": {
+      "const": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-EXECUTION-REQUEST-20260726-01"
+    },
+    "scope": {
+      "const": "benchmark_effect"
+    },
+    "companion_scope": {
+      "const": "benchmark_effect"
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol_id",
+        "r5_contract_id",
+        "r5_contract_sha256",
+        "r5a_contract_id",
+        "r5a_contract_sha256",
+        "corrective_protocol_id",
+        "corrective_protocol_sha256",
+        "r8c_formal_contract_id",
+        "r8c_formal_contract_sha256",
+        "formal_schedule_id",
+        "formal_schedule_sha256",
+        "source_git_commit",
+        "source_git_tree"
+      ],
+      "properties": {
+        "protocol_id": {
+          "const": "WGT-JOURNAL-2026-01"
+        },
+        "r5_contract_id": {
+          "const": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01"
+        },
+        "r5_contract_sha256": {
+          "const": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+        },
+        "r5a_contract_id": {
+          "const": "WGT-V11-R5A-E3-INPUT-CONTRACT-01"
+        },
+        "r5a_contract_sha256": {
+          "const": "a7275dc1624fc2167c0ed5a599f9b5cb3297151037c47c5b85fb27d38e857424"
+        },
+        "corrective_protocol_id": {
+          "const": "WGT-V11-R8C-RESULT-BLIND-CORRECTIVE-PROTOCOL-01"
+        },
+        "corrective_protocol_sha256": {
+          "const": "dfe74d041f36b12fd13cb86e1fa2bba5483bbd871a7749b2c98e09160ee39b43"
+        },
+        "r8c_formal_contract_id": {
+          "const": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-FORMAL-EXECUTION-CONTRACT-01"
+        },
+        "r8c_formal_contract_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "formal_schedule_id": {
+          "const": "WGT-V11-R8C-E1E2-FORMAL-SCHEDULE-01"
+        },
+        "formal_schedule_sha256": {
+          "const": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d"
+        },
+        "source_git_commit": {
+          "$ref": "#/$defs/git_object"
+        },
+        "source_git_tree": {
+          "$ref": "#/$defs/git_object"
+        }
+      }
+    },
+    "frozen_exact_command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author_confirmation_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author_exact_command_confirmed": {
+      "const": true
+    },
+    "formal_effect_execution_requested": {
+      "const": true
+    },
+    "participant_data_requested": {
+      "const": false
+    },
+    "hidden_generation_requested": {
+      "const": false
+    },
+    "results_analysis_requested": {
+      "const": false
+    },
+    "results_writing_requested": {
+      "const": false
+    },
+    "remote_git_mutation_requested": {
+      "const": false
+    },
+    "release_or_distribution_requested": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "git_object": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    }
+  }
+}

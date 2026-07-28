@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-MANIFEST-SCHEMA-01",
+  "title": "R8C E1+E2 compact equation-derived reference catalog manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalog_id",
+    "schema_version",
+    "created_date",
+    "status",
+    "authority_amendments",
+    "identity_scope",
+    "representation",
+    "catalog_artifact",
+    "source_bindings",
+    "verification",
+    "effect_boundary",
+    "validation_rule"
+  ],
+  "properties": {
+    "catalog_id": {
+      "const": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "created_date": {
+      "const": "2026-07-26"
+    },
+    "status": {
+      "const": "FROZEN_RESULT_BLIND_REFERENCE_INPUT_NOT_EXECUTION_AUTHORITY"
+    },
+    "authority_amendments": {
+      "const": {
+        "lircmop": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01",
+        "cdf": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01"
+      }
+    },
+    "identity_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_total",
+        "actual_total",
+        "lircmop_static",
+        "cdf_non_cdf13",
+        "cdf13_seed_time",
+        "finite_front_records",
+        "continuous_front_records",
+        "cdf13_master_seeds_u64",
+        "cdf_profiles",
+        "cdf_events_per_sequence",
+        "unique_evaluator_bindings",
+        "evaluator_binding_set_sha256"
+      ],
+      "properties": {
+        "expected_total": {
+          "const": 2294
+        },
+        "actual_total": {
+          "const": 2294
+        },
+        "lircmop_static": {
+          "const": 14
+        },
+        "cdf_non_cdf13": {
+          "const": 1680
+        },
+        "cdf13_seed_time": {
+          "const": 600
+        },
+        "finite_front_records": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "continuous_front_records": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cdf13_master_seeds_u64": {
+          "const": [
+            "1814705672717120344",
+            "11510044127855585889",
+            "2013063862857590834",
+            "9940308221477475016",
+            "10545341458691982268"
+          ]
+        },
+        "cdf_profiles": {
+          "const": [
+            "CDF-HARSH",
+            "CDF-MILD"
+          ]
+        },
+        "cdf_events_per_sequence": {
+          "const": 60
+        },
+        "unique_evaluator_bindings": {
+          "const": 44
+        },
+        "evaluator_binding_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "representation": {
+      "const": {
+        "continuous_front": "OBJECTIVE_EXTREMA_PLUS_DERIVATION_OR_ROOT_CERTIFICATE",
+        "finite_front": "ALL_UNIQUE_TRUE_PARETO_POINTS",
+        "finite_front_order": "LEXICOGRAPHIC",
+        "float_encoding": "PYTHON_FLOAT_HEX_BINARY64",
+        "record_encoding": "CANONICAL_JSON_UTF8_ONE_RECORD_PER_LF",
+        "arbitrary_dense_pf_samples_stored": false,
+        "historical_10000_point_target": "PROVENANCE_ONLY_NOT_MATERIALIZED",
+        "method_output_derived_reference_allowed": false
+      }
+    },
+    "catalog_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "lines",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lines": {
+          "const": 2294
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "source_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cdf_paper",
+        "cdf_author_oracle",
+        "cdf_authority_audit",
+        "cdf_corrective_evaluator",
+        "historical_evaluator",
+        "lircmop_paper_evaluator",
+        "reference_derivation",
+        "reference_identity_model",
+        "analytic_scale",
+        "generator"
+      ],
+      "properties": {
+        "cdf_paper": {
+          "const": {
+            "doi": "10.1007/s11047-020-09799-y",
+            "version_of_record_url": "https://link.springer.com/article/10.1007/s11047-020-09799-y"
+          }
+        },
+        "cdf_author_oracle": {
+          "const": {
+            "repository": "https://bitbucket.org/Pag1c18/cmlsga",
+            "commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+            "path": "MLSGA/Fit_Functions.cpp",
+            "bytes": 461394,
+            "sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a"
+          }
+        },
+        "cdf_authority_audit": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "cdf_corrective_evaluator": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "historical_evaluator": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "lircmop_paper_evaluator": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "reference_derivation": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "reference_identity_model": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "analytic_scale": {
+          "$ref": "#/$defs/fileBinding"
+        },
+        "generator": {
+          "$ref": "#/$defs/fileBinding"
+        }
+      }
+    },
+    "verification": {
+      "const": {
+        "all_records_reloaded_and_self_hash_validated": true,
+        "all_identity_sha256_unique": true,
+        "finite_front_completeness_model_validated": true,
+        "source_equation_witness_tests_required": true,
+        "cdf5_independent_global_minimum_crosscheck_required": true,
+        "cdf11_dense_domination_crosscheck_required": true,
+        "cdf8_cdf13_cdf15_endpoint_witnesses_required": true,
+        "manifest_schema_validation_required": true
+      }
+    },
+    "effect_boundary": {
+      "const": {
+        "effect_outputs_inspected": false,
+        "effect_outputs_written": false,
+        "observed_method_outputs_used": false,
+        "changes_algorithms_seeds_samples_endpoints_or_cfe": false,
+        "authorizes_formal_execution": false,
+        "authorizes_effect_analysis": false,
+        "authorizes_results_writing": false
+      }
+    },
+    "validation_rule": {
+      "const": {
+        "catalog_file_hash_bytes_lines_must_match": true,
+        "all_bound_source_hashes_and_bytes_must_match": true,
+        "all_2294_identities_must_be_present_once": true,
+        "cdf13_identity_must_bind_seed_and_full_time_vector": true,
+        "any_drift": "FAIL_CLOSED"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "fileBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,646 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-SCHEMA-01",
+  "title": "R8C E1+E2 result-blind CDF operational-authority amendment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "amendment_id",
+    "schema_version",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "created_date",
+    "trigger",
+    "authority_binding",
+    "historical_freeze",
+    "operational_binding",
+    "per_problem_resolution",
+    "cdf13_schedule_binding",
+    "cdf9_failure_policy",
+    "reference_catalog_binding",
+    "implementation_bindings",
+    "verification",
+    "validation_rule",
+    "effect_boundary"
+  ],
+  "properties": {
+    "amendment_id": {
+      "const": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R8C_E1E2_RESULT_BLIND_CDF_OPERATIONAL_AUTHORITY_CORRECTION"
+    },
+    "status": {
+      "const": "FROZEN_RESULT_BLIND_CORRECTIVE_IMPLEMENTATION_NOT_EXECUTION_AUTHORITY"
+    },
+    "created_date": {
+      "const": "2026-07-26"
+    },
+    "trigger": {
+      "const": {
+        "finding": "CDF_VERSION_OF_RECORD_AUTHOR_ORACLE_AND_HISTORICAL_PYTHON_ARE_NOT_GLOBALLY_IDENTICAL",
+        "resolution": "USE_NAMED_AUTHOR_COMMIT_AS_OPERATIONAL_AUTHORITY_PRESERVE_HISTORICAL_R4_AND_ENUMERATE_ALL_CONFLICTS",
+        "effect_outputs_inspected": false,
+        "observed_method_outputs_used": false,
+        "changes_research_question": false
+      }
+    },
+    "authority_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "paper",
+        "author_oracle",
+        "authority_precedence",
+        "audit_document",
+        "covered_problem_ids"
+      ],
+      "properties": {
+        "paper": {
+          "const": {
+            "citation": "Grudniewski and Sobey, Natural Computing 21, 109-125 (2022)",
+            "doi": "10.1007/s11047-020-09799-y",
+            "version_of_record_date": "2020-07-22",
+            "version_of_record_url": "https://link.springer.com/article/10.1007/s11047-020-09799-y"
+          }
+        },
+        "author_oracle": {
+          "const": {
+            "repository": "https://bitbucket.org/Pag1c18/cmlsga",
+            "commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+            "path": "MLSGA/Fit_Functions.cpp",
+            "bytes": 461394,
+            "sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a"
+          }
+        },
+        "authority_precedence": {
+          "const": "NAMED_AUTHOR_COMMIT_IS_OPERATIONAL_EQUATION_AUTHORITY_PAPER_IS_SCIENTIFIC_DESCRIPTION_CONFLICTS_ARE_EXPLICIT"
+        },
+        "audit_document": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "covered_problem_ids": {
+          "const": [
+            "CDF1",
+            "CDF2",
+            "CDF3",
+            "CDF4",
+            "CDF5",
+            "CDF6",
+            "CDF7",
+            "CDF8",
+            "CDF9",
+            "CDF10",
+            "CDF11",
+            "CDF12",
+            "CDF13",
+            "CDF14",
+            "CDF15"
+          ]
+        }
+      }
+    },
+    "historical_freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "r5_contract",
+        "r4_benchmark_registry",
+        "historical_suite_id",
+        "historical_evaluator_class",
+        "historical_binding_preserved",
+        "config_r4_modified_by_this_amendment",
+        "config_r5_modified_by_this_amendment"
+      ],
+      "properties": {
+        "r5_contract": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "r4_benchmark_registry": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "historical_suite_id": {
+          "const": "CDF-1-15-CMLSGA-1926A5A1"
+        },
+        "historical_evaluator_class": {
+          "const": "benchmark_adapters.r4_evaluators.CDFEvaluator"
+        },
+        "historical_binding_preserved": {
+          "const": true
+        },
+        "config_r4_modified_by_this_amendment": {
+          "const": false
+        },
+        "config_r5_modified_by_this_amendment": {
+          "const": false
+        }
+      }
+    },
+    "operational_binding": {
+      "const": {
+        "corrective_suite_id": "CDF-1-15-CMLSGA-1926A5A1-OPERATIONAL",
+        "authority_id": "WGT-V11-R8C-CDF-OPERATIONAL-AUTHORITY-1.0.0",
+        "evaluator_version": "1.0.0",
+        "corrective_evaluator_class": "benchmark_adapters.cdf_operational.CDFOperationalEvaluator",
+        "paper_feasible_constraint_convention": "G_PAPER_GTE_0",
+        "project_feasible_constraint_convention": "C_PROJECT_LTE_0",
+        "boundary_transform": "C_PROJECT_EQUALS_NEGATIVE_G_OPERATIONAL",
+        "decision_bounds": "FROZEN_PER_PROBLEM_R4_BOUNDS",
+        "scalar_batch_operation_order": "ORDERED_SCALAR_REFERENCE_KERNEL",
+        "corrective_python_changes": [
+          "CDF1_ORACLE_EXPONENT_PLACEMENT",
+          "CDF9_TYPED_UNDEFINED_REAL_DOMAIN_FAILURE"
+        ],
+        "oracle_paper_conflicts_preserved": [
+          "CDF6",
+          "CDF9",
+          "CDF10",
+          "CDF11",
+          "CDF12",
+          "CDF13",
+          "CDF15"
+        ]
+      }
+    },
+    "per_problem_resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "CDF1",
+        "CDF2",
+        "CDF3",
+        "CDF4",
+        "CDF5",
+        "CDF6",
+        "CDF7",
+        "CDF8",
+        "CDF9",
+        "CDF10",
+        "CDF11",
+        "CDF12",
+        "CDF13",
+        "CDF14",
+        "CDF15"
+      ],
+      "properties": {
+        "CDF1": {
+          "const": "CORRECT_PYTHON_TO_PAPER_AND_ORACLE_EXPONENT_PLACEMENT"
+        },
+        "CDF2": {
+          "const": "INHERIT_ORACLE_MATCH"
+        },
+        "CDF3": {
+          "const": "INHERIT_ORACLE_MATCH"
+        },
+        "CDF4": {
+          "const": "INHERIT_ORACLE_MATCH"
+        },
+        "CDF5": {
+          "const": "INHERIT_ORACLE_EQUATIONS_AND_CORRECT_REFERENCE_FOR_DECISION_BOUND_REACHABILITY"
+        },
+        "CDF6": {
+          "const": "FREEZE_ORACLE_OMISSION_OF_PAPER_ABS_G_CONSTRAINT_SHIFTS"
+        },
+        "CDF7": {
+          "const": "INHERIT_ORACLE_MATCH"
+        },
+        "CDF8": {
+          "const": "INHERIT_ORACLE_EQUATIONS_AND_RETAIN_ONLY_FEASIBLE_IDEAL_CURVE_SUBSET"
+        },
+        "CDF9": {
+          "const": "FREEZE_ORACLE_EQUATIONS_AND_TYPE_NONREAL_SQRT_DOMAIN"
+        },
+        "CDF10": {
+          "const": "FREEZE_ORACLE_UNSQUARED_W_SUM_AND_TWO_CF6_CONSTRAINTS"
+        },
+        "CDF11": {
+          "const": "FREEZE_ORACLE_NO_OBJECTIVE_SHIFT_AND_Y_SQUARED_RIPPLE_WITH_BOUND_REACHABLE_FINITE_FRONT"
+        },
+        "CDF12": {
+          "const": "FREEZE_ORACLE_ODD_SIN_EVEN_COS_ORDER"
+        },
+        "CDF13": {
+          "const": "FREEZE_ORACLE_K_EQUALS_CEIL_10G_AND_BIND_SEED_FULL_TIME_VECTOR"
+        },
+        "CDF14": {
+          "const": "INHERIT_ORACLE_MATCH_AND_CLASSIFY_ZERO_EVENTS_BY_EXACT_EVENT_ARITHMETIC"
+        },
+        "CDF15": {
+          "const": "FREEZE_ORACLE_SIN_2PI_TIMES_A_PLUS_G_PARENTHESIZATION"
+        }
+      }
+    },
+    "cdf13_schedule_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profiles",
+        "event_ids",
+        "events_per_sequence",
+        "time_components",
+        "one_component_increment_per_event",
+        "master_seeds_u64",
+        "environment_schedule_commitments_sha256",
+        "reference_identity_required_fields"
+      ],
+      "properties": {
+        "profiles": {
+          "const": [
+            "CDF-HARSH",
+            "CDF-MILD"
+          ]
+        },
+        "event_ids": {
+          "const": "0..59"
+        },
+        "events_per_sequence": {
+          "const": 60
+        },
+        "time_components": {
+          "const": 5
+        },
+        "one_component_increment_per_event": {
+          "const": true
+        },
+        "master_seeds_u64": {
+          "const": [
+            "1814705672717120344",
+            "11510044127855585889",
+            "2013063862857590834",
+            "9940308221477475016",
+            "10545341458691982268"
+          ]
+        },
+        "environment_schedule_commitments_sha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "CDF-HARSH",
+            "CDF-MILD"
+          ],
+          "properties": {
+            "CDF-HARSH": {
+              "$ref": "#/$defs/five_sha256"
+            },
+            "CDF-MILD": {
+              "$ref": "#/$defs/five_sha256"
+            }
+          }
+        },
+        "reference_identity_required_fields": {
+          "const": [
+            "profile",
+            "event_id",
+            "master_seed_u64",
+            "time_vector",
+            "evaluator_binding_sha256"
+          ]
+        }
+      }
+    },
+    "cdf9_failure_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_domain",
+        "undefined_real_domain_action",
+        "ledger_failure_type",
+        "external_terminal",
+        "batch_preentry_action",
+        "domain_extension_allowed",
+        "clamp_allowed",
+        "sign_extension_allowed",
+        "bound_narrowing_allowed",
+        "resampling_allowed",
+        "automatic_retry_allowed"
+      ],
+      "properties": {
+        "source_domain": {
+          "const": "Q_EQUALS_1_MINUS_M_X1_TO_THE_H_MUST_BE_GTE_0"
+        },
+        "undefined_real_domain_action": {
+          "const": "CHARGE_ONCE_AND_RAISE_CDFDomainUndefinedError"
+        },
+        "ledger_failure_type": {
+          "const": "CDFDomainUndefinedError"
+        },
+        "external_terminal": {
+          "const": "REJECT_NUMERICAL"
+        },
+        "batch_preentry_action": {
+          "const": "RAISE_BatchEvaluationUnavailableBeforeEntry_WITH_ZERO_LEDGER_SIDE_EFFECTS_THEN_ORDERED_SCALAR_FALLBACK"
+        },
+        "domain_extension_allowed": {
+          "const": false
+        },
+        "clamp_allowed": {
+          "const": false
+        },
+        "sign_extension_allowed": {
+          "const": false
+        },
+        "bound_narrowing_allowed": {
+          "const": false
+        },
+        "resampling_allowed": {
+          "const": false
+        },
+        "automatic_retry_allowed": {
+          "const": false
+        }
+      }
+    },
+    "reference_catalog_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "manifest",
+        "manifest_schema",
+        "artifact",
+        "identity_scope",
+        "representation",
+        "arbitrary_dense_pf_samples_stored",
+        "observed_method_outputs_used"
+      ],
+      "properties": {
+        "catalog_id": {
+          "const": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01"
+        },
+        "manifest": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "manifest_schema": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "artifact": {
+          "$ref": "#/$defs/catalog_binding"
+        },
+        "identity_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expected_total",
+            "actual_total",
+            "lircmop_static",
+            "cdf_non_cdf13",
+            "cdf13_seed_time",
+            "finite_front_records",
+            "continuous_front_records",
+            "unique_evaluator_bindings",
+            "evaluator_binding_set_sha256"
+          ],
+          "properties": {
+            "expected_total": {
+              "const": 2294
+            },
+            "actual_total": {
+              "const": 2294
+            },
+            "lircmop_static": {
+              "const": 14
+            },
+            "cdf_non_cdf13": {
+              "const": 1680
+            },
+            "cdf13_seed_time": {
+              "const": 600
+            },
+            "finite_front_records": {
+              "const": 369
+            },
+            "continuous_front_records": {
+              "const": 1925
+            },
+            "unique_evaluator_bindings": {
+              "const": 44
+            },
+            "evaluator_binding_set_sha256": {
+              "const": "07858376417dee3bfc1f366c229c1ad50b2e75398fb58eb484a1a48432c1d949"
+            }
+          }
+        },
+        "representation": {
+          "const": "CONTINUOUS_EXTREMA_PLUS_CERTIFICATE_OR_COMPLETE_FINITE_FRONT"
+        },
+        "arbitrary_dense_pf_samples_stored": {
+          "const": false
+        },
+        "observed_method_outputs_used": {
+          "const": false
+        }
+      }
+    },
+    "implementation_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corrective_evaluator",
+        "historical_evaluator",
+        "suite_registry",
+        "corrective_factory",
+        "reference_derivation",
+        "reference_identity_model",
+        "analytic_scale"
+      ],
+      "properties": {
+        "corrective_evaluator": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "historical_evaluator": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "suite_registry": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "corrective_factory": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "reference_derivation": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "reference_identity_model": {
+          "$ref": "#/$defs/file_binding"
+        },
+        "analytic_scale": {
+          "$ref": "#/$defs/file_binding"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_files",
+        "all_15_problem_known_answers",
+        "both_profiles_all_60_events_scalar_batch_equality",
+        "cdf13_first_five_seed_schedule_commitments",
+        "cdf9_scalar_charge_and_original_type",
+        "cdf9_batch_zero_side_effect_fallback",
+        "cdf9_external_reject_numerical",
+        "cdf5_decision_bound_global_crosscheck",
+        "cdf11_complete_finite_front_dense_domination_crosscheck",
+        "cdf8_cdf13_cdf15_evaluator_endpoint_witnesses",
+        "manifest_schema_and_source_binding_checks"
+      ],
+      "properties": {
+        "test_files": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/test_binding"
+            },
+            {
+              "$ref": "#/$defs/test_binding"
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "all_15_problem_known_answers": {
+          "const": true
+        },
+        "both_profiles_all_60_events_scalar_batch_equality": {
+          "const": true
+        },
+        "cdf13_first_five_seed_schedule_commitments": {
+          "const": true
+        },
+        "cdf9_scalar_charge_and_original_type": {
+          "const": true
+        },
+        "cdf9_batch_zero_side_effect_fallback": {
+          "const": true
+        },
+        "cdf9_external_reject_numerical": {
+          "const": true
+        },
+        "cdf5_decision_bound_global_crosscheck": {
+          "const": true
+        },
+        "cdf11_complete_finite_front_dense_domination_crosscheck": {
+          "const": true
+        },
+        "cdf8_cdf13_cdf15_evaluator_endpoint_witnesses": {
+          "const": true
+        },
+        "manifest_schema_and_source_binding_checks": {
+          "const": true
+        }
+      }
+    },
+    "validation_rule": {
+      "const": {
+        "amendment_and_schema_must_validate": true,
+        "audit_document_or_oracle_identity_drift": "FAIL_CLOSED",
+        "all_project_file_bindings_must_match_bytes_and_sha256": true,
+        "catalog_file_hash_bytes_lines_must_match": true,
+        "all_2294_reference_identities_must_be_present_once": true,
+        "corrective_factory_must_use_operational_suite": true,
+        "historical_factory_identity_must_remain_available": true,
+        "cdf9_undefined_domain_must_not_be_extended": true,
+        "any_bound_source_or_test_drift": "FAIL_CLOSED",
+        "qualified_execution_contract_must_bind_this_amendment_before_launch": true
+      }
+    },
+    "effect_boundary": {
+      "const": {
+        "effect_outputs_inspected": false,
+        "effect_outputs_written": false,
+        "observed_method_outputs_used": false,
+        "changes_algorithms_seeds_samples_endpoints_or_cfe": false,
+        "authorizes_formal_effect_execution": false,
+        "authorizes_effect_analysis": false,
+        "authorizes_results_writing": false,
+        "requires_separate_target_qualification": true,
+        "requires_separate_source_bound_verbatim_request": true
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "file_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "catalog_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "lines",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lines": {
+          "const": 2294
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "test_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^tests/test_v11_[a-z0-9_]+\\.py$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "five_sha256": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sha256"
+      },
+      "minItems": 5,
+      "maxItems": 5
+    }
+  }
+}

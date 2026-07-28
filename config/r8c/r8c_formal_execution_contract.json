@@ -1,0 +1,197 @@
+{
+  "contract_id": "WGT-V11-R8C-FORMAL-EXECUTION-CONTRACT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_FAIL_CLOSED_RESOURCE_AND_LAUNCH_FREEZE",
+  "status": "TARGET_HOST_UNMEASURED",
+  "created_date": "2026-07-26",
+  "authorization": {
+    "author_text": "R8C_CORRECTIVE_PROTOCOL_AUTHORIZED",
+    "authorized_scope": "FREEZE_A_FAIL_CLOSED_R8C_RESOURCE_AND_PENDING_EXECUTION_ENVELOPE_WITHOUT_FORMAL_LAUNCH",
+    "resource_purchase_or_remote_host_provisioning_authorized": false,
+    "formal_effect_execution_authorized": false,
+    "effect_analysis_authorized": false,
+    "results_writing_authorized": false
+  },
+  "upstream": {
+    "r5": {
+      "contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+      "path": "config/r5/r5_freeze_contract.json",
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+    },
+    "r5a": {
+      "contract_id": "WGT-V11-R5A-E3-INPUT-CONTRACT-01",
+      "path": "config/r5a/e3_input_contract.json",
+      "sha256": "a7275dc1624fc2167c0ed5a599f9b5cb3297151037c47c5b85fb27d38e857424"
+    },
+    "corrective_protocol": {
+      "contract_id": "WGT-V11-R8C-RESULT-BLIND-CORRECTIVE-PROTOCOL-01",
+      "path": "config/r8c/r8c_corrective_protocol.json",
+      "sha256": "dfe74d041f36b12fd13cb86e1fa2bba5483bbd871a7749b2c98e09160ee39b43"
+    }
+  },
+  "schedule": {
+    "id": "WGT-V11-R8C-FORMAL-SCHEDULE-01",
+    "canonical_format": "UTF-8 canonical JSONL, one FormalSequenceSpec per line",
+    "sha256": "734ee0b20daf7855e566e6747ab61b74373db386ed9d5dec117f0612845ef8ba",
+    "e2_full_reuse_rows": 310,
+    "e2_full_reuse_sha256": "d235c1c53d7e504400ad37674bebba4a01145a934964039454776c9f09ba0c9e",
+    "task_namespace": "r8c",
+    "e1_e2": {
+      "method_sequences": 5030,
+      "CFE": 851000000,
+      "atomic_model_steps": 1971000000
+    },
+    "e3": {
+      "method_sequences": 672,
+      "CFE": 74882496,
+      "atomic_model_steps": 449294976,
+      "scenarios": [
+        "NOMINAL",
+        "PARAMETER_MISMATCH_EVAL_EE_PLUS_10_PERCENT",
+        "INFEASIBLE_REQUIRED_DEFICIT_1500_OVER_ACTION_CAP_1000_KCAL_DAY"
+      ]
+    },
+    "totals": {
+      "method_sequences": 5702,
+      "CFE": 925882496,
+      "atomic_model_steps": 2420294976
+    },
+    "e2_full_reuse": "E2 FULL references exact immutable new R8C E1 FULL task IDs and task-manifest hashes; it is not redispatched or double-counted."
+  },
+  "method_runtime": {
+    "population_size": 100,
+    "archive_capacity": 100,
+    "logical_threads_per_worker": 1,
+    "blas_openmp_threads_per_worker": 1,
+    "gpu_allowed_for_e1_e2": false,
+    "gpu_allowed_for_this_formal_scope": false,
+    "paired_initialization": "RandomStream.INITIALIZATION excludes method_id and is shared at each unit-replicate-event.",
+    "method_rng": "RandomStream.ALGORITHM includes method_id and comparator_root or registered DT-RAMDE substream.",
+    "formal_e3_planning": "Nominal nonlinear Hall model only for every frozen scenario.",
+    "formal_e3_execution": "R5a layer-specific observation, feasibility, execution transform and evaluation transition only."
+  },
+  "launch": {
+    "working_directory": ".",
+    "contract_path": "config/r8c/r8c_formal_execution_contract.json",
+    "request_path": "config/r8c/r8c_execution_request.json",
+    "output_root": "runs/r8c-formal",
+    "exact_command": "python tools/run_v11_r8c_formal.py --contract config/r8c/r8c_formal_execution_contract.json --request config/r8c/r8c_execution_request.json --output-root runs/r8c-formal",
+    "command_identity_frozen": true,
+    "command_executable_now": false,
+    "formal_launch_prohibited": true,
+    "current_confirmation_state": "PENDING_SOURCE_IDENTITY_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION",
+    "one_time_consumption_required": true,
+    "overwrite_allowed": false
+  },
+  "resources": {
+    "qualification_status": "TARGET_HOST_UNMEASURED",
+    "candidate_profile_frozen": true,
+    "selected_exact_host_frozen": false,
+    "local_validation_host": {
+      "cpu": "Intel Core i7-13700HX",
+      "physical_cores": 16,
+      "logical_processors": 24,
+      "installed_memory_gib": 32,
+      "role": "LOCAL_EQUIVALENCE_AND_RESULT_BLIND_ENGINEERING_PILOT_ONLY__NOT_FORMAL_TARGET_QUALIFICATION"
+    },
+    "candidate_target": {
+      "processor_reference": "AMD EPYC 9754",
+      "physical_package_reference_cores": 128,
+      "physical_package_reference_threads": 256,
+      "offered_instance_description": "64-core, 80 GiB",
+      "normalized_compute_allocation": "UNVERIFIED_64_VCPU_QUOTA",
+      "memory_gib": 80,
+      "provider": null,
+      "instance_type": null,
+      "host_fingerprint": null,
+      "remote_measurement_completed": false,
+      "interpretation": "The processor package reference does not prove that an offered instance exposes 64 physical cores. Provider, instance type, topology, quota and host fingerprint must be verified on target."
+    },
+    "parallelism": {
+      "candidate_workers": 32,
+      "logical_threads_per_worker": 1,
+      "blas_openmp_threads_per_worker": 1,
+      "max_worker_peak_rss_bytes": 2147483648,
+      "candidate_pool_peak_rss_bytes": 68719476736,
+      "worker_count_qualified_on_target": false
+    },
+    "decision_rule": {
+      "estimated_e1_e2_wall_hours_lte_36": "GO_ELIGIBLE_ONLY_AFTER_EXACT_TARGET_MEASUREMENT_AND_CONTRACT_SUPERSESSION",
+      "estimated_e1_e2_wall_hours_gt_36_lte_48": "HOLD_OPTIMIZE_CONTENTION_AND_RETEST",
+      "estimated_e1_e2_wall_hours_gt_48": "NO_GO",
+      "target_wall_hours": 48,
+      "headroom_fraction_at_36_hours": 0.25,
+      "current_decision": "NO_GO_TARGET_HOST_UNMEASURED"
+    },
+    "timeouts_seconds": {
+      "per_static_sequence": 3600,
+      "per_dynamic_sequence": 21600,
+      "per_rolling_sequence": 10800,
+      "per_e3_sequence": 10800,
+      "global_formal_wall": 172800
+    },
+    "max_total_cpu_seconds": 5529600,
+    "scratch": {
+      "required_root": "runs",
+      "onedrive_path_allowed": false,
+      "minimum_free_bytes_at_start": 225485783040,
+      "stop_dispatch_below_free_bytes": 32212254720
+    },
+    "output": {
+      "max_total_bytes": 193273528320,
+      "raw_evaluations_required": true,
+      "format": "deterministic gzip UTF-8 canonical JSONL task chunks",
+      "silent_truncation_allowed": false
+    },
+    "monitor": {
+      "interval_seconds": 1,
+      "stall_suspected_seconds": 90,
+      "stall_action": "ADVISORY_ONLY_NO_AUTOMATIC_TERMINATION",
+      "resource_anomaly_action": "STOP_NEW_DISPATCH_AND_COOPERATIVE_EVENT_BOUNDARY_STOP",
+      "hard_timeout_action": "TERMINATE_PROCESS"
+    }
+  },
+  "failure_and_recovery": {
+    "automatic_retries": 0,
+    "method_specific_failure": "Retain typed task failure as a formal outcome; do not retry.",
+    "infrastructure_failure": "Retain logs; no retry without author-approved result-blind deviation record.",
+    "resume_policy": "PROHIBITED_WITHOUT_AUTHOR_APPROVED_RESULT_BLIND_DEVIATION_RECORD",
+    "resource_breach": "Stop new dispatch, preserve completed and partial immutable artifacts, and mark INCOMPLETE_RESOURCE_CEILING.",
+    "global_or_sequence_hard_timeout": "Terminate the timed process, preserve logs, and never retry automatically."
+  },
+  "persistence": {
+    "control_plane": "Redacted counts, resource state, task IDs and hashes only.",
+    "data_plane": "Task-local immutable raw evaluations and summaries unavailable to scheduling decisions.",
+    "task_attempts": 1,
+    "manifest_hashing": "SHA-256 per raw chunk, task manifest and run manifest.",
+    "analysis_during_r8c": false,
+    "analysis_next_gate": "R9_RAW_LOCK_AND_ANALYSIS"
+  },
+  "permissions": {
+    "public_benchmark_effect_execution": false,
+    "public_synthetic_weight_effect_execution": false,
+    "participant_data": false,
+    "hidden_instance_or_seed": false,
+    "effect_analysis": false,
+    "results_writing": false,
+    "remote_git_mutation": false,
+    "release_or_distribution": false
+  },
+  "fail_closed_gate": {
+    "request_id": "WGT-V11-R8C-EXECUTION-REQUEST-20260726-01",
+    "request_status": "PENDING_SOURCE_IDENTITY_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION",
+    "source_identity_binding_location": "external pending request only; this contract intentionally does not self-bind a future Git commit or tree",
+    "target_host_status": "TARGET_HOST_UNMEASURED",
+    "formal_launch_status": "PROHIBITED",
+    "prohibition_reasons": [
+      "exact target provider, instance type, CPU topology and host fingerprint are absent",
+      "1/8/16/24/32-worker throughput and peak-RSS qualification has not been run on the exact target",
+      "source Git commit and tree have not been bound in a launch request",
+      "verbatim author confirmation has not been supplied",
+      "resource purchase or remote provisioning was not authorized"
+    ],
+    "transition_rule": "This fail-closed artifact may not be edited into a GO record. A separately identified superseding target-qualified contract and a source-bound, verbatim-confirmed one-time request are required before formal launch.",
+    "launch_before_superseding_gate_closure": "PROHIBITED"
+  }
+}

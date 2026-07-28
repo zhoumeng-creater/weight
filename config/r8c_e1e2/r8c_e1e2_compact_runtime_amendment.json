@@ -1,0 +1,290 @@
+{
+  "amendment_id": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_RESULT_BLIND_COMPACT_RUNTIME_EQUIVALENCE",
+  "status": "FROZEN_RESULT_BLIND_CORRECTIVE_RUNTIME_EVIDENCE_NOT_EXECUTION_AUTHORITY",
+  "created_date": "2026-07-26",
+  "scope": {
+    "workloads": [
+      "E1_STATIC",
+      "E1_DYNAMIC",
+      "E1_ROLLING",
+      "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+      "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+    ],
+    "persistence_mode": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT",
+    "corrective_formal_configuration_evidence_id": "WGT_V11_R8C_PUBLIC_E1_E2_FORMAL",
+    "qualification_configuration_evidence_id": "WGT_V11_R8C_E1E2_FULL_PATH_TARGET_QUALIFICATION_PILOT",
+    "legacy_raw_behavior": "FULL_AUDIT_MATERIALIZATION_AND_SERIALIZED_CONFIG_IDENTITY_UNCHANGED",
+    "e3_in_scope": false,
+    "research_endpoints_changed": false,
+    "sample_seed_or_cfe_contract_changed": false
+  },
+  "runtime_identities": {
+    "full": {
+      "audit_materialization": "full",
+      "engine_identity_field_present": false,
+      "legacy_config_serialization_field_present": false,
+      "audit_outputs_materialized": true
+    },
+    "compact_checkpoint": {
+      "audit_materialization": "compact_checkpoint",
+      "engine_identity_field_present": true,
+      "config_serialization_field_present": true,
+      "audit_outputs_materialized": false
+    },
+    "binding_rule": "COMPACT_CHECKPOINT_IS_ALLOWED_ONLY_FOR_THE_CORRECTIVE_E1_E2_FORMAL_CONFIGURATION_OR_ITS_RESULT_BLIND_TARGET_QUALIFICATION"
+  },
+  "implementation": {
+    "optimization_a": {
+      "id": "SKIP_UNCONSUMED_ENGINE_AUDIT_MATERIAL",
+      "skipped_material": [
+        "INITIALIZATION_VECTOR_AND_HASH_AUDIT",
+        "TRIAL_VECTOR_OPERATOR_PARAMETER_AND_HASH_AUDIT",
+        "ARCHIVE_AUDIT_RECORDS",
+        "SERIALIZED_LINEAGE_RECORDS",
+        "UNCONSUMED_RNG_DERIVATION_MANIFESTS"
+      ],
+      "retained_minimum_lineage": [
+        "NODE_ID",
+        "EVENT_ID",
+        "GENERATION",
+        "TARGET_PREDECESSOR",
+        "F",
+        "CR",
+        "SURVIVAL",
+        "EVALUATION_STATUS_WHEN_NONDEFAULT"
+      ],
+      "selection_terminal_ledger_archive_feedback_semantics_changed": false,
+      "evaluation_stream_hash_chain_changed": false
+    },
+    "optimization_b": {
+      "id": "ONE_FIXED_SCHEMA_VALIDATION_PER_CHECKPOINT_SNAPSHOT",
+      "checkpoint_known_front_only": true,
+      "fixed_items_validated_once_per_snapshot": [
+        "OBJECTIVE_IDENTITY",
+        "CONSTRAINT_IDENTITY",
+        "OBJECTIVE_LENGTH",
+        "CONSTRAINT_LENGTH",
+        "FINITE_VALUES",
+        "CONSTRAINT_SCALES"
+      ],
+      "legacy_callers_retain_per_candidate_scale_validation": true,
+      "ordering_or_crowding_semantics_changed": false
+    },
+    "scientific_state_preserved": [
+      "RNG_BITSTREAM",
+      "CANDIDATE_IDS",
+      "EVALUATION_ORDER",
+      "CFE_AND_ATOMIC_STEP_LEDGER",
+      "ENVIRONMENTAL_SELECTION",
+      "PARETO_ARCHIVE",
+      "TERMINAL_SELECTION",
+      "EXECUTION_FEEDBACK",
+      "MG_UPDATE",
+      "CROSS_EVENT_MEMORY",
+      "CHECKPOINT_EVALUATION_PREFIX_HASH_CHAIN"
+    ]
+  },
+  "same_seed_equivalence": {
+    "test_file": "tests/test_v11_e1e2_compact_runtime.py",
+    "test_name": "test_compact_engine_is_scientifically_exact_to_full_audit_reference",
+    "cases": [
+      {
+        "case_class": "STATIC",
+        "workload_id": "E1_STATIC",
+        "unit_id": "LIRCMOP1",
+        "method_id": "F22_MG_STATIC",
+        "events": 1,
+        "cfe_per_event": 200
+      },
+      {
+        "case_class": "CDF",
+        "workload_id": "E1_DYNAMIC",
+        "unit_id": "CDF9/CDF-HARSH",
+        "method_id": "DT-RAMDE_TS2_FULL",
+        "events": 2,
+        "cfe_per_event": 200
+      },
+      {
+        "case_class": "ROLLING",
+        "workload_id": "E1_ROLLING",
+        "unit_id": "RR-SMOOTH/0",
+        "method_id": "DT-RAMDE_TS2_FULL",
+        "events": 2,
+        "cfe_per_event": 200
+      }
+    ],
+    "byte_exact_claims": [
+      "CHECKPOINT_FRONTS_CFE_FILE",
+      "EVENT_SUMMARIES_JSONL"
+    ],
+    "structural_exact_claims": [
+      "TERMINAL",
+      "LEDGER",
+      "SELECTION_VIA_TERMINAL_CANDIDATE",
+      "PARETO_ARCHIVE",
+      "EXECUTION_FEEDBACK",
+      "MG_FINAL",
+      "WARM_START_SEED_COUNT"
+    ],
+    "compact_audit_outputs_empty": true,
+    "full_reference_audit_outputs_present": true,
+    "all_three_case_classes_passed": true
+  },
+  "verification": {
+    "focused_regression": {
+      "status": "PASS",
+      "test_count": 323,
+      "test_paths": [
+        "tests/test_v11_contracts_interfaces.py",
+        "tests/test_v11_engine.py",
+        "tests/test_v11_checkpoint_data.py",
+        "tests/test_v11_e1e2_compact_runtime.py",
+        "tests/test_v11_r8c_e1e2_qualification.py",
+        "tests/test_v11_rng_hash_fastpath.py",
+        "tests/test_v11_comparator_finalization.py",
+        "tests/test_v11_fast_two_objective_sort.py",
+        "tests/test_v11_fast_three_objective_front.py",
+        "tests/test_v11_quadratic_pairwise.py",
+        "tests/test_v11_public_benchmark_adapter.py",
+        "tests/test_v11_weight_adapter.py",
+        "tests/test_v11_runner_analysis_guard.py"
+      ]
+    },
+    "ruff": {
+      "status": "PASS",
+      "scope": "ALL_COMPACT_RUNTIME_IMPLEMENTATION_AND_TEST_FILES"
+    },
+    "git_diff_check": {
+      "status": "PASS"
+    }
+  },
+  "local_ab_benchmark": {
+    "machine": {
+      "role": "LOCAL_NON_TARGET_PERFORMANCE_EVIDENCE_ONLY",
+      "cpu_model": "13th Gen Intel(R) Core(TM) i7-13700HX",
+      "physical_cores": 16,
+      "logical_processors": 24,
+      "memory_bytes": 34038341632,
+      "system": "Windows 11",
+      "python": "CPython 3.12.4",
+      "numpy": "1.26.4",
+      "host_fingerprint_sha256": "43ab5d6feb0c4d6b237d0389686c7722148501dbcba454a29f2e2761fa2919b1"
+    },
+    "design": {
+      "population_size": 100,
+      "archive_capacity": 100,
+      "cfe_per_event": 5000,
+      "events_per_sample": 1,
+      "process_worker_count": 1,
+      "seed": 8202607260,
+      "warmup_runs_per_case": 1,
+      "timing_metric": "WALL_SECONDS_PER_PRODUCTION_QUALIFICATION_TASK",
+      "production_checkpoint_writer_used": true,
+      "real_effect_values_persisted": false
+    },
+    "samples": {
+      "CDF": {
+        "case_id": "CDF1_HARSH_BASE",
+        "repetitions": 3,
+        "full_old_scales_wall_seconds": [
+          1.299372,
+          1.445311,
+          1.361146
+        ],
+        "compact_old_scales_wall_seconds": [
+          1.128558,
+          1.079275,
+          1.080789
+        ],
+        "full_new_scales_wall_seconds": [
+          1.417323,
+          1.362091,
+          1.39919
+        ],
+        "compact_new_scales_wall_seconds": [
+          1.194977,
+          1.098544,
+          1.149646
+        ],
+        "baseline_median_wall_seconds": 1.361146,
+        "combined_median_wall_seconds": 1.149646,
+        "combined_speedup_percent": 15.54
+      },
+      "ROLLING": {
+        "case_id": "WGT_RR_KNOWN_ANSWER",
+        "repetitions": 2,
+        "full_old_scales_wall_seconds": [
+          2.677917,
+          2.826016
+        ],
+        "compact_old_scales_wall_seconds": [
+          2.275409,
+          2.485334
+        ],
+        "full_new_scales_wall_seconds": [
+          2.733309,
+          2.649914
+        ],
+        "compact_new_scales_wall_seconds": [
+          2.214216,
+          2.178732
+        ],
+        "baseline_median_wall_seconds": 2.751966,
+        "combined_median_wall_seconds": 2.196474,
+        "combined_speedup_percent": 20.19
+      }
+    },
+    "component_interpretation": {
+      "optimization_a_cdf_speedup_percent": 20.6,
+      "optimization_a_rolling_speedup_percent": 13.5,
+      "optimization_b_cdf_speedup_percent": -2.79,
+      "optimization_b_rolling_speedup_percent": 2.19,
+      "optimization_b_alone_has_timing_noise": true,
+      "combined_optimization_retained_because_scientific_equivalence_is_exact_and_combined_gain_is_clear": true
+    }
+  },
+  "full_batch_projection": {
+    "formal_cfe_weights": {
+      "dynamic_dt_ramde": 360000000,
+      "rolling_dt_ramde": 144000000,
+      "static_dt_ramde_assigned_zero_gain": 7000000,
+      "comparators_assigned_zero_gain": 340000000,
+      "total_e1_e2": 851000000
+    },
+    "median_cfe_weighted_speedup_percent": 9.99,
+    "conservative_observed_envelope": {
+      "cdf_baseline_min_vs_combined_max_speedup_percent": 8.03,
+      "rolling_baseline_min_vs_combined_max_speedup_percent": 17.32,
+      "full_batch_cfe_weighted_speedup_percent": 6.33
+    },
+    "decision_gate_percent": 5.0,
+    "decision_gate_passed": true,
+    "interpretation": "RESULT_BLIND_LOCAL_ENGINEERING_CFE_WEIGHTED_DECISION_ESTIMATE",
+    "is_target_host_wall_time_eta": false,
+    "may_replace_target_host_qualification": false
+  },
+  "result_blindness": {
+    "effect_outputs_inspected_for_this_evidence": false,
+    "effect_values_recorded": false,
+    "effect_values_used_in_runtime_or_resource_decision": false,
+    "control_metrics_used": [
+      "WALL_SECONDS",
+      "CPU_SECONDS",
+      "CHECKPOINT_WRITE_SECONDS",
+      "TEST_PASS_COUNTS",
+      "BYTE_AND_STRUCTURE_EQUALITY"
+    ]
+  },
+  "authority_boundary": {
+    "authorizes_formal_effect_execution": false,
+    "authorizes_effect_analysis": false,
+    "authorizes_results_writing": false,
+    "authorizes_target_host_rental_or_provisioning": false,
+    "changes_research_question_or_confirmatory_claim": false,
+    "requires_clean_source_identity_and_exact_target_host_qualification": true,
+    "requires_separate_source_bound_verbatim_author_request": true
+  }
+}

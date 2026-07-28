@@ -1,0 +1,20 @@
+# WGT-V11 R3 V11-MQ1 qualification lock
+# Target: CPython 3.12, Windows AMD64
+# Scope: aggregate-only model qualification runtime and schema validation
+# R2 correctness remains independently bound by requirements-r2.lock.
+
+--require-hashes
+--only-binary=:all:
+
+attrs==24.2.0 --hash=sha256:81921eb96de3191c8258c199618104dd27ac608d9366f5e35d011eae1867ede2
+jsonschema-specifications==2023.12.1 --hash=sha256:87e4fdf3a94858b8a2ba2778d9ba57d8a9cafca7c7489c46ba0d30a8bc6a9c3c
+jsonschema==4.23.0 --hash=sha256:fbadb6f8b144a8f8cf9f0b89ba94501d143e50411a1278633f56a7acf7fd5566
+numpy==1.26.4 --hash=sha256:08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818
+pandas==2.2.2 --hash=sha256:d187d355ecec3629624fccb01d104da7d7f391db0311145817525281e2804d23
+python-dateutil==2.9.0.post0 --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
+pytz==2024.1 --hash=sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319
+referencing==0.35.1 --hash=sha256:eda6d3234d62814d1c64e305c1331c9a3a6132da475ab6382eaa997b21ee75de
+rpds-py==0.20.0 --hash=sha256:0e13e6952ef264c40587d510ad676a988df19adea20444c2b295e536457bc585
+scipy==1.14.0 --hash=sha256:4c4161597c75043f7154238ef419c29a64ac4a7c889d588ea77690ac4d0d9b20
+six==1.16.0 --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
+tzdata==2024.1 --hash=sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252

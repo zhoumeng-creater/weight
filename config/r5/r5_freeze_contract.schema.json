@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/wgt-v11-r5-freeze-contract.schema.json",
+  "title": "WGT V11 R5 result-blind freeze contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "protocol_stage",
+    "status",
+    "frozen_date",
+    "author_authorization_text",
+    "material_passport",
+    "result_awareness_boundary",
+    "upstream_bindings",
+    "common_configuration",
+    "endpoint_contract",
+    "statistics_contract",
+    "seed_contract",
+    "experiment_design",
+    "workload_budget",
+    "resource_budget",
+    "change_control",
+    "permissions",
+    "next_gate"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01"
+    },
+    "schema_version": {"const": "1.0.0"},
+    "protocol_stage": {"const": "R5"},
+    "status": {
+      "const": "RESULT_BLIND_DESIGN_FROZEN__NO_EFFECT_EXECUTION_AUTHORITY"
+    },
+    "frozen_date": {
+      "type": "string",
+      "pattern": "^20[0-9]{2}-[0-9]{2}-[0-9]{2}$"
+    },
+    "author_authorization_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "material_passport": {
+      "type": "object",
+      "required": [
+        "origin_skill",
+        "origin_mode",
+        "verification_status",
+        "version_label"
+      ],
+      "properties": {
+        "origin_skill": {"const": "academic-research-suite/experiment-agent"},
+        "origin_mode": {"const": "plan"},
+        "verification_status": {"const": "RESULT_BLIND_CONTRACT_VALIDATED"},
+        "version_label": {"const": "v11_r5_freeze_v1"}
+      },
+      "additionalProperties": false
+    },
+    "result_awareness_boundary": {
+      "type": "object",
+      "minProperties": 7,
+      "additionalProperties": {"const": false}
+    },
+    "upstream_bindings": {
+      "type": "object",
+      "required": [
+        "implementation_git_root",
+        "branch",
+        "r4_base_commit",
+        "r4_base_tree",
+        "r4_benchmark_registry",
+        "r4_comparator_manifest",
+        "dependency_lock",
+        "randomness_module",
+        "r3_model_qualification_status",
+        "weight_case_name"
+      ]
+    },
+    "common_configuration": {
+      "type": "object",
+      "required": [
+        "population_size",
+        "archive_capacity",
+        "budget_unit",
+        "checkpoint_fractions",
+        "transfer_checkpoint_fractions",
+        "cfe_accounting",
+        "unused_budget_transfer_allowed",
+        "silent_retry_allowed",
+        "method_specific_budget_allowed",
+        "post_result_sample_extension_allowed"
+      ],
+      "properties": {
+        "population_size": {"const": 100},
+        "archive_capacity": {"const": 100},
+        "budget_unit": {"const": "joint_candidate_evaluation_CFE"},
+        "checkpoint_fractions": {
+          "type": "array",
+          "minItems": 21,
+          "maxItems": 21,
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "transfer_checkpoint_fractions": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {"type": "number", "minimum": 0, "maximum": 0.2}
+        },
+        "cfe_accounting": {"type": "string", "minLength": 1},
+        "unused_budget_transfer_allowed": {"const": false},
+        "silent_retry_allowed": {"const": false},
+        "method_specific_budget_allowed": {"const": false},
+        "post_result_sample_extension_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "endpoint_contract": {
+      "type": "object",
+      "required": [
+        "analysis_sets",
+        "nhv",
+        "endpoint_ids",
+        "practical_effect_thresholds"
+      ]
+    },
+    "statistics_contract": {
+      "type": "object",
+      "required": [
+        "top_level_units",
+        "aggregation",
+        "paired_effect_direction",
+        "confidence_interval",
+        "permutation_test",
+        "multiplicity",
+        "missing_and_failure_rules",
+        "reporting",
+        "p_value_only_conclusion_allowed"
+      ]
+    },
+    "seed_contract": {
+      "type": "object",
+      "required": [
+        "paired_master_seed_derivation",
+        "paired_master_seeds_u64",
+        "paired_master_seed_table_sha256",
+        "use_prefix_counts",
+        "stream_pairing",
+        "rolling_public_generator",
+        "rolling_public_instances",
+        "e3_public_subject_derivation",
+        "e3_public_subject_table_sha256",
+        "e3_public_subjects",
+        "method_blinding_seed_u64",
+        "seed_filtering_allowed",
+        "replacement_seed_after_algorithm_failure_allowed"
+      ],
+      "properties": {
+        "paired_master_seed_derivation": {"type": "string", "minLength": 1},
+        "paired_master_seeds_u64": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/u64String"}
+        },
+        "paired_master_seed_table_sha256": {"$ref": "#/$defs/sha256"},
+        "use_prefix_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          }
+        },
+        "stream_pairing": {"type": "object"},
+        "rolling_public_generator": {
+          "type": "object",
+          "required": [
+            "generator_id",
+            "version",
+            "generator_sha256",
+            "split",
+            "public_master_seed_hex",
+            "templates",
+            "indices_per_template",
+            "instance_count",
+            "instance_table_sha256",
+            "hidden"
+          ],
+          "properties": {
+            "generator_id": {"const": "WGT-F23-RRGEN-01"},
+            "version": {"const": "1.0.0"},
+            "generator_sha256": {"$ref": "#/$defs/sha256"},
+            "split": {"const": "development"},
+            "public_master_seed_hex": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "templates": {
+              "const": [
+                "RR-SMOOTH",
+                "RR-SHOCK",
+                "RR-REJECTION",
+                "RR-INTERMITTENT"
+              ]
+            },
+            "indices_per_template": {
+              "const": [0, 1, 2, 3, 4, 5, 6, 7]
+            },
+            "instance_count": {"const": 32},
+            "instance_table_sha256": {"$ref": "#/$defs/sha256"},
+            "hidden": {"const": false}
+          },
+          "additionalProperties": false
+        },
+        "rolling_public_instances": {
+          "type": "array",
+          "minItems": 32,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": ["template", "index", "derived_seed_u64"],
+            "properties": {
+              "template": {
+                "enum": [
+                  "RR-SMOOTH",
+                  "RR-SHOCK",
+                  "RR-REJECTION",
+                  "RR-INTERMITTENT"
+                ]
+              },
+              "index": {"type": "integer", "minimum": 0, "maximum": 7},
+              "derived_seed_u64": {"$ref": "#/$defs/u64String"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "e3_public_subject_derivation": {"type": "string", "minLength": 1},
+        "e3_public_subject_table_sha256": {"$ref": "#/$defs/sha256"},
+        "e3_public_subjects": {
+          "type": "array",
+          "minItems": 32,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "required": ["subject_id", "seed_u64"],
+            "properties": {
+              "subject_id": {
+                "type": "string",
+                "pattern": "^VS-[0-9]{3}$"
+              },
+              "seed_u64": {"$ref": "#/$defs/u64String"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "method_blinding_seed_u64": {"$ref": "#/$defs/u64String"},
+        "seed_filtering_allowed": {"const": false},
+        "replacement_seed_after_algorithm_failure_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "experiment_design": {
+      "type": "object",
+      "required": [
+        "E1_STATIC",
+        "E1_DYNAMIC",
+        "E1_ROLLING",
+        "E2_DYNAMIC",
+        "E2_ROLLING",
+        "E3"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "role",
+          "top_level_unit_count",
+          "paired_replicates",
+          "events",
+          "atomic_steps_per_cfe",
+          "methods"
+        ]
+      }
+    },
+    "workload_budget": {
+      "type": "object",
+      "required": [
+        "unique_workloads",
+        "total_unique_method_sequences",
+        "total_CFE",
+        "total_atomic_model_steps",
+        "full_run_reuse_rule"
+      ],
+      "properties": {
+        "unique_workloads": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": ["id", "method_sequences", "CFE", "atomic_model_steps"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "method_sequences": {"type": "integer", "minimum": 1},
+              "CFE": {"type": "integer", "minimum": 1},
+              "atomic_model_steps": {"type": "integer", "minimum": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "total_unique_method_sequences": {"const": 7046},
+        "total_CFE": {"const": 1075647488},
+        "total_atomic_model_steps": {"const": 3318884928},
+        "full_run_reuse_rule": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "resource_budget": {
+      "type": "object",
+      "required": [
+        "freeze_hardware",
+        "parallelism",
+        "timeouts_seconds",
+        "max_total_cpu_hours",
+        "scratch",
+        "output",
+        "breach_policy",
+        "retry_policy"
+      ]
+    },
+    "change_control": {
+      "type": "object",
+      "required": [
+        "after_any_effect_visibility",
+        "r6_runtime_only_amendment",
+        "results_driven_extension_allowed"
+      ]
+    },
+    "permissions": {
+      "type": "object",
+      "required": [
+        "r5_contract_validation_allowed",
+        "synthetic_known_answer_tests_allowed",
+        "r6_engineering_pilot_allowed",
+        "formal_effect_execution_allowed",
+        "participant_data_access_allowed",
+        "hidden_generation_allowed",
+        "results_analysis_allowed",
+        "results_writing_allowed",
+        "remote_mutation_or_release_allowed"
+      ],
+      "properties": {
+        "r5_contract_validation_allowed": {"const": true},
+        "synthetic_known_answer_tests_allowed": {"const": true},
+        "r6_engineering_pilot_allowed": {"const": false},
+        "formal_effect_execution_allowed": {"const": false},
+        "participant_data_access_allowed": {"const": false},
+        "hidden_generation_allowed": {"const": false},
+        "results_analysis_allowed": {"const": false},
+        "results_writing_allowed": {"const": false},
+        "remote_mutation_or_release_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "next_gate": {
+      "type": "object",
+      "required": [
+        "id",
+        "authorized",
+        "separate_author_confirmation_required",
+        "effect_evidence_allowed"
+      ],
+      "properties": {
+        "id": {
+          "const": "V11_R6_ISOLATED_RESULT_BLIND_ENGINEERING_PILOT_AUTHORIZATION"
+        },
+        "authorized": {"const": false},
+        "separate_author_confirmation_required": {"const": true},
+        "effect_evidence_allowed": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "u64String": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})$"
+    }
+  }
+}

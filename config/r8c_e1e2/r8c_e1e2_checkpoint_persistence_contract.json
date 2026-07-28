@@ -1,0 +1,284 @@
+{
+  "contract_id": "WGT-V11-R8C-E1E2-CHECKPOINT-PERSISTENCE-CONTRACT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_RESULT_BLIND_CHECKPOINT_PERSISTENCE_FREEZE",
+  "status": "FROZEN_RESULT_BLIND_NOT_EXECUTION_AUTHORITY",
+  "created_date": "2026-07-26",
+  "authorization": {
+    "author_text": "R8C_E1E2_CHECKPOINT_POLICY_FROZEN",
+    "authorized_scope": "RESULT_BLIND_E1_E2_PERSISTENCE_MINIMIZATION_ONLY",
+    "effect_outputs_inspected": false,
+    "formal_effect_execution_authorized": false,
+    "effect_analysis_authorized": false,
+    "results_writing_authorized": false
+  },
+  "upstream": {
+    "r5": {
+      "contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+      "path": "config/r5/r5_freeze_contract.json",
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+    },
+    "e1_e2_schedule": {
+      "id": "WGT-V11-R8C-E1E2-FORMAL-SCHEDULE-01",
+      "sha256": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d",
+      "method_sequences": 5030,
+      "CFE": 851000000,
+      "event_runs": 162640
+    }
+  },
+  "amendment_scope": {
+    "applies_only_to": [
+      "E1_STATIC",
+      "E1_DYNAMIC",
+      "E1_ROLLING",
+      "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+      "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+    ],
+    "e3_in_scope": false,
+    "r5_fields_replaced_for_e1_e2_only": [
+      "resource_budget.output.format",
+      "resource_budget.output.max_total_gib",
+      "resource_budget.output.raw_evaluations_required",
+      "resource_budget.output.silent_truncation_allowed",
+      "resource_budget.scratch.minimum_free_gib_at_r7_start",
+      "resource_budget.scratch.stop_dispatch_below_free_gib"
+    ],
+    "unchanged_research_identity": {
+      "endpoints": true,
+      "sample_units_and_counts": true,
+      "paired_seeds": true,
+      "CFE_budgets_and_accounting": true,
+      "method_and_algorithm_definitions": true,
+      "population_and_archive": true,
+      "reference_sets_and_statistical_methods": true,
+      "schedule_and_e2_full_reuse": true
+    },
+    "population_size": 100,
+    "archive_capacity": 100
+  },
+  "checkpoint_semantics": {
+    "checkpoints_per_event": 21,
+    "checkpoint_fractions": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      1.0
+    ],
+    "prefix_definition": "LOGICAL_ORDERED_CHARGED_CFE_PREFIX_WITHIN_CURRENT_EVENT",
+    "within_batch_order": "EVALUATOR_RETURN_AND_CHARGE_ORDER_ONE_RESULT_AT_A_TIME",
+    "charged_success_advances_prefix": true,
+    "charged_numerical_failure_advances_prefix": true,
+    "repair_failure_before_evaluator_entry_advances_prefix": false,
+    "checkpoint_zero": "EMPTY_FRONT_BEFORE_ANY_CHARGED_CFE",
+    "front_source": "ALL_SUCCESSFUL_FEASIBLE_EVALUATIONS_IN_THE_COMPLETE_CURRENT_EVENT_PREFIX",
+    "front_construction": "EXACT_NONDOMINATED_SET_OVER_COMPLETE_HISTORY_THEN_DETERMINISTIC_CAPACITY_100_ORDERING",
+    "previous_truncated_checkpoint_used_as_future_base": false,
+    "archive_capacity_at_snapshot": 100
+  },
+  "binary_format": {
+    "format": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT",
+    "format_version": 1,
+    "byte_order": "LITTLE_ENDIAN",
+    "floating_point": "IEEE_754_FLOAT64",
+    "objective_dimensions_allowed": [
+      2,
+      3
+    ],
+    "fixed_objective_slots_per_checkpoint": 100,
+    "unused_slot_encoding": "ALL_ZERO_BYTES",
+    "valid_count_required": true,
+    "valid_count_encoding": "LITTLE_ENDIAN_UINT16",
+    "front_max_constraint": {
+      "values_per_checkpoint": 1,
+      "encoding": "IEEE_754_FLOAT64_LITTLE_ENDIAN",
+      "scope": "GLOBAL_MAXIMUM_ACROSS_ALL_CONSTRAINTS_OF_ALL_VALID_FRONT_POINTS",
+      "feasibility_requirement": "LESS_THAN_OR_EQUAL_TO_ZERO",
+      "empty_front_value": 0.0
+    },
+    "evaluation_chain_sha256": {
+      "required_per_checkpoint": true,
+      "prefix_bound": true,
+      "includes_success_and_charged_failure_records_in_logical_order": true,
+      "reversible_raw_record_store": false
+    },
+    "raw_evaluation_rows_persisted": false,
+    "decision_vectors_persisted": false,
+    "candidate_ids_persisted": false,
+    "terminal_candidate_identity_persisted": false,
+    "full_constraint_vectors_persisted": false,
+    "lineage_and_optimizer_memory_persisted": false,
+    "execution_observation_persisted_in_control_plane": true,
+    "algorithm_feedback_and_statistical_observation_channels_separated": true
+  },
+  "event_summary_control": {
+    "filename": "event_summaries.jsonl",
+    "encoding": "UTF-8_CANONICAL_JSONL_LF",
+    "append_scope": "ONE_DURABLE_RECORD_PER_COMPLETED_EVENT",
+    "maximum_rows": 162640,
+    "maximum_canonical_record_bytes_including_lf": 8192,
+    "maximum_opaque_trailing_fragment_bytes": 8191,
+    "oversize_writer_action": "FAIL_BEFORE_WRITE",
+    "reader_rejects_oversize_record_before_json_decode": true,
+    "flush_after_each_event": true,
+    "fsync_after_each_event": true,
+    "terminal_code_enum_frozen": true,
+    "execution_transition_count_required": true,
+    "candidate_ids_persisted": false,
+    "decision_vectors_persisted": false,
+    "objective_fronts_persisted": false,
+    "effect_endpoints_persisted": false,
+    "partial_task_completed_event_prefix_preserved": true,
+    "included_in_formal_12_gib_envelope": true,
+    "strict_final_lf_required_for_complete_or_exact_task": true,
+    "opaque_tail_exception_outcome_classes": [
+      "TECHNICAL_SEQUENCE_TIMEOUT",
+      "TECHNICAL_GLOBAL_TIMEOUT",
+      "TECHNICAL_RESOURCE_TERMINATION"
+    ],
+    "opaque_tail_exception_requires_charged_work_exact_false": true,
+    "whole_file_commitment_verified_before_tail_split": true,
+    "trailing_fragment_interpreted_as_event": false,
+    "trailing_fragment_metadata_reported": [
+      "present",
+      "bytes",
+      "sha256"
+    ],
+    "top_level_field_count": 7,
+    "terminal_field_count": 3,
+    "ledger_field_count": 8,
+    "execution_channel_field_counts_allowed": [
+      0,
+      6,
+      7
+    ],
+    "arbitrary_nested_fields_or_arrays_allowed": false,
+    "failure_type_count_keys_bounded_by_event_cfe": true
+  },
+  "worker_control_reports": {
+    "applies_only_to_profile": "R8C_E1E2",
+    "transport": "TASK_MANIFEST_COMMITTED_TASK_ARTIFACTS",
+    "report_kind_to_filename": {
+      "TASK_SUMMARY": "task_summary.json",
+      "TASK_FAILURE": "task_failure.json",
+      "SUPERVISOR_OUTCOME": "task_supervisor_outcome.json"
+    },
+    "maximum_canonical_report_bytes_including_lf": 65536,
+    "encoding": "UTF-8_CANONICAL_JSON_WITH_FINAL_LF",
+    "exclusive_create_flush_and_fsync_required": true,
+    "task_summary_statuses_allowed": [
+      "COMPLETE",
+      "INCOMPLETE_RESOURCE_CEILING"
+    ],
+    "only_complete_status_is_success": true,
+    "failure_reason_code_equals_outcome_class": true,
+    "failure_error_type_only_no_message": true,
+    "recursive_forbidden_keys": [
+      "candidate_id",
+      "candidate_ids",
+      "vector",
+      "vectors",
+      "objectives",
+      "front_objectives",
+      "constraints",
+      "nhv",
+      "auc",
+      "negative_transfer",
+      "effect_size",
+      "p_value",
+      "error",
+      "message",
+      "traceback"
+    ],
+    "root_relative_commitment_fields": [
+      "kind",
+      "path",
+      "bytes",
+      "sha256"
+    ],
+    "task_manifest_binding_required": true,
+    "run_and_runtime_commitments_equal_and_cover_schedule": true,
+    "launch_binding_transport_marker_required": true,
+    "raw_worker_stdout_persisted": false,
+    "raw_worker_stderr_persisted": false,
+    "worker_logs_directory_created": false,
+    "worker_log_commitments_allowed": false,
+    "normal_success_additional_report_files": 0,
+    "legacy_r8_worker_log_behavior_changed": false
+  },
+  "analysis_boundary": {
+    "r8_computes_nHV": false,
+    "r8_computes_any_effect_endpoint": false,
+    "r8_supervisor_reads_effect_values": false,
+    "r9_independently_reconstructs_nHV_and_AUC": true,
+    "r9_requires_raw_manifest_lock_first": true,
+    "online_scalar_only_nHV_persistence_allowed": false,
+    "checkpoint_fronts_reconstruct_frozen_endpoints": true,
+    "untruncated_front_or_internal_archive_reconstructable": false,
+    "evaluation_stream_chain_reconstructs_raw_rows": false,
+    "evaluation_stream_chain_verification_requires_deterministic_replay": true
+  },
+  "storage_estimate": {
+    "basis": "FULL_COMPLETED_E1_E2_FIXED_CHECKPOINT_PAYLOAD_AND_FILE_OVERHEAD",
+    "task_count": 5030,
+    "event_count": 162640,
+    "checkpoint_record_count": 3415440,
+    "objective_payload_bytes": 6219360000,
+    "front_max_constraint_payload_bytes": 27323520,
+    "fixed_record_overhead_bytes": 464499840,
+    "file_header_upper_bound_bytes": 20602880,
+    "conservative_total_upper_bound_bytes": 6731786240,
+    "event_summary_upper_bound_bytes": 1332346880,
+    "worker_control_report_upper_bound_bytes": 329646080,
+    "checkpoint_event_and_worker_control_upper_bound_bytes": 8393779200,
+    "checkpoint_event_and_worker_control_strictly_less_than_12_gib": true,
+    "strictly_less_than_7_gib": true,
+    "seven_gib_bytes": 7516192768
+  },
+  "formal_resource_envelope": {
+    "max_total_bytes": 12884901888,
+    "control_plane_reserve_bytes": 67108864,
+    "max_inflight_write_bytes_per_worker": 8388608,
+    "stop_dispatch_below_free_bytes": 8589934592,
+    "minimum_free_bytes_at_start": 34359738368,
+    "raw_evaluations_required": false,
+    "silent_truncation": false
+  },
+  "integrity_and_failure": {
+    "task_files_immutable_after_close": true,
+    "exclusive_create_required": true,
+    "file_and_manifest_sha256_required": true,
+    "partial_event_terminal_snapshot_required": true,
+    "automatic_retry_allowed": false,
+    "periodic_delete_or_posthoc_raw_cleanup_allowed": false,
+    "resource_breach_action": "STOP_NEW_DISPATCH_PRESERVE_COMPLETED_AND_PARTIAL_IMMUTABLE_ARTIFACTS"
+  },
+  "authority_boundary": {
+    "changes_research_question": false,
+    "changes_effect_endpoints": false,
+    "changes_algorithm": false,
+    "clarifies_statistical_observation_archive": true,
+    "changes_only_e1_e2_persistence_storage_and_result_blind_observation_archive_clarification": true,
+    "authorizes_formal_execution": false,
+    "authorizes_effect_analysis": false,
+    "requires_separate_target_qualification": true,
+    "requires_separate_source_bound_verbatim_request": true
+  }
+}

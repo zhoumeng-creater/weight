@@ -1,0 +1,237 @@
+{
+  "contract_id": "WGT-V11-R8C-E1E2-FORMAL-EXECUTION-CONTRACT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_FAIL_CLOSED_TARGET_QUALIFICATION_PENDING",
+  "status": "TARGET_HOST_UNMEASURED",
+  "created_date": "2026-07-26",
+  "authorization": {
+    "author_text": "R8C_E1E2_FORMAL_SCOPE_AUTHORIZED",
+    "authorized_scope": "PREPARE_AND_QUALIFY_E1E2_ONLY_EXECUTION_WITHOUT_STARTING_FORMAL_EFFECT_TASKS",
+    "resource_purchase_or_remote_host_provisioning_authorized": false,
+    "formal_effect_execution_authorized": false,
+    "effect_analysis_authorized": false,
+    "results_writing_authorized": false
+  },
+  "upstream": {
+    "r5": {
+      "contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+      "path": "config/r5/r5_freeze_contract.json",
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+    },
+    "r5a": {
+      "contract_id": "WGT-V11-R5A-E3-INPUT-CONTRACT-01",
+      "path": "config/r5a/e3_input_contract.json",
+      "sha256": "a7275dc1624fc2167c0ed5a599f9b5cb3297151037c47c5b85fb27d38e857424"
+    },
+    "corrective_protocol": {
+      "contract_id": "WGT-V11-R8C-RESULT-BLIND-CORRECTIVE-PROTOCOL-01",
+      "path": "external_result_blind_commitment",
+      "sha256": "dfe74d041f36b12fd13cb86e1fa2bba5483bbd871a7749b2c98e09160ee39b43"
+    },
+    "checkpoint_persistence": {
+      "contract_id": "WGT-V11-R8C-E1E2-CHECKPOINT-PERSISTENCE-CONTRACT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.json",
+      "sha256": "ef2420f2cb1eabc1e898b6288068e57051acab1494ff1cc169b04eafaf1e5b3a",
+      "schema_path": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.schema.json",
+      "schema_sha256": "4811661e6e580b1866b72b87e4928b8313ce235cb9dcae4dd81d591fd9d1108a"
+    },
+    "rng_implementation_amendment": {
+      "amendment_id": "WGT-V11-R8C-E1E2-RNG-IMPLEMENTATION-AMENDMENT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_rng_implementation_amendment.json",
+      "sha256": "744a29f29a1108e44bfbe25ddac2b7e16ce4867958ab23418842fd5fba4f84bd"
+    },
+    "compact_runtime_amendment": {
+      "amendment_id": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.json",
+      "sha256": "e8f8564a64e93614eb9db00e38b48a2f8cc8dd7f57b52e164f66ea1352315ff1",
+      "schema_path": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.schema.json",
+      "schema_sha256": "49969b9eb35eb224f6d6f4eeceb8fe130ded399f3aaa99c8572f866157b399c5"
+    },
+    "timeout_semantics_amendment": {
+      "amendment_id": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.json",
+      "sha256": "a94aed1613540ff119fcc47550c933dda4821c55789c09a98697eba32394d9fc",
+      "schema_path": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.schema.json",
+      "schema_sha256": "c497577f737940647883d89a2bac093907724f4d068d591b21bd8e998653fbd7"
+    },
+    "lircmop_reference_amendment": {
+      "amendment_id": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.json",
+      "sha256": "6e711a4832036fb83d7b3ae3c79cb237c2e8b096255d1894c0b886c2209bca27",
+      "schema_path": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.schema.json",
+      "schema_sha256": "951d29f855a08e72835d5116a0621c2d21036ff0c2d67fa6ccba8ef0b9d97311"
+    },
+    "cdf_operational_authority_amendment": {
+      "amendment_id": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01",
+      "path": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.json",
+      "sha256": "aab6a99eee16ac24ce316449f08ed0d4a6a7fb9caf1f4e22ef3c0b204c9c96f3",
+      "schema_path": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.schema.json",
+      "schema_sha256": "cb04a8be2be06dd6ec00370ca1a7aa45a3f0fcc3ad2910754319bf6d16c1a8ee"
+    },
+    "reference_catalog": {
+      "catalog_id": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01",
+      "manifest_path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.json",
+      "manifest_sha256": "ee58c00544a4f0d069c7407dd03dc40d26bdd71e3b5b9e6b87f0322d44f66b8a",
+      "manifest_schema_path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.schema.json",
+      "manifest_schema_sha256": "a8768c8dbd53c71a89899bc8860fd1eab7163bf0840618991950f59e1a88298e",
+      "artifact_path": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl",
+      "artifact_sha256": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f",
+      "artifact_bytes": 3507565,
+      "artifact_lines": 2294
+    },
+    "linux_runtime_lock": {
+      "path": "requirements-r8c-linux-x86_64.lock",
+      "sha256": "288dc0e9cdaa38d61ede8abffb8bbad17f76b43adb0f19be1adcdbaeb1a25dd6",
+      "bytes": 3728,
+      "locked_package_count": 35,
+      "target_interpreter": "CPython 3.12",
+      "target_platform": "Linux x86_64 manylinux2014-compatible"
+    }
+  },
+  "schedule": {
+    "id": "WGT-V11-R8C-E1E2-FORMAL-SCHEDULE-01",
+    "canonical_format": "UTF-8 canonical JSONL, one FormalSequenceSpec per line",
+    "sha256": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d",
+    "e2_full_reuse_rows": 310,
+    "e2_full_reuse_sha256": "d235c1c53d7e504400ad37674bebba4a01145a934964039454776c9f09ba0c9e",
+    "task_namespace": "r8c",
+    "totals": {
+      "method_sequences": 5030,
+      "CFE": 851000000,
+      "atomic_model_steps": 1971000000
+    },
+    "workload_order": [
+      "E1_STATIC",
+      "E1_DYNAMIC",
+      "E1_ROLLING",
+      "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+      "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+    ],
+    "e3_dispatched": false,
+    "e2_full_reuse": "E2 FULL references the exact staged R8C E1 FULL task IDs and task-manifest hashes; it is not redispatched or double-counted."
+  },
+  "method_runtime": {
+    "population_size": 100,
+    "archive_capacity": 100,
+    "logical_threads_per_worker": 1,
+    "blas_openmp_threads_per_worker": 1,
+    "gpu_allowed_for_e1_e2": false,
+    "gpu_allowed_for_this_formal_scope": false,
+    "paired_initialization": "RandomStream.INITIALIZATION excludes method_id and is shared at each unit-replicate-event.",
+    "method_rng": "RandomStream.ALGORITHM includes method_id and comparator_root or registered DT-RAMDE substream."
+  },
+  "launch": {
+    "working_directory": "$PROJECT_ROOT",
+    "contract_path": "config/r8c_e1e2/r8c_e1e2_formal_execution_contract.json",
+    "request_path": "PENDING_TARGET_QUALIFICATION",
+    "request_consumption_marker": "PENDING_TARGET_QUALIFICATION",
+    "output_root": "PENDING_TARGET_QUALIFICATION",
+    "exact_command": "PENDING_TARGET_QUALIFICATION",
+    "command_identity_frozen": false,
+    "command_executable_now": false,
+    "formal_launch_prohibited": true,
+    "current_confirmation_state": "PENDING_FINAL_CODE_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION",
+    "one_time_consumption_required": true,
+    "overwrite_allowed": false
+  },
+  "resources": {
+    "qualification_status": "TARGET_HOST_UNMEASURED",
+    "candidate_profile_frozen": true,
+    "selected_exact_host_frozen": false,
+    "candidate_target": {
+      "processor_reference": "AMD EPYC 9754",
+      "offered_instance_description": "64-core allocation, 80 GiB",
+      "normalized_compute_allocation": "UNVERIFIED_64_VCPU_QUOTA",
+      "memory_gib": 80,
+      "provider": null,
+      "instance_type": null,
+      "host_fingerprint_sha256": null,
+      "remote_measurement_completed": false
+    },
+    "parallelism": {
+      "candidate_workers": 32,
+      "logical_threads_per_worker": 1,
+      "blas_openmp_threads_per_worker": 1,
+      "max_worker_peak_rss_bytes": 2147483648,
+      "candidate_pool_peak_rss_bytes": 68719476736,
+      "worker_count_qualified_on_target": false
+    },
+    "decision_rule": {
+      "estimated_e1_e2_wall_hours_lte_36": "GO_ELIGIBLE_ONLY_AFTER_EXACT_TARGET_MEASUREMENT_AND_CONTRACT_SUPERSESSION",
+      "estimated_e1_e2_wall_hours_gt_36_lte_48": "HOLD_OPTIMIZE_CONTENTION_AND_RETEST",
+      "estimated_e1_e2_wall_hours_gt_48": "NO_GO",
+      "target_wall_hours": 48,
+      "headroom_fraction_at_36_hours": 0.25,
+      "current_decision": "NO_GO_TARGET_HOST_UNMEASURED"
+    },
+    "timeouts_seconds": {
+      "per_static_sequence": 3600,
+      "per_dynamic_sequence": 21600,
+      "per_rolling_sequence": 10800,
+      "global_formal_wall": 172800
+    },
+    "max_total_cpu_seconds": 5529600,
+    "scratch": {
+      "required_root": "PENDING_TARGET_QUALIFICATION",
+      "onedrive_path_allowed": false,
+      "minimum_free_bytes_at_start": 34359738368,
+      "stop_dispatch_below_free_bytes": 8589934592
+    },
+    "output": {
+      "max_total_bytes": 12884901888,
+      "control_plane_reserve_bytes": 67108864,
+      "max_inflight_write_bytes_per_worker": 8388608,
+      "raw_evaluations_required": false,
+      "format": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT",
+      "silent_truncation": false
+    },
+    "monitor": {
+      "interval_seconds": 1,
+      "stall_suspected_seconds": 90,
+      "stall_action": "ADVISORY_ONLY_NO_AUTOMATIC_TERMINATION",
+      "resource_anomaly_action": "STOP_NEW_DISPATCH_AND_COOPERATIVE_EVENT_BOUNDARY_STOP",
+      "hard_timeout_action": "TERMINATE_PROCESS"
+    }
+  },
+  "failure_and_recovery": {
+    "automatic_retries": 0,
+    "method_specific_failure": "Retain typed task failure as a formal outcome; do not retry.",
+    "infrastructure_failure": "Retain bounded manifest-committed task artifacts without worker stdout or stderr; no retry without author-approved result-blind deviation record.",
+    "resume_policy": "PROHIBITED_WITHOUT_AUTHOR_APPROVED_RESULT_BLIND_DEVIATION_RECORD",
+    "resource_breach": "Stop new dispatch, preserve completed and partial immutable artifacts, and mark INCOMPLETE_RESOURCE_CEILING.",
+    "global_or_sequence_hard_timeout": "Terminate the timed process, preserve bounded manifest-committed task artifacts without worker stdout or stderr, and never retry automatically."
+  },
+  "persistence": {
+    "control_plane": "Redacted counts, resource state, task IDs, bounded task-artifact worker reports and hashes only; raw worker stdout, stderr, exception messages and tracebacks are not persisted.",
+    "data_plane": "Task-local immutable endpoint-sufficient checkpoint fronts and summaries unavailable to scheduling decisions; per-evaluation raw rows are never written.",
+    "task_attempts": 1,
+    "manifest_hashing": "SHA-256 per checkpoint binary, evaluation-prefix chain, task manifest and run manifest.",
+    "analysis_during_r8c": false,
+    "analysis_next_gate": "R9_RAW_LOCK_AND_ANALYSIS"
+  },
+  "permissions": {
+    "public_benchmark_effect_execution": false,
+    "public_synthetic_weight_effect_execution": false,
+    "participant_data": false,
+    "hidden_instance_or_seed": false,
+    "effect_analysis": false,
+    "results_writing": false,
+    "remote_git_mutation": false,
+    "release_or_distribution": false
+  },
+  "fail_closed_gate": {
+    "request_id": "WGT-V11-R8C-E1E2-EXECUTION-REQUEST-20260726-01",
+    "request_status": "PENDING_FINAL_CODE_TARGET_HOST_QUALIFICATION_AND_VERBATIM_AUTHOR_CONFIRMATION",
+    "target_host_status": "TARGET_HOST_UNMEASURED",
+    "formal_launch_status": "PROHIBITED",
+    "prohibition_reasons": [
+      "exact target provider, instance type, topology and host fingerprint are absent",
+      "all-method full-path throughput and checkpoint-persistence contention have not been measured on the exact target",
+      "source Git commit and tree have not been bound in a one-time request",
+      "verbatim author confirmation has not been supplied"
+    ],
+    "transition_rule": "Do not edit this fail-closed template into a GO record. Generate a separately identified target-qualified contract and source-bound one-time request after target measurement.",
+    "launch_before_superseding_gate_closure": "PROHIBITED"
+  }
+}

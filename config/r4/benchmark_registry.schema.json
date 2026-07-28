@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wgt-v11.invalid/schema/r4/benchmark_registry.schema.json",
+  "title": "WGT-V11 R4 benchmark registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "registry_id",
+    "protocol_stage",
+    "status",
+    "effect_estimation_allowed",
+    "benchmarks"
+  ],
+  "properties": {
+    "registry_id": {
+      "const": "WGT-V11-R4-BENCHMARK-REGISTRY-01"
+    },
+    "protocol_stage": {"const": "R4"},
+    "status": {
+      "const": "EXECUTABLE_BINDING_CLOSED_NO_EFFECT_AUTHORITY"
+    },
+    "effect_estimation_allowed": {"const": false},
+    "benchmarks": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "suite_id",
+          "problem_ids",
+          "adapter_factory",
+          "evaluator_interface",
+          "source",
+          "events",
+          "atomic_steps_per_evaluation",
+          "constraint_convention",
+          "registered_effect_instance",
+          "formal_effect_execution_allowed"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "public_static_constrained_mo",
+              "public_dynamic_constrained_mo",
+              "public_rolling_receding_horizon_constrained_mo"
+            ]
+          },
+          "suite_id": {"type": "string", "minLength": 1},
+          "problem_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "profiles": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1}
+          },
+          "adapter_factory": {"type": "string", "minLength": 1},
+          "evaluator_interface": {"type": "string", "minLength": 1},
+          "source": {"type": "object"},
+          "events": {"type": "integer", "minimum": 1},
+          "planning_horizon": {"type": "integer", "minimum": 1},
+          "decision_dimension": {"type": "integer", "minimum": 1},
+          "atomic_steps_per_evaluation": {"type": "integer", "minimum": 1},
+          "constraint_convention": {"const": "c_le_0_feasible"},
+          "environment_schedule": {"type": ["object", "null"]},
+          "bridge_fixture": {"type": ["object", "null"]},
+          "registered_effect_instance": {"const": false},
+          "formal_effect_execution_allowed": {"const": false},
+          "r5_freeze_required": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1}
+          },
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}

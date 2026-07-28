@@ -1,0 +1,253 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-SCHEMA-01",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "amendment_id",
+    "schema_version",
+    "protocol_id",
+    "created_date",
+    "status",
+    "scope",
+    "result_blindness",
+    "source_authorities",
+    "scientific_event_deadlines_seconds",
+    "technical_sequence_hard_ceilings_seconds",
+    "classification",
+    "supersession",
+    "implementation_gate"
+  ],
+  "properties": {
+    "amendment_id": {
+      "const": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "created_date": {
+      "const": "2026-07-26"
+    },
+    "status": {
+      "const": "RESULT_BLIND_TIMEOUT_SEMANTICS_IMPLEMENTED_AND_VERIFIED"
+    },
+    "scope": {
+      "const": "E1_E2_PUBLIC_BENCHMARKS_ONLY"
+    },
+    "result_blindness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect_values_read",
+        "method_outputs_read",
+        "purpose"
+      ],
+      "properties": {
+        "effect_values_read": {
+          "const": false
+        },
+        "method_outputs_read": {
+          "const": false
+        },
+        "purpose": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "source_authorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "f23_human_contract",
+        "r5_machine_contract",
+        "methods_semantic_corroboration"
+      ],
+      "properties": {
+        "f23_human_contract": {
+          "$ref": "#/$defs/source"
+        },
+        "r5_machine_contract": {
+          "$ref": "#/$defs/source"
+        },
+        "methods_semantic_corroboration": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "scientific_event_deadlines_seconds": {
+      "const": {
+        "E1_STATIC": 1800,
+        "E1_DYNAMIC_CDF": 300,
+        "E1_E2_ROLLING": 120
+      }
+    },
+    "technical_sequence_hard_ceilings_seconds": {
+      "const": {
+        "E1_STATIC": 3600,
+        "E1_E2_DYNAMIC": 21600,
+        "E1_E2_ROLLING": 10800,
+        "GLOBAL_FORMAL_WALL": 172800
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scientific_event_deadline",
+        "technical_sequence_or_global_timeout"
+      ],
+      "properties": {
+        "scientific_event_deadline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scope",
+            "applies_equally_to_all_methods",
+            "terminal_code",
+            "continuous_endpoint",
+            "unused_budget_transferred"
+          ],
+          "properties": {
+            "scope": {
+              "const": "ONE_OPTIMIZATION_EVENT"
+            },
+            "applies_equally_to_all_methods": {
+              "const": true
+            },
+            "terminal_code": {
+              "const": "REJECT_TIMEOUT"
+            },
+            "continuous_endpoint": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "unused_budget_transferred": {
+              "const": false
+            }
+          }
+        },
+        "technical_sequence_or_global_timeout": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "scope",
+            "applies_equally_to_all_methods",
+            "task_outcome_classes",
+            "algorithm_terminal_code",
+            "partial_checkpoint_policy",
+            "retry_policy"
+          ],
+          "properties": {
+            "scope": {
+              "const": "SUPERVISOR_PROCESS_OR_SCHEDULE"
+            },
+            "applies_equally_to_all_methods": {
+              "const": true
+            },
+            "task_outcome_classes": {
+              "const": [
+                "TECHNICAL_SEQUENCE_TIMEOUT",
+                "TECHNICAL_GLOBAL_TIMEOUT"
+              ]
+            },
+            "algorithm_terminal_code": {
+              "type": "null"
+            },
+            "partial_checkpoint_policy": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "retry_policy": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        }
+      }
+    },
+    "supersession": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "f23_rolling_2400_second_instance_ceiling",
+        "f23_event_deadlines",
+        "r5_sequence_hard_ceilings"
+      ],
+      "properties": {
+        "f23_rolling_2400_second_instance_ceiling": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "f23_event_deadlines": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "r5_sequence_hard_ceilings": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "implementation_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timeout_semantics_gate_passed",
+        "required_runtime_behavior",
+        "historical_drift_closed",
+        "verification"
+      ],
+      "properties": {
+        "timeout_semantics_gate_passed": {
+          "const": true
+        },
+        "required_runtime_behavior": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        },
+        "historical_drift_closed": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "verification": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "frozen_rule"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "frozen_rule": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    }
+  }
+}

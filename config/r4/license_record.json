@@ -1,0 +1,89 @@
+{
+  "record_id": "WGT-V11-R4-LICENSE-RECORD-01",
+  "protocol_stage": "R4",
+  "status": "RECORDED_MIT_DISTRIBUTION_ALLOWED",
+  "distribution_allowed": true,
+  "project_license": {
+    "path": "LICENSE",
+    "spdx_identifier": "MIT",
+    "sha256": "e984df6dd727fdebd5a6a7c9c399fe3b4374fdd06d59a06fdb871a0aae51dafc"
+  },
+  "dependency_lock": {
+    "path": "requirements-r4-benchmark.lock",
+    "sha256": "67479ba5980fa02248bf0f30aa9f25c0b9013956c6639a1e2b5f7ff87e643be3",
+    "target": "CPython 3.12 Windows AMD64"
+  },
+  "primary_sources": [
+    {
+      "component": "jMetalPy LIR-CMOP evaluators and GDE3/NSGA-II search",
+      "use": "Runtime dependency through the R4 project bridge",
+      "source": "https://github.com/jMetal/jMetalPy",
+      "version_or_commit": "1.7.0 / 3d5d0072876f84db32d1336e38e06b90319d01ee",
+      "sha256": "57a86bb939695459b0f7deb4723abbbdf4c28fb83bf8036cfdaf20b17b6778e9",
+      "license": "MIT",
+      "vendored": false,
+      "distribution_note": "Installed as an exact hash-locked dependency; retain its license notice in any future distributable bundle. The R4 wrapper documents and corrects the LIRCMOP7/8 constraint-count and LIRCMOP13/14 objective-count metadata defects without changing their upstream equations."
+    },
+    {
+      "component": "CDF1-15 published benchmark equations",
+      "use": "Scientific specification for an independently maintained project evaluator",
+      "source": "https://doi.org/10.1007/s11047-020-09799-y",
+      "version_or_commit": "published article",
+      "license": "CC-BY-4.0",
+      "vendored": false,
+      "distribution_note": "Cite the article and retain attribution; the project does not redistribute article text or figures."
+    },
+    {
+      "component": "CDF author C++ implementation",
+      "use": "Read-only provenance and equation cross-check oracle only",
+      "source": "https://bitbucket.org/Pag1c18/cmlsga",
+      "version_or_commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+      "sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a",
+      "license": "GPL-3.0-or-later",
+      "vendored": false,
+      "distribution_note": "Not imported, linked, copied into the package, or distributed. Any future use beyond provenance requires a fresh license review."
+    },
+    {
+      "component": "WGT-RR-CMOP generator and public known-answer fixture",
+      "use": "Project-authored rolling/receding-horizon public benchmark bridge",
+      "source": "project protocol workspace F23 generator and R4 fixture",
+      "version_or_commit": "WGT-F23-RRGEN-01/1.0.0",
+      "sha256": "d553e237df7f18a8cfe9f02931e32dc185368b7504a3247a106f0571f9ad8dd2",
+      "license": "MIT",
+      "vendored": true,
+      "distribution_note": "Distributed as project-authored material under the repository-level MIT License."
+    }
+  ],
+  "locked_packages": [
+    {"name": "attrs", "version": "24.2.0", "license": "MIT"},
+    {"name": "colorama", "version": "0.4.6", "license": "BSD-3-Clause"},
+    {"name": "contourpy", "version": "1.2.1", "license": "BSD-3-Clause"},
+    {"name": "cycler", "version": "0.12.1", "license": "BSD-3-Clause"},
+    {"name": "fonttools", "version": "4.53.1", "license": "MIT"},
+    {"name": "jmetalpy", "version": "1.7.0", "license": "MIT"},
+    {"name": "jsonschema", "version": "4.23.0", "license": "MIT"},
+    {"name": "jsonschema-specifications", "version": "2023.12.1", "license": "MIT"},
+    {"name": "kiwisolver", "version": "1.4.5", "license": "BSD-3-Clause"},
+    {"name": "matplotlib", "version": "3.9.1.post1", "license": "PSF-based"},
+    {"name": "mockito", "version": "1.5.4", "license": "MIT"},
+    {"name": "numpy", "version": "1.26.4", "license": "BSD-3-Clause"},
+    {"name": "packaging", "version": "26.2", "license": "Apache-2.0 OR BSD-2-Clause"},
+    {"name": "pandas", "version": "2.2.2", "license": "BSD-3-Clause"},
+    {"name": "patsy", "version": "0.5.6", "license": "BSD-2-Clause"},
+    {"name": "pillow", "version": "10.4.0", "license": "HPND"},
+    {"name": "plotly", "version": "5.23.0", "license": "MIT"},
+    {"name": "PyHamcrest", "version": "2.1.0", "license": "BSD-3-Clause"},
+    {"name": "pyparsing", "version": "3.1.2", "license": "MIT"},
+    {"name": "python-dateutil", "version": "2.9.0.post0", "license": "Apache-2.0 OR BSD-3-Clause"},
+    {"name": "pytz", "version": "2024.1", "license": "MIT"},
+    {"name": "referencing", "version": "0.35.1", "license": "MIT"},
+    {"name": "rpds-py", "version": "0.20.0", "license": "MIT"},
+    {"name": "scipy", "version": "1.14.0", "license": "BSD-3-Clause"},
+    {"name": "six", "version": "1.16.0", "license": "MIT"},
+    {"name": "statsmodels", "version": "0.14.2", "license": "BSD-3-Clause"},
+    {"name": "tenacity", "version": "8.5.0", "license": "Apache-2.0"},
+    {"name": "tqdm", "version": "4.66.5", "license": "MPL-2.0 AND MIT"},
+    {"name": "tzdata", "version": "2024.1", "license": "Apache-2.0"}
+  ],
+  "release_blockers": []
+}

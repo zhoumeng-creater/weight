@@ -1,0 +1,173 @@
+{
+  "registry_id": "WGT-V11-R4-BENCHMARK-REGISTRY-01",
+  "protocol_stage": "R4",
+  "status": "EXECUTABLE_BINDING_CLOSED_NO_EFFECT_AUTHORITY",
+  "effect_estimation_allowed": false,
+  "benchmarks": [
+    {
+      "category": "public_static_constrained_mo",
+      "suite_id": "LIR-CMOP-JMETALPY-1.7.0",
+      "problem_ids": [
+        "LIRCMOP1",
+        "LIRCMOP2",
+        "LIRCMOP3",
+        "LIRCMOP4",
+        "LIRCMOP5",
+        "LIRCMOP6",
+        "LIRCMOP7",
+        "LIRCMOP8",
+        "LIRCMOP9",
+        "LIRCMOP10",
+        "LIRCMOP11",
+        "LIRCMOP12",
+        "LIRCMOP13",
+        "LIRCMOP14"
+      ],
+      "profiles": [],
+      "adapter_factory": "benchmark_adapters.r4_public.make_r4_lircmop_adapter",
+      "evaluator_interface": "STATIC-CMOP-EVAL-1.0.0",
+      "source": {
+        "distribution": "jmetalpy",
+        "release": "1.7.0",
+        "tag_commit": "3d5d0072876f84db32d1336e38e06b90319d01ee",
+        "wheel_sha256": "57a86bb939695459b0f7deb4723abbbdf4c28fb83bf8036cfdaf20b17b6778e9",
+        "license": "MIT",
+        "bridge_patch": "LIRCMOP7/8 declare two constraints upstream but evaluate three, and LIRCMOP13/14 declare two objectives upstream but evaluate three; the R4 wrapper corrects only those metadata counts so allocation matches the unchanged upstream equations"
+      },
+      "events": 1,
+      "planning_horizon": 1,
+      "decision_dimension": 30,
+      "atomic_steps_per_evaluation": 1,
+      "constraint_convention": "c_le_0_feasible",
+      "environment_schedule": null,
+      "bridge_fixture": null,
+      "registered_effect_instance": false,
+      "formal_effect_execution_allowed": false,
+      "r5_freeze_required": [
+        "problem subset or full-suite declaration",
+        "CFE per problem",
+        "algorithm seeds",
+        "reference fronts and endpoint reference points",
+        "wall-time and memory limits"
+      ],
+      "notes": "R4 binds the full 14-problem evaluator family and preserves the upstream 7/8 constraint-count and 13/14 objective-count defects as explicit bridge patches. R5, not R4, determines formal sampling and endpoints."
+    },
+    {
+      "category": "public_dynamic_constrained_mo",
+      "suite_id": "CDF-1-15",
+      "problem_ids": [
+        "CDF1",
+        "CDF2",
+        "CDF3",
+        "CDF4",
+        "CDF5",
+        "CDF6",
+        "CDF7",
+        "CDF8",
+        "CDF9",
+        "CDF10",
+        "CDF11",
+        "CDF12",
+        "CDF13",
+        "CDF14",
+        "CDF15"
+      ],
+      "profiles": [
+        "CDF-HARSH",
+        "CDF-MILD"
+      ],
+      "adapter_factory": "benchmark_adapters.r4_public.make_r4_cdf_adapter",
+      "evaluator_interface": "CDF-EVAL-1.0.0",
+      "source": {
+        "paper_doi": "10.1007/s11047-020-09799-y",
+        "paper_license": "CC-BY-4.0",
+        "provenance_oracle_repository": "https://bitbucket.org/Pag1c18/cmlsga",
+        "provenance_oracle_commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+        "provenance_oracle_fit_functions_cpp_sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a",
+        "provenance_oracle_license": "GPL-3.0-or-later",
+        "oracle_vendored_or_imported": false,
+        "python_evaluator": "independent project implementation of the published equations"
+      },
+      "events": 60,
+      "planning_horizon": 1,
+      "decision_dimension": 10,
+      "atomic_steps_per_evaluation": 1,
+      "constraint_convention": "c_le_0_feasible",
+      "environment_schedule": {
+        "time": "event_id/ns",
+        "profiles": {
+          "CDF-HARSH": {
+            "ns": 5,
+            "seed_0_schedule_commitment_sha256": "6f29e151d67cb64cd52a7c7e9b36814f33293ef231445b1ae424befca5e7b788"
+          },
+          "CDF-MILD": {
+            "ns": 10,
+            "seed_0_schedule_commitment_sha256": "12756e82812d4fdb86c34bc61615a67e1c266bb1bdb1278abe417040acc05e9b"
+          }
+        },
+        "CDF13_rule": "PCG64(environment_seed); at each event increment one of five time components by 1/ns",
+        "pairing": "same environment_seed across compared methods",
+        "r5_action": "freeze the actual paired environment seed list before any effect execution"
+      },
+      "bridge_fixture": null,
+      "registered_effect_instance": false,
+      "formal_effect_execution_allowed": false,
+      "r5_freeze_required": [
+        "paired environment seed list",
+        "CFE per event",
+        "algorithm seeds",
+        "dynamic endpoints and reference points",
+        "wall-time and memory limits"
+      ],
+      "notes": "The R4 schedule is an explicit reproducible implementation choice. The author's Visual-Studio-oriented C++ program is a provenance oracle, not executable project code."
+    },
+    {
+      "category": "public_rolling_receding_horizon_constrained_mo",
+      "suite_id": "WGT-RR-CMOP",
+      "problem_ids": [
+        "RR-SMOOTH"
+      ],
+      "profiles": [
+        "public-development-bridge"
+      ],
+      "adapter_factory": "benchmark_adapters.r4_wgt_rr.WGTRRPublicAdapter.from_known_answer",
+      "evaluator_interface": "WGT-RR-EVAL-1.0.0",
+      "source": {
+        "generator_id": "WGT-F23-RRGEN-01",
+        "generator_version": "1.0.0",
+        "historical_generator_sha256": "d553e237df7f18a8cfe9f02931e32dc185368b7504a3247a106f0571f9ad8dd2",
+        "public_known_answer_commitment_sha256": "25c3aea2bb3e08e1435f1b68e61f2ad98a3085dc38c7f21af6a7a5eccfa077fa",
+        "ownership": "project-authored"
+      },
+      "events": 20,
+      "planning_horizon": 6,
+      "decision_dimension": 12,
+      "atomic_steps_per_evaluation": 6,
+      "constraint_convention": "c_le_0_feasible",
+      "environment_schedule": {
+        "future_disturbance_visibility": "prohibited",
+        "execution_feedback_release": "next event only",
+        "fallback": "zero action on rejection",
+        "pairing": "same generated public environment across compared methods"
+      },
+      "bridge_fixture": {
+        "split": "development",
+        "template": "RR-SMOOTH",
+        "index": 0,
+        "fixture_sha256": "0a4a8cca86a912a1676af6f4c0b340413182f25f62d5d3cb08563f56c5de34bb",
+        "hidden": false,
+        "participant_data": false
+      },
+      "registered_effect_instance": false,
+      "formal_effect_execution_allowed": false,
+      "r5_freeze_required": [
+        "public instance generation list",
+        "CFE per event",
+        "algorithm seeds",
+        "rolling endpoints and aggregation units",
+        "wall-time and memory limits"
+      ],
+      "notes": "R4 executes only the bundled public known answer for interface correctness. It neither generates nor reads hidden instances and it produces no performance estimate."
+    }
+  ]
+}

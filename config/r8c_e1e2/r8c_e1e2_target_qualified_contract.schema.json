@@ -1,0 +1,1132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-FORMAL-EXECUTION-CONTRACT-SCHEMA-01",
+  "title": "R8C E1+E2 target-qualified formal execution contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_id",
+    "schema_version",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "created_date",
+    "authorization",
+    "target_qualification_evidence",
+    "upstream",
+    "schedule",
+    "method_runtime",
+    "launch",
+    "resources",
+    "failure_and_recovery",
+    "persistence",
+    "permissions",
+    "fail_closed_gate"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-FORMAL-EXECUTION-CONTRACT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R8C_E1E2_TARGET_QUALIFIED_FORMAL_EXECUTION"
+    },
+    "status": {
+      "const": "TARGET_HOST_QUALIFIED_AND_AUTHORIZED"
+    },
+    "created_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "author_text",
+        "authorized_scope",
+        "resource_purchase_or_remote_host_provisioning_authorized",
+        "formal_effect_execution_authorized",
+        "effect_analysis_authorized",
+        "results_writing_authorized"
+      ],
+      "properties": {
+        "author_text": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "authorized_scope": {
+          "const": "FORMAL_E1_E2_PUBLIC_BENCHMARK_EFFECT_EXECUTION_ONLY"
+        },
+        "resource_purchase_or_remote_host_provisioning_authorized": {
+          "type": "boolean"
+        },
+        "formal_effect_execution_authorized": {
+          "const": true
+        },
+        "effect_analysis_authorized": {
+          "const": false
+        },
+        "results_writing_authorized": {
+          "const": false
+        }
+      }
+    },
+    "target_qualification_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualification_report_path",
+        "qualification_report_sha256",
+        "qualification_id",
+        "qualification_status",
+        "source",
+        "host_fingerprint_sha256",
+        "design",
+        "selected_worker_count",
+        "selected_projection"
+      ],
+      "properties": {
+        "qualification_report_path": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "qualification_report_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "qualification_id": {
+          "const": "WGT-V11-R8C-E1E2-TARGET-QUALIFICATION-20260726-02"
+        },
+        "qualification_status": {
+          "const": "PASS_PENDING_REVIEW_AND_ONE_TIME_REQUEST_FREEZE"
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "git_commit",
+            "git_tree",
+            "worktree_clean",
+            "qualification_source_sha256"
+          ],
+          "properties": {
+            "git_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "git_tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "worktree_clean": {
+              "const": true
+            },
+            "qualification_source_sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "host_fingerprint_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "design": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "worker_counts",
+            "repetitions",
+            "static_cfe_per_event",
+            "dynamic_cfe_per_event",
+            "rolling_cfe_per_event",
+            "dynamic_events",
+            "workload_method_case_binding_count",
+            "unique_representative_benchmark_case_count",
+            "formal_projection_rate_class_count",
+            "task_count"
+          ],
+          "properties": {
+            "worker_counts": {
+              "const": [
+                1,
+                8,
+                16,
+                24,
+                32,
+                48,
+                64
+              ]
+            },
+            "repetitions": {
+              "const": 2
+            },
+            "static_cfe_per_event": {
+              "const": 50000
+            },
+            "dynamic_cfe_per_event": {
+              "const": 5000
+            },
+            "rolling_cfe_per_event": {
+              "const": 5000
+            },
+            "dynamic_events": {
+              "const": 6
+            },
+            "workload_method_case_binding_count": {
+              "const": 84
+            },
+            "unique_representative_benchmark_case_count": {
+              "const": 8
+            },
+            "formal_projection_rate_class_count": {
+              "const": 39
+            },
+            "task_count": {
+              "const": 1176
+            }
+          }
+        },
+        "selected_worker_count": {
+          "enum": [
+            1,
+            8,
+            16,
+            24,
+            32,
+            48,
+            64
+          ]
+        },
+        "selected_projection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "projected_wall_hours",
+            "decision_classification"
+          ],
+          "properties": {
+            "status": {
+              "const": "TARGET_HOST_FULL_PATH_ESTIMATE"
+            },
+            "projected_wall_hours": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 36
+            },
+            "decision_classification": {
+              "const": "GO_ELIGIBLE_AFTER_CONTRACT_AND_REQUEST_FREEZE"
+            }
+          }
+        }
+      }
+    },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "r5",
+        "r5a",
+        "corrective_protocol",
+        "checkpoint_persistence",
+        "rng_implementation_amendment",
+        "compact_runtime_amendment",
+        "timeout_semantics_amendment",
+        "lircmop_reference_amendment",
+        "cdf_operational_authority_amendment",
+        "reference_catalog",
+        "linux_runtime_lock"
+      ],
+      "properties": {
+        "r5": {
+          "$ref": "#/$defs/r5_upstream"
+        },
+        "r5a": {
+          "$ref": "#/$defs/r5a_upstream"
+        },
+        "corrective_protocol": {
+          "$ref": "#/$defs/corrective_upstream"
+        },
+        "checkpoint_persistence": {
+          "$ref": "#/$defs/checkpoint_persistence_upstream"
+        },
+        "rng_implementation_amendment": {
+          "$ref": "#/$defs/rng_implementation_amendment_upstream"
+        },
+        "compact_runtime_amendment": {
+          "$ref": "#/$defs/compact_runtime_amendment_upstream"
+        },
+        "timeout_semantics_amendment": {
+          "$ref": "#/$defs/timeout_semantics_amendment_upstream"
+        },
+        "lircmop_reference_amendment": {
+          "$ref": "#/$defs/lircmop_reference_amendment_upstream"
+        },
+        "cdf_operational_authority_amendment": {
+          "$ref": "#/$defs/cdf_operational_authority_amendment_upstream"
+        },
+        "reference_catalog": {
+          "$ref": "#/$defs/reference_catalog_upstream"
+        },
+        "linux_runtime_lock": {
+          "$ref": "#/$defs/linux_runtime_lock_upstream"
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_format",
+        "sha256",
+        "e2_full_reuse_rows",
+        "e2_full_reuse_sha256",
+        "task_namespace",
+        "totals",
+        "workload_order",
+        "e3_dispatched",
+        "e2_full_reuse"
+      ],
+      "properties": {
+        "id": {
+          "const": "WGT-V11-R8C-E1E2-FORMAL-SCHEDULE-01"
+        },
+        "canonical_format": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "sha256": {
+          "const": "db468253fb1430749d9f816d19532e428ca1054a86f399f80b12575a5c45282d"
+        },
+        "e2_full_reuse_rows": {
+          "const": 310
+        },
+        "e2_full_reuse_sha256": {
+          "const": "d235c1c53d7e504400ad37674bebba4a01145a934964039454776c9f09ba0c9e"
+        },
+        "task_namespace": {
+          "const": "r8c"
+        },
+        "totals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method_sequences",
+            "CFE",
+            "atomic_model_steps"
+          ],
+          "properties": {
+            "method_sequences": {
+              "const": 5030
+            },
+            "CFE": {
+              "const": 851000000
+            },
+            "atomic_model_steps": {
+              "const": 1971000000
+            }
+          }
+        },
+        "workload_order": {
+          "const": [
+            "E1_STATIC",
+            "E1_DYNAMIC",
+            "E1_ROLLING",
+            "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+            "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+          ]
+        },
+        "e3_dispatched": {
+          "const": false
+        },
+        "e2_full_reuse": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "method_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "population_size",
+        "archive_capacity",
+        "logical_threads_per_worker",
+        "blas_openmp_threads_per_worker",
+        "gpu_allowed_for_e1_e2",
+        "gpu_allowed_for_this_formal_scope",
+        "paired_initialization",
+        "method_rng"
+      ],
+      "properties": {
+        "population_size": {
+          "const": 100
+        },
+        "archive_capacity": {
+          "const": 100
+        },
+        "logical_threads_per_worker": {
+          "const": 1
+        },
+        "blas_openmp_threads_per_worker": {
+          "const": 1
+        },
+        "gpu_allowed_for_e1_e2": {
+          "const": false
+        },
+        "gpu_allowed_for_this_formal_scope": {
+          "const": false
+        },
+        "paired_initialization": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "method_rng": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "launch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "working_directory",
+        "contract_path",
+        "request_path",
+        "request_consumption_marker",
+        "output_root",
+        "exact_command",
+        "command_identity_frozen",
+        "command_executable_now",
+        "formal_launch_prohibited",
+        "current_confirmation_state",
+        "one_time_consumption_required",
+        "overwrite_allowed"
+      ],
+      "properties": {
+        "working_directory": {
+          "const": "$PROJECT_ROOT"
+        },
+        "contract_path": {
+          "$ref": "#/$defs/non_pending_string"
+        },
+        "request_path": {
+          "$ref": "#/$defs/non_pending_string"
+        },
+        "request_consumption_marker": {
+          "$ref": "#/$defs/non_pending_string"
+        },
+        "output_root": {
+          "$ref": "#/$defs/non_pending_string"
+        },
+        "exact_command": {
+          "$ref": "#/$defs/non_pending_string"
+        },
+        "command_identity_frozen": {
+          "const": true
+        },
+        "command_executable_now": {
+          "const": true
+        },
+        "formal_launch_prohibited": {
+          "const": false
+        },
+        "current_confirmation_state": {
+          "const": "ONE_TIME_SOURCE_BOUND_VERBATIM_CONFIRMED"
+        },
+        "one_time_consumption_required": {
+          "const": true
+        },
+        "overwrite_allowed": {
+          "const": false
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "qualification_status",
+        "selected_exact_host_frozen",
+        "candidate_target",
+        "parallelism",
+        "decision_rule",
+        "timeouts_seconds",
+        "max_total_cpu_seconds",
+        "scratch",
+        "output",
+        "monitor"
+      ],
+      "properties": {
+        "qualification_status": {
+          "const": "TARGET_HOST_QUALIFIED"
+        },
+        "selected_exact_host_frozen": {
+          "const": true
+        },
+        "candidate_target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "processor_reference",
+            "offered_instance_description",
+            "normalized_compute_allocation",
+            "memory_gib",
+            "provider",
+            "instance_type",
+            "host_fingerprint_sha256",
+            "remote_measurement_completed"
+          ],
+          "properties": {
+            "processor_reference": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "offered_instance_description": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "normalized_compute_allocation": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "memory_gib": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "provider": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "instance_type": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "host_fingerprint_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "remote_measurement_completed": {
+              "const": true
+            }
+          }
+        },
+        "parallelism": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_workers",
+            "logical_threads_per_worker",
+            "blas_openmp_threads_per_worker",
+            "max_worker_peak_rss_bytes",
+            "max_pool_peak_rss_bytes",
+            "worker_count_qualified_on_target"
+          ],
+          "properties": {
+            "max_workers": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "logical_threads_per_worker": {
+              "const": 1
+            },
+            "blas_openmp_threads_per_worker": {
+              "const": 1
+            },
+            "max_worker_peak_rss_bytes": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "max_pool_peak_rss_bytes": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "worker_count_qualified_on_target": {
+              "const": true
+            }
+          }
+        },
+        "decision_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "estimated_e1_e2_wall_hours_lte_36",
+            "estimated_e1_e2_wall_hours_gt_36_lte_48",
+            "estimated_e1_e2_wall_hours_gt_48",
+            "target_wall_hours",
+            "headroom_fraction_at_36_hours",
+            "current_decision"
+          ],
+          "properties": {
+            "estimated_e1_e2_wall_hours_lte_36": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "estimated_e1_e2_wall_hours_gt_36_lte_48": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "estimated_e1_e2_wall_hours_gt_48": {
+              "$ref": "#/$defs/non_empty_string"
+            },
+            "target_wall_hours": {
+              "const": 48
+            },
+            "headroom_fraction_at_36_hours": {
+              "const": 0.25
+            },
+            "current_decision": {
+              "$ref": "#/$defs/non_empty_string"
+            }
+          }
+        },
+        "timeouts_seconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "per_static_sequence",
+            "per_dynamic_sequence",
+            "per_rolling_sequence",
+            "global_formal_wall"
+          ],
+          "properties": {
+            "per_static_sequence": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "per_dynamic_sequence": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "per_rolling_sequence": {
+              "$ref": "#/$defs/positive_integer"
+            },
+            "global_formal_wall": {
+              "$ref": "#/$defs/positive_integer"
+            }
+          }
+        },
+        "max_total_cpu_seconds": {
+          "$ref": "#/$defs/positive_integer"
+        },
+        "scratch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_root",
+            "onedrive_path_allowed",
+            "minimum_free_bytes_at_start",
+            "stop_dispatch_below_free_bytes"
+          ],
+          "properties": {
+            "required_root": {
+              "$ref": "#/$defs/non_pending_string"
+            },
+            "onedrive_path_allowed": {
+              "const": false
+            },
+            "minimum_free_bytes_at_start": {
+              "const": 34359738368
+            },
+            "stop_dispatch_below_free_bytes": {
+              "const": 8589934592
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_total_bytes",
+            "control_plane_reserve_bytes",
+            "max_inflight_write_bytes_per_worker",
+            "raw_evaluations_required",
+            "format",
+            "silent_truncation"
+          ],
+          "properties": {
+            "max_total_bytes": {
+              "const": 12884901888
+            },
+            "control_plane_reserve_bytes": {
+              "const": 67108864
+            },
+            "max_inflight_write_bytes_per_worker": {
+              "const": 8388608
+            },
+            "raw_evaluations_required": {
+              "const": false
+            },
+            "format": {
+              "const": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT"
+            },
+            "silent_truncation": {
+              "const": false
+            }
+          }
+        },
+        "monitor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "interval_seconds",
+            "stall_suspected_seconds",
+            "stall_action",
+            "resource_anomaly_action",
+            "hard_timeout_action"
+          ],
+          "properties": {
+            "interval_seconds": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "stall_suspected_seconds": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "stall_action": {
+              "const": "ADVISORY_ONLY_NO_AUTOMATIC_TERMINATION"
+            },
+            "resource_anomaly_action": {
+              "const": "STOP_NEW_DISPATCH_AND_COOPERATIVE_EVENT_BOUNDARY_STOP"
+            },
+            "hard_timeout_action": {
+              "const": "TERMINATE_PROCESS"
+            }
+          }
+        }
+      }
+    },
+    "failure_and_recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automatic_retries",
+        "method_specific_failure",
+        "infrastructure_failure",
+        "resume_policy",
+        "resource_breach",
+        "global_or_sequence_hard_timeout"
+      ],
+      "properties": {
+        "automatic_retries": {
+          "const": 0
+        },
+        "method_specific_failure": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "infrastructure_failure": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "resume_policy": {
+          "const": "PROHIBITED_WITHOUT_AUTHOR_APPROVED_RESULT_BLIND_DEVIATION_RECORD"
+        },
+        "resource_breach": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "global_or_sequence_hard_timeout": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "control_plane",
+        "data_plane",
+        "task_attempts",
+        "manifest_hashing",
+        "analysis_during_r8c",
+        "analysis_next_gate"
+      ],
+      "properties": {
+        "control_plane": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "data_plane": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "task_attempts": {
+          "const": 1
+        },
+        "manifest_hashing": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "analysis_during_r8c": {
+          "const": false
+        },
+        "analysis_next_gate": {
+          "const": "R9_RAW_LOCK_AND_ANALYSIS"
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_benchmark_effect_execution",
+        "public_synthetic_weight_effect_execution",
+        "participant_data",
+        "hidden_instance_or_seed",
+        "effect_analysis",
+        "results_writing",
+        "remote_git_mutation",
+        "release_or_distribution"
+      ],
+      "properties": {
+        "public_benchmark_effect_execution": {
+          "const": true
+        },
+        "public_synthetic_weight_effect_execution": {
+          "const": false
+        },
+        "participant_data": {
+          "const": false
+        },
+        "hidden_instance_or_seed": {
+          "const": false
+        },
+        "effect_analysis": {
+          "const": false
+        },
+        "results_writing": {
+          "const": false
+        },
+        "remote_git_mutation": {
+          "const": false
+        },
+        "release_or_distribution": {
+          "const": false
+        }
+      }
+    },
+    "fail_closed_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "request_id",
+        "request_status",
+        "target_host_status",
+        "formal_launch_status"
+      ],
+      "properties": {
+        "request_id": {
+          "const": "WGT-V11-R8C-E1E2-TARGET-QUALIFIED-EXECUTION-REQUEST-20260726-01"
+        },
+        "request_status": {
+          "const": "ONE_TIME_SOURCE_BOUND_VERBATIM_CONFIRMED"
+        },
+        "target_host_status": {
+          "const": "TARGET_HOST_QUALIFIED"
+        },
+        "formal_launch_status": {
+          "const": "ELIGIBLE"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "positive_integer": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "non_pending_string": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "const": "PENDING_TARGET_QUALIFICATION"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "r5_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01"
+        },
+        "path": {
+          "const": "config/r5/r5_freeze_contract.json"
+        },
+        "sha256": {
+          "const": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+        }
+      }
+    },
+    "r5a_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "WGT-V11-R5A-E3-INPUT-CONTRACT-01"
+        },
+        "path": {
+          "const": "config/r5a/e3_input_contract.json"
+        },
+        "sha256": {
+          "const": "a7275dc1624fc2167c0ed5a599f9b5cb3297151037c47c5b85fb27d38e857424"
+        }
+      }
+    },
+    "corrective_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "WGT-V11-R8C-RESULT-BLIND-CORRECTIVE-PROTOCOL-01"
+        },
+        "path": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "sha256": {
+          "const": "dfe74d041f36b12fd13cb86e1fa2bba5483bbd871a7749b2c98e09160ee39b43"
+        }
+      }
+    },
+    "checkpoint_persistence_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "contract_id": {
+          "const": "WGT-V11-R8C-E1E2-CHECKPOINT-PERSISTENCE-CONTRACT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.json"
+        },
+        "sha256": {
+          "const": "ef2420f2cb1eabc1e898b6288068e57051acab1494ff1cc169b04eafaf1e5b3a"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_checkpoint_persistence_contract.schema.json"
+        },
+        "schema_sha256": {
+          "const": "4811661e6e580b1866b72b87e4928b8313ce235cb9dcae4dd81d591fd9d1108a"
+        }
+      }
+    },
+    "rng_implementation_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-RNG-IMPLEMENTATION-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_rng_implementation_amendment.json"
+        },
+        "sha256": {
+          "const": "744a29f29a1108e44bfbe25ddac2b7e16ce4867958ab23418842fd5fba4f84bd"
+        }
+      }
+    },
+    "compact_runtime_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.json"
+        },
+        "sha256": {
+          "const": "e8f8564a64e93614eb9db00e38b48a2f8cc8dd7f57b52e164f66ea1352315ff1"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_compact_runtime_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "49969b9eb35eb224f6d6f4eeceb8fe130ded399f3aaa99c8572f866157b399c5"
+        }
+      }
+    },
+    "timeout_semantics_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.json"
+        },
+        "sha256": {
+          "const": "a94aed1613540ff119fcc47550c933dda4821c55789c09a98697eba32394d9fc"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_timeout_semantics_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "c497577f737940647883d89a2bac093907724f4d068d591b21bd8e998653fbd7"
+        }
+      }
+    },
+    "lircmop_reference_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-LIRCMOP-REFERENCE-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.json"
+        },
+        "sha256": {
+          "const": "6e711a4832036fb83d7b3ae3c79cb237c2e8b096255d1894c0b886c2209bca27"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_lircmop_reference_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "951d29f855a08e72835d5116a0621c2d21036ff0c2d67fa6ccba8ef0b9d97311"
+        }
+      }
+    },
+    "cdf_operational_authority_amendment_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amendment_id",
+        "path",
+        "sha256",
+        "schema_path",
+        "schema_sha256"
+      ],
+      "properties": {
+        "amendment_id": {
+          "const": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01"
+        },
+        "path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.json"
+        },
+        "sha256": {
+          "const": "aab6a99eee16ac24ce316449f08ed0d4a6a7fb9caf1f4e22ef3c0b204c9c96f3"
+        },
+        "schema_path": {
+          "const": "config/r8c_e1e2/r8c_e1e2_cdf_operational_authority_amendment.schema.json"
+        },
+        "schema_sha256": {
+          "const": "cb04a8be2be06dd6ec00370ca1a7aa45a3f0fcc3ad2910754319bf6d16c1a8ee"
+        }
+      }
+    },
+    "reference_catalog_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "manifest_path",
+        "manifest_sha256",
+        "manifest_schema_path",
+        "manifest_schema_sha256",
+        "artifact_path",
+        "artifact_sha256",
+        "artifact_bytes",
+        "artifact_lines"
+      ],
+      "properties": {
+        "catalog_id": {
+          "const": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01"
+        },
+        "manifest_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.json"
+        },
+        "manifest_sha256": {
+          "const": "ee58c00544a4f0d069c7407dd03dc40d26bdd71e3b5b9e6b87f0322d44f66b8a"
+        },
+        "manifest_schema_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.schema.json"
+        },
+        "manifest_schema_sha256": {
+          "const": "a8768c8dbd53c71a89899bc8860fd1eab7163bf0840618991950f59e1a88298e"
+        },
+        "artifact_path": {
+          "const": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl"
+        },
+        "artifact_sha256": {
+          "const": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f"
+        },
+        "artifact_bytes": {
+          "const": 3507565
+        },
+        "artifact_lines": {
+          "const": 2294
+        }
+      }
+    },
+    "linux_runtime_lock_upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "locked_package_count",
+        "target_interpreter",
+        "target_platform"
+      ],
+      "properties": {
+        "path": {
+          "const": "requirements-r8c-linux-x86_64.lock"
+        },
+        "sha256": {
+          "const": "288dc0e9cdaa38d61ede8abffb8bbad17f76b43adb0f19be1adcdbaeb1a25dd6"
+        },
+        "bytes": {
+          "const": 3728
+        },
+        "locked_package_count": {
+          "const": 35
+        },
+        "target_interpreter": {
+          "const": "CPython 3.12"
+        },
+        "target_platform": {
+          "const": "Linux x86_64 manylinux2014-compatible"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "contract_id": "WGT-V11-R6-ISOLATED-RESULT-BLIND-ENGINEERING-PILOT-01",
+  "schema_version": "1.0.0",
+  "protocol_stage": "R6",
+  "status": "AUTHOR_AUTHORIZED__ENGINEERING_PILOT_ONLY__NO_EFFECT_AUTHORITY",
+  "frozen_date": "2026-07-25",
+  "author_authorization_text": "R6_PILOT_AUTHORIZED",
+  "execution_authority": "development_only_not_effect_evidence",
+  "upstream": {
+    "r5_contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+    "r5_contract_path": "config/r5/r5_freeze_contract.json",
+    "r5_contract_sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554",
+    "r5_base_commit": "4526bc1cc3123bdadc331117c94e3a09f42fe2eb",
+    "r5_base_tree": "685aa9824f9cd6004c58950264d9d60f27fc3aa0",
+    "r3_model_status": "MODEL_QUALIFICATION_FAILED_POINT_MODEL_NOT_QUALIFIED_ONE_TIME_CONSUMED"
+  },
+  "pilot_schedule": {
+    "repetitions_per_fixture": 2,
+    "algorithm_seed": 17,
+    "development_fixture_seed": 620260725,
+    "static_public_correctness": {
+      "fixture_id": "static_bridge_e0",
+      "events": 1,
+      "cfe_per_event": 4,
+      "atomic_steps_per_cfe": 1
+    },
+    "illustrative_e3": {
+      "fixture_id": "illustrative_nonformal_development_fixture",
+      "events": 5,
+      "cfe_per_event": 8,
+      "atomic_steps_per_cfe": 6,
+      "baseline_rule": "single explicit static development baseline; not derived from R5 public subject seeds",
+      "target_rule": "single explicit 85 kg development target; not the formal E3 target rule",
+      "scenarios": [
+        "NOMINAL",
+        "PARAMETER_MISMATCH_EVAL_EE_PLUS_10_PERCENT",
+        "MODEL_FORM_MISMATCH_HALL_LINEARIZED_EVALUATION",
+        "OBSERVATION_NOISE_GAUSSIAN_SD_0_5_KG",
+        "MISSINGNESS_EVERY_FOURTH_POSTBASELINE_WEEK",
+        "IMPLEMENTATION_DEVIATION_75_PERCENT_INTAKE_ACTIVITY_FREQUENCY",
+        "ENERGY_SURPLUS_PLUS_250_KCAL_DAY",
+        "OUT_OF_DOMAIN_STATE_FAT_50KG_LEAN_35KG",
+        "INFEASIBLE_REQUIRED_DEFICIT_1500_OVER_ACTION_CAP_1000_KCAL_DAY"
+      ]
+    }
+  },
+  "budget": {
+    "scheduled_worker_processes": 20,
+    "total_cfe": 728,
+    "total_atomic_model_steps": 4328,
+    "unused_budget_transfer_allowed": false,
+    "method_specific_budget_allowed": false
+  },
+  "resource_controls": {
+    "max_parallel_workers": 1,
+    "threads_per_worker": 1,
+    "worker_hard_timeout_seconds": 120,
+    "global_wall_timeout_seconds": 2400,
+    "max_worker_peak_rss_bytes": 2147483648,
+    "max_output_bytes": 20971520,
+    "auto_retry_allowed": false,
+    "attempts_per_scheduled_worker": 1,
+    "gpu_allowed": false
+  },
+  "output_contract": {
+    "required_root": "runs/r6-engineering-pilot",
+    "must_be_absolute": true,
+    "must_be_outside_repository": true,
+    "must_not_preexist": true,
+    "files": [
+      "engineering_records.jsonl.gz",
+      "runtime_report.json",
+      "deviation_record.json",
+      "run_manifest.json"
+    ],
+    "raw_objectives_persisted": false,
+    "raw_actions_persisted": false,
+    "raw_states_persisted": false,
+    "participant_rows_persisted": false,
+    "semantic_hash_only": true,
+    "gzip_mtime": 0
+  },
+  "permissions": {
+    "r6_engineering_pilot_allowed": true,
+    "participant_data_allowed": false,
+    "effect_estimation_allowed": false,
+    "method_comparison_allowed": false,
+    "formal_subject_generation_allowed": false,
+    "hidden_generation_allowed": false,
+    "results_writing_allowed": false,
+    "remote_git_mutation_allowed": false,
+    "release_or_distribution_allowed": false,
+    "automatic_retry_allowed": false
+  },
+  "acceptance": {
+    "all_workers_exit_zero": true,
+    "paired_replay_semantic_hashes_must_match": true,
+    "joint_ledger_must_balance": true,
+    "scenario_branch_count": 9,
+    "missingness_branch_must_be_reached_at_week_4": true,
+    "resource_ceiling_must_hold": true,
+    "deviations_must_be_empty": true
+  },
+  "formal_input_gap": {
+    "r5_seed_to_subject_parameter_generator_frozen": false,
+    "r5_formal_target_rule_frozen": false,
+    "r6_may_invent_formal_rules": false,
+    "required_next_action": "R5A_RESULT_BLIND_E3_SUBJECT_GENERATOR_AND_TARGET_RULE_FREEZE"
+  },
+  "next_gate": {
+    "gate_id": "V11_R7_FORMAL_EXECUTION_AUTHORIZATION",
+    "authorized": false,
+    "blocked_by": "R5A_RESULT_BLIND_E3_SUBJECT_GENERATOR_AND_TARGET_RULE_FREEZE"
+  },
+  "official_command": [
+    "python",
+    "tools/run_v11_r6_pilot.py",
+    "--contract",
+    "config/r6/r6_pilot_contract.json",
+    "--output-root",
+    "runs/r6-engineering-pilot"
+  ]
+}

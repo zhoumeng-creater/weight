@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R7-FORMAL-EXECUTION-CONTRACT-SCHEMA-01",
+  "type": "object",
+  "required": [
+    "contract_id",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "authorization",
+    "upstream",
+    "schedule",
+    "method_runtime",
+    "launch",
+    "resources",
+    "failure_and_recovery",
+    "persistence",
+    "permissions",
+    "r8_gate"
+  ],
+  "properties": {
+    "contract_id": {
+      "const": "WGT-V11-R7-FORMAL-EXECUTION-CONTRACT-01"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R7"
+    },
+    "status": {
+      "const": "R7_AUTHORIZED_R8_COMMAND_FROZEN_PENDING_VERBATIM_CONFIRMATION"
+    },
+    "authorization": {
+      "type": "object",
+      "properties": {
+        "author_text": {
+          "const": "R7_FORMAL_EXECUTION_AUTHORIZED"
+        },
+        "formal_effect_execution_started": {
+          "const": false
+        },
+        "r8_execution_authorized_by_this_record": {
+          "const": false
+        }
+      },
+      "required": [
+        "author_text",
+        "formal_effect_execution_started",
+        "r8_execution_authorized_by_this_record"
+      ]
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "WGT-V11-R7-FORMAL-SCHEDULE-01"
+        },
+        "sha256": {
+          "const": "40ea633532a3ba2c461ae47925a91ccae305bafac397e6246ced1951fa6e8969"
+        },
+        "e2_full_reuse_rows": {
+          "const": 310
+        },
+        "e2_full_reuse_sha256": {
+          "const": "bd6e92a96c0b7bfa899b319db1e9d8fef50c9a4cbaab08b14187ff739eb90fe8"
+        },
+        "totals": {
+          "type": "object",
+          "properties": {
+            "method_sequences": {
+              "const": 7046
+            },
+            "CFE": {
+              "const": 1075647488
+            },
+            "atomic_model_steps": {
+              "const": 3318884928
+            }
+          },
+          "required": [
+            "method_sequences",
+            "CFE",
+            "atomic_model_steps"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sha256",
+        "e2_full_reuse_rows",
+        "e2_full_reuse_sha256",
+        "totals"
+      ]
+    },
+    "launch": {
+      "type": "object",
+      "properties": {
+        "verbatim_author_confirmation_required": {
+          "const": true
+        },
+        "current_confirmation_state": {
+          "const": "PENDING"
+        },
+        "one_time_consumption": {
+          "const": true
+        },
+        "overwrite_allowed": {
+          "const": false
+        }
+      },
+      "required": [
+        "working_directory",
+        "contract_path",
+        "request_path",
+        "output_root",
+        "exact_command",
+        "verbatim_author_confirmation_required",
+        "current_confirmation_state",
+        "one_time_consumption",
+        "overwrite_allowed"
+      ]
+    },
+    "resources": {
+      "type": "object",
+      "properties": {
+        "parallelism": {
+          "type": "object",
+          "properties": {
+            "max_workers": {
+              "const": 12
+            },
+            "logical_threads_per_worker": {
+              "const": 1
+            },
+            "blas_openmp_threads_per_worker": {
+              "const": 1
+            },
+            "max_worker_peak_rss_bytes": {
+              "const": 2147483648
+            },
+            "max_pool_peak_rss_bytes": {
+              "const": 25769803776
+            }
+          },
+          "required": [
+            "max_workers",
+            "logical_threads_per_worker",
+            "blas_openmp_threads_per_worker",
+            "max_worker_peak_rss_bytes",
+            "max_pool_peak_rss_bytes"
+          ]
+        },
+        "max_total_cpu_seconds": {
+          "const": 14515200
+        }
+      },
+      "required": [
+        "parallelism",
+        "timeouts_seconds",
+        "max_total_cpu_seconds",
+        "scratch",
+        "output",
+        "monitor"
+      ]
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "participant_data": {
+          "const": false
+        },
+        "hidden_instance_or_seed": {
+          "const": false
+        },
+        "effect_analysis": {
+          "const": false
+        },
+        "results_writing": {
+          "const": false
+        },
+        "remote_git_mutation": {
+          "const": false
+        },
+        "release_or_distribution": {
+          "const": false
+        }
+      },
+      "required": [
+        "public_benchmark_effect_execution",
+        "public_synthetic_weight_effect_execution",
+        "participant_data",
+        "hidden_instance_or_seed",
+        "effect_analysis",
+        "results_writing",
+        "remote_git_mutation",
+        "release_or_distribution"
+      ]
+    },
+    "r8_gate": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "const": "WGT-V11-R8-EXECUTION-REQUEST-20260725-01"
+        },
+        "request_status": {
+          "const": "PENDING_VERBATIM_AUTHOR_CONFIRMATION"
+        },
+        "launch_before_gate_closure": {
+          "const": "PROHIBITED"
+        }
+      },
+      "required": [
+        "request_id",
+        "request_status",
+        "launch_before_gate_closure"
+      ]
+    }
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/wgt-v11/r9-inference-implementation-v1.0.1.schema.json",
+  "title": "WGT v1.1 R9 inference implementation contract v1.0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "implementation_id",
+    "schema_version",
+    "status",
+    "authorization",
+    "provenance",
+    "r5_binding",
+    "input_binding",
+    "implementation_source_artifacts",
+    "procedure",
+    "hypothesis_order",
+    "permissions"
+  ],
+  "properties": {
+    "implementation_id": {
+      "const": "WGT-V11-R9-INFERENCE-v1.0.1-result-aware-authorized"
+    },
+    "schema_version": {"const": "1.0.1"},
+    "status": {"const": "RESULT_AWARE_AUTHOR_APPROVED_FROZEN"},
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "text", "token"],
+      "properties": {
+        "date": {"const": "2026-07-27"},
+        "text": {"type": "string", "minLength": 1},
+        "token": {
+          "const": "R9_RESULT_AWARE_CONFIRMATORY_INFERENCE_AUTHORIZED"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_visibility",
+        "claim",
+        "supersedes_nonconforming_implementation",
+        "correction",
+        "endpoint_change",
+        "sample_change",
+        "threshold_change",
+        "method_change"
+      ],
+      "properties": {
+        "result_visibility": {"const": "EFFECTS_ALREADY_VISIBLE"},
+        "claim": {
+          "const": "AUTHOR_APPROVED_POST_VISIBILITY_SOFTWARE_IMPLEMENTATION"
+        },
+        "supersedes_nonconforming_implementation": {
+          "const": "WGT-V11-R9-INFERENCE-v1.0.0-result-aware-authorized"
+        },
+        "correction": {"type": "string", "minLength": 1},
+        "endpoint_change": {"const": false},
+        "sample_change": {"const": false},
+        "threshold_change": {"const": false},
+        "method_change": {"const": false}
+      }
+    },
+    "r5_binding": {"$ref": "#/$defs/pathCommitment"},
+    "input_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_root",
+        "export_manifest_sha256",
+        "raw_run_manifest_sha256",
+        "schedule_sha256",
+        "reference_catalog_sha256",
+        "artifacts"
+      ],
+      "properties": {
+        "input_root": {"type": "string", "minLength": 1},
+        "export_manifest_sha256": {
+          "const": "9b9761360294b6194aea05d09504223c49fafee26f9e343e5fd7e5667d0b9e94"
+        },
+        "raw_run_manifest_sha256": {
+          "const": "33ab590adf809ca2b1f87c1ef225a18d43f50dbc40d7f3c2e2da7a379b1768d3"
+        },
+        "schedule_sha256": {"$ref": "#/$defs/hash"},
+        "reference_catalog_sha256": {"$ref": "#/$defs/hash"},
+        "artifacts": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/commitment"}
+        }
+      }
+    },
+    "implementation_source_artifacts": {
+      "type": "object",
+      "minProperties": 4,
+      "additionalProperties": {"$ref": "#/$defs/commitment"}
+    },
+    "procedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aggregation",
+        "bootstrap_replicates",
+        "bootstrap_level",
+        "bootstrap_seed_u64",
+        "bootstrap_percentile_method",
+        "rolling_bootstrap_stratification",
+        "nested_seed_bootstrap",
+        "sign_flip_replicates",
+        "sign_flip_seed_u64",
+        "sign_flip_p_value",
+        "holm_familywise_alpha",
+        "rng_consumption_order",
+        "continuous_endpoint_bounds",
+        "missing_policy",
+        "effect_direction"
+      ],
+      "properties": {
+        "aggregation": {"type": "string", "minLength": 1},
+        "bootstrap_replicates": {"const": 20000},
+        "bootstrap_level": {"const": 0.95},
+        "bootstrap_seed_u64": {"const": "18411052415373205191"},
+        "bootstrap_percentile_method": {"const": "linear"},
+        "rolling_bootstrap_stratification": {
+          "const": "resample instances within each fixed rolling template"
+        },
+        "nested_seed_bootstrap": {
+          "const": "paired seeds resampled within each selected cluster and fixed profile/template stratum"
+        },
+        "sign_flip_replicates": {"const": 100000},
+        "sign_flip_seed_u64": {"const": "12682445017195329024"},
+        "sign_flip_p_value": {"const": "(b+1)/(B+1)"},
+        "holm_familywise_alpha": {"const": 0.05},
+        "rng_consumption_order": {
+          "const": "one PCG64 stream per procedure; hypotheses consume sequentially"
+        },
+        "continuous_endpoint_bounds": {"const": [0.0, 1.0]},
+        "missing_policy": {"type": "string", "minLength": 1},
+        "effect_direction": {"const": "proposed minus comparator"}
+      }
+    },
+    "hypothesis_order": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "r9_inference_allowed",
+        "e3_allowed",
+        "raw_mutation_allowed",
+        "input_mutation_allowed",
+        "r10_results_writing_allowed"
+      ],
+      "properties": {
+        "r9_inference_allowed": {"const": true},
+        "e3_allowed": {"const": false},
+        "raw_mutation_allowed": {"const": false},
+        "input_mutation_allowed": {"const": false},
+        "r10_results_writing_allowed": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "commitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes", "sha256"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "pathCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {
+          "const": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+        }
+      }
+    }
+  }
+}

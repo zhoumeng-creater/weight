@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R2-EXECUTION-REQUEST-SCHEMA-01",
+  "title": "v1.1 R2 correctness-only execution request",
+  "type": "object",
+  "required": [
+    "protocol_id",
+    "protocol_version",
+    "r2_start_record_id",
+    "f22_f23_shade_amendment_id",
+    "f22_shade_success_overlay_id",
+    "f23_shade_success_overlay_id",
+    "scope",
+    "permissions"
+  ],
+  "properties": {
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_version": {
+      "const": "v1.1.8-r2-shade-success-frozen"
+    },
+    "r2_start_record_id": {
+      "const": "WGT-V11-R2-START-20260724-01"
+    },
+    "f22_f23_shade_amendment_id": {
+      "const": "AMEND-V11-F22-F23-SHADE-20260724-01"
+    },
+    "f22_shade_success_overlay_id": {
+      "const": "WGT-DT-RAMDE-F22-SHADE-SUCCESS-OVERLAY-01"
+    },
+    "f23_shade_success_overlay_id": {
+      "const": "WGT-F23-SHADE-SUCCESS-BINDING-OVERLAY-01"
+    },
+    "scope": {
+      "enum": [
+        "unit_test_fixture",
+        "public_correctness_fixture"
+      ]
+    },
+    "permissions": {
+      "type": "object",
+      "required": [
+        "participant_data_requested",
+        "effect_estimation_requested",
+        "hidden_generation_requested",
+        "results_writing_requested",
+        "remote_git_mutation_requested",
+        "release_or_distribution_requested"
+      ],
+      "properties": {
+        "participant_data_requested": {
+          "const": false
+        },
+        "effect_estimation_requested": {
+          "const": false
+        },
+        "hidden_generation_requested": {
+          "const": false
+        },
+        "results_writing_requested": {
+          "const": false
+        },
+        "remote_git_mutation_requested": {
+          "const": false
+        },
+        "release_or_distribution_requested": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,126 @@
+{
+  "contract_id": "WGT-V11-R7-FORMAL-EXECUTION-CONTRACT-01",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R7",
+  "status": "R7_AUTHORIZED_R8_COMMAND_FROZEN_PENDING_VERBATIM_CONFIRMATION",
+  "created_date": "2026-07-25",
+  "authorization": {
+    "author_text": "R7_FORMAL_EXECUTION_AUTHORIZED",
+    "authorized_scope": "formal_execution_authorization_and_optional_new_commitment",
+    "formal_effect_execution_started": false,
+    "r8_execution_authorized_by_this_record": false
+  },
+  "upstream": {
+    "r5": {
+      "contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+      "path": "config/r5/r5_freeze_contract.json",
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+    },
+    "r5a": {
+      "contract_id": "WGT-V11-R5A-E3-INPUT-CONTRACT-01",
+      "path": "config/r5a/e3_input_contract.json",
+      "sha256": "a7275dc1624fc2167c0ed5a599f9b5cb3297151037c47c5b85fb27d38e857424"
+    }
+  },
+  "schedule": {
+    "id": "WGT-V11-R7-FORMAL-SCHEDULE-01",
+    "canonical_format": "UTF-8 canonical JSONL, one FormalSequenceSpec per line",
+    "sha256": "40ea633532a3ba2c461ae47925a91ccae305bafac397e6246ced1951fa6e8969",
+    "e2_full_reuse_rows": 310,
+    "e2_full_reuse_sha256": "bd6e92a96c0b7bfa899b319db1e9d8fef50c9a4cbaab08b14187ff739eb90fe8",
+    "totals": {
+      "method_sequences": 7046,
+      "CFE": 1075647488,
+      "atomic_model_steps": 3318884928
+    },
+    "e2_full_reuse": "The 310-row reuse map references exact immutable E1 FULL task IDs and later task-manifest hashes; E2 FULL is not redispatched or recounted",
+    "fixed_e3_replicate_rule": "FIXED_ENERGY_DEFICIT_POLICY uses replicate_index 0 once per subject-scenario unit"
+  },
+  "method_runtime": {
+    "population_size": 20,
+    "archive_capacity": 20,
+    "paired_initialization": "RandomStream.INITIALIZATION excludes method_id and is shared at each unit-replicate-event",
+    "method_rng": "RandomStream.ALGORITHM includes method_id and comparator_root or registered DT-RAMDE substream",
+    "formal_e3_planning": "nominal nonlinear Hall only for every scenario",
+    "formal_e3_execution": "R5a layer-specific observation, feasibility, execution transform and evaluation transition only"
+  },
+  "launch": {
+    "working_directory": ".",
+    "contract_path": "config/r7/r7_formal_execution_contract.json",
+    "request_path": "config/r7/r7_execution_request.json",
+    "output_root": "runs/r8-formal",
+    "exact_command": "python tools/run_v11_r8_formal.py --contract config/r7/r7_formal_execution_contract.json --request config/r7/r7_execution_request.json --output-root runs/r8-formal",
+    "verbatim_author_confirmation_required": true,
+    "current_confirmation_state": "PENDING",
+    "one_time_consumption": true,
+    "overwrite_allowed": false
+  },
+  "resources": {
+    "parallelism": {
+      "max_workers": 12,
+      "logical_threads_per_worker": 1,
+      "blas_openmp_threads_per_worker": 1,
+      "max_worker_peak_rss_bytes": 2147483648,
+      "max_pool_peak_rss_bytes": 25769803776
+    },
+    "timeouts_seconds": {
+      "per_static_sequence": 3600,
+      "per_dynamic_sequence": 21600,
+      "per_rolling_sequence": 10800,
+      "per_e3_sequence": 10800,
+      "global_formal_wall": 1209600
+    },
+    "max_total_cpu_seconds": 14515200,
+    "scratch": {
+      "required_root": "runs",
+      "onedrive_path_allowed": false,
+      "minimum_free_bytes_at_start": 225485783040,
+      "stop_dispatch_below_free_bytes": 32212254720
+    },
+    "output": {
+      "max_total_bytes": 193273528320,
+      "raw_evaluations_required": true,
+      "format": "deterministic gzip UTF-8 canonical JSONL task chunks",
+      "silent_truncation_allowed": false
+    },
+    "monitor": {
+      "interval_seconds": 1,
+      "stall_suspected_seconds": 90,
+      "stall_action": "ADVISORY_ONLY_NO_AUTOMATIC_TERMINATION",
+      "resource_anomaly_action": "STOP_NEW_DISPATCH_AND_COOPERATIVE_EVENT_BOUNDARY_STOP",
+      "hard_timeout_action": "TERMINATE_PROCESS"
+    }
+  },
+  "failure_and_recovery": {
+    "automatic_retries": 0,
+    "method_specific_failure": "retain typed task failure as a formal outcome; do not retry",
+    "infrastructure_failure": "retain logs; no retry without author-approved deviation record",
+    "resume_policy": "PROHIBITED_WITHOUT_AUTHOR_APPROVED_RESULT_BLIND_DEVIATION_RECORD",
+    "resource_breach": "stop new dispatch, create cooperative stop marker, preserve completed and partial immutable artifacts, mark INCOMPLETE_RESOURCE_CEILING",
+    "global_or_sequence_hard_timeout": "terminate the timed process, preserve logs, never retry automatically"
+  },
+  "persistence": {
+    "control_plane": "redacted counts, resource state, task IDs and hashes only",
+    "data_plane": "task-local immutable raw evaluations and summaries unavailable to scheduling decisions",
+    "task_attempts": 1,
+    "manifest_hashing": "SHA-256 per raw chunk, task manifest and run manifest",
+    "analysis_during_r8": false,
+    "analysis_next_gate": "R9_RAW_LOCK_AND_ANALYSIS"
+  },
+  "permissions": {
+    "public_benchmark_effect_execution": true,
+    "public_synthetic_weight_effect_execution": true,
+    "participant_data": false,
+    "hidden_instance_or_seed": false,
+    "effect_analysis": false,
+    "results_writing": false,
+    "remote_git_mutation": false,
+    "release_or_distribution": false
+  },
+  "r8_gate": {
+    "request_id": "WGT-V11-R8-EXECUTION-REQUEST-20260725-01",
+    "request_status": "PENDING_VERBATIM_AUTHOR_CONFIRMATION",
+    "required_source_identity": "clean full Git commit and tree frozen in the external R8 request after R7 implementation closure",
+    "launch_before_gate_closure": "PROHIBITED"
+  }
+}

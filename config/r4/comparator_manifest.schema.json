@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wgt-v11.invalid/schema/r4/comparator_manifest.schema.json",
+  "title": "WGT-V11 R4 comparator manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "protocol_stage",
+    "status",
+    "effect_estimation_allowed",
+    "shared_contract",
+    "methods"
+  ],
+  "properties": {
+    "manifest_id": {
+      "const": "WGT-V11-R4-COMPARATOR-MANIFEST-01"
+    },
+    "protocol_stage": {
+      "const": "R4"
+    },
+    "status": {
+      "const": "EXECUTABLE_BINDING_CLOSED_NO_EFFECT_AUTHORITY"
+    },
+    "effect_estimation_allowed": {
+      "const": false
+    },
+    "shared_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objective_constraint_evaluator",
+        "constraint_convention",
+        "repair_policy",
+        "budget_unit",
+        "atomic_step_accounting",
+        "information_boundary",
+        "paired_seed_policy",
+        "failure_policy",
+        "archive_policy",
+        "selector_policy",
+        "resource_policy_stage"
+      ],
+      "properties": {
+        "objective_constraint_evaluator": {"type": "string", "minLength": 1},
+        "constraint_convention": {"const": "c_le_0_feasible"},
+        "repair_policy": {"type": "string", "minLength": 1},
+        "budget_unit": {"const": "joint_candidate_evaluation_CFE"},
+        "atomic_step_accounting": {"type": "string", "minLength": 1},
+        "information_boundary": {"type": "string", "minLength": 1},
+        "paired_seed_policy": {"type": "string", "minLength": 1},
+        "failure_policy": {"type": "string", "minLength": 1},
+        "archive_policy": {"type": "string", "minLength": 1},
+        "selector_policy": {"type": "string", "minLength": 1},
+        "resource_policy_stage": {"const": "R5"}
+      }
+    },
+    "methods": {
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "method_id",
+          "implementation",
+          "constructor",
+          "source_kind",
+          "cross_event_state",
+          "shared_evaluator",
+          "shared_ledger",
+          "effect_execution_allowed"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "matched_fixed_de_pareto",
+              "matched_jde_style_pareto",
+              "matched_shade_style_pareto",
+              "standard_pareto_de_no_cross_event",
+              "external_non_de_static_cmoea",
+              "external_dynamic_constrained_moea",
+              "domain_fixed_energy_deficit",
+              "domain_conventional_rolling_planner"
+            ]
+          },
+          "method_id": {"type": "string", "minLength": 1},
+          "implementation": {"type": "string", "minLength": 1},
+          "constructor": {"type": "object"},
+          "source_kind": {
+            "enum": [
+              "project_matched",
+              "external_search_project_bridge",
+              "domain_policy"
+            ]
+          },
+          "upstream": {"type": ["object", "null"]},
+          "cross_event_state": {"type": "boolean"},
+          "shared_evaluator": {"const": true},
+          "shared_ledger": {"const": true},
+          "effect_execution_allowed": {"const": false},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}

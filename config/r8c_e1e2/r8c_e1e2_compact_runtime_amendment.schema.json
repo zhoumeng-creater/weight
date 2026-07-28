@@ -1,0 +1,884 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-SCHEMA-01",
+  "title": "R8C E1+E2 result-blind compact runtime amendment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "amendment_id",
+    "schema_version",
+    "protocol_id",
+    "protocol_stage",
+    "status",
+    "created_date",
+    "scope",
+    "runtime_identities",
+    "implementation",
+    "same_seed_equivalence",
+    "verification",
+    "local_ab_benchmark",
+    "full_batch_projection",
+    "result_blindness",
+    "authority_boundary"
+  ],
+  "properties": {
+    "amendment_id": {
+      "const": "WGT-V11-R8C-E1E2-COMPACT-RUNTIME-AMENDMENT-01"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "protocol_id": {
+      "const": "WGT-JOURNAL-2026-01"
+    },
+    "protocol_stage": {
+      "const": "R8C_E1E2_RESULT_BLIND_COMPACT_RUNTIME_EQUIVALENCE"
+    },
+    "status": {
+      "const": "FROZEN_RESULT_BLIND_CORRECTIVE_RUNTIME_EVIDENCE_NOT_EXECUTION_AUTHORITY"
+    },
+    "created_date": {
+      "const": "2026-07-26"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workloads",
+        "persistence_mode",
+        "corrective_formal_configuration_evidence_id",
+        "qualification_configuration_evidence_id",
+        "legacy_raw_behavior",
+        "e3_in_scope",
+        "research_endpoints_changed",
+        "sample_seed_or_cfe_contract_changed"
+      ],
+      "properties": {
+        "workloads": {
+          "const": [
+            "E1_STATIC",
+            "E1_DYNAMIC",
+            "E1_ROLLING",
+            "E2_DYNAMIC_INCREMENTAL_AFTER_FULL_REUSE",
+            "E2_ROLLING_INCREMENTAL_AFTER_FULL_REUSE"
+          ]
+        },
+        "persistence_mode": {
+          "const": "WGT_CFE_CHECKPOINT_BINARY_V1_ENDPOINT_SUFFICIENT"
+        },
+        "corrective_formal_configuration_evidence_id": {
+          "const": "WGT_V11_R8C_PUBLIC_E1_E2_FORMAL"
+        },
+        "qualification_configuration_evidence_id": {
+          "const": "WGT_V11_R8C_E1E2_FULL_PATH_TARGET_QUALIFICATION_PILOT"
+        },
+        "legacy_raw_behavior": {
+          "const": "FULL_AUDIT_MATERIALIZATION_AND_SERIALIZED_CONFIG_IDENTITY_UNCHANGED"
+        },
+        "e3_in_scope": {
+          "const": false
+        },
+        "research_endpoints_changed": {
+          "const": false
+        },
+        "sample_seed_or_cfe_contract_changed": {
+          "const": false
+        }
+      }
+    },
+    "runtime_identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full",
+        "compact_checkpoint",
+        "binding_rule"
+      ],
+      "properties": {
+        "full": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "audit_materialization",
+            "engine_identity_field_present",
+            "legacy_config_serialization_field_present",
+            "audit_outputs_materialized"
+          ],
+          "properties": {
+            "audit_materialization": {
+              "const": "full"
+            },
+            "engine_identity_field_present": {
+              "const": false
+            },
+            "legacy_config_serialization_field_present": {
+              "const": false
+            },
+            "audit_outputs_materialized": {
+              "const": true
+            }
+          }
+        },
+        "compact_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "audit_materialization",
+            "engine_identity_field_present",
+            "config_serialization_field_present",
+            "audit_outputs_materialized"
+          ],
+          "properties": {
+            "audit_materialization": {
+              "const": "compact_checkpoint"
+            },
+            "engine_identity_field_present": {
+              "const": true
+            },
+            "config_serialization_field_present": {
+              "const": true
+            },
+            "audit_outputs_materialized": {
+              "const": false
+            }
+          }
+        },
+        "binding_rule": {
+          "const": "COMPACT_CHECKPOINT_IS_ALLOWED_ONLY_FOR_THE_CORRECTIVE_E1_E2_FORMAL_CONFIGURATION_OR_ITS_RESULT_BLIND_TARGET_QUALIFICATION"
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "optimization_a",
+        "optimization_b",
+        "scientific_state_preserved"
+      ],
+      "properties": {
+        "optimization_a": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "skipped_material",
+            "retained_minimum_lineage",
+            "selection_terminal_ledger_archive_feedback_semantics_changed",
+            "evaluation_stream_hash_chain_changed"
+          ],
+          "properties": {
+            "id": {
+              "const": "SKIP_UNCONSUMED_ENGINE_AUDIT_MATERIAL"
+            },
+            "skipped_material": {
+              "type": "array",
+              "minItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              }
+            },
+            "retained_minimum_lineage": {
+              "type": "array",
+              "minItems": 8,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/non_empty_string"
+              }
+            },
+            "selection_terminal_ledger_archive_feedback_semantics_changed": {
+              "const": false
+            },
+            "evaluation_stream_hash_chain_changed": {
+              "const": false
+            }
+          }
+        },
+        "optimization_b": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "checkpoint_known_front_only",
+            "fixed_items_validated_once_per_snapshot",
+            "legacy_callers_retain_per_candidate_scale_validation",
+            "ordering_or_crowding_semantics_changed"
+          ],
+          "properties": {
+            "id": {
+              "const": "ONE_FIXED_SCHEMA_VALIDATION_PER_CHECKPOINT_SNAPSHOT"
+            },
+            "checkpoint_known_front_only": {
+              "const": true
+            },
+            "fixed_items_validated_once_per_snapshot": {
+              "const": [
+                "OBJECTIVE_IDENTITY",
+                "CONSTRAINT_IDENTITY",
+                "OBJECTIVE_LENGTH",
+                "CONSTRAINT_LENGTH",
+                "FINITE_VALUES",
+                "CONSTRAINT_SCALES"
+              ]
+            },
+            "legacy_callers_retain_per_candidate_scale_validation": {
+              "const": true
+            },
+            "ordering_or_crowding_semantics_changed": {
+              "const": false
+            }
+          }
+        },
+        "scientific_state_preserved": {
+          "type": "array",
+          "minItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        }
+      }
+    },
+    "same_seed_equivalence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "test_file",
+        "test_name",
+        "cases",
+        "byte_exact_claims",
+        "structural_exact_claims",
+        "compact_audit_outputs_empty",
+        "full_reference_audit_outputs_present",
+        "all_three_case_classes_passed"
+      ],
+      "properties": {
+        "test_file": {
+          "const": "tests/test_v11_e1e2_compact_runtime.py"
+        },
+        "test_name": {
+          "const": "test_compact_engine_is_scientifically_exact_to_full_audit_reference"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/static_case"
+            },
+            {
+              "$ref": "#/$defs/cdf_case"
+            },
+            {
+              "$ref": "#/$defs/rolling_case"
+            }
+          ],
+          "items": false
+        },
+        "byte_exact_claims": {
+          "const": [
+            "CHECKPOINT_FRONTS_CFE_FILE",
+            "EVENT_SUMMARIES_JSONL"
+          ]
+        },
+        "structural_exact_claims": {
+          "type": "array",
+          "minItems": 7,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        },
+        "compact_audit_outputs_empty": {
+          "const": true
+        },
+        "full_reference_audit_outputs_present": {
+          "const": true
+        },
+        "all_three_case_classes_passed": {
+          "const": true
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focused_regression",
+        "ruff",
+        "git_diff_check"
+      ],
+      "properties": {
+        "focused_regression": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "test_count",
+            "test_paths"
+          ],
+          "properties": {
+            "status": {
+              "const": "PASS"
+            },
+            "test_count": {
+              "const": 323
+            },
+            "test_paths": {
+              "type": "array",
+              "minItems": 13,
+              "maxItems": 13,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^tests/test_v11_[a-z0-9_]+\\.py$"
+              }
+            }
+          }
+        },
+        "ruff": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "scope"
+          ],
+          "properties": {
+            "status": {
+              "const": "PASS"
+            },
+            "scope": {
+              "const": "ALL_COMPACT_RUNTIME_IMPLEMENTATION_AND_TEST_FILES"
+            }
+          }
+        },
+        "git_diff_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "PASS"
+            }
+          }
+        }
+      }
+    },
+    "local_ab_benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machine",
+        "design",
+        "samples",
+        "component_interpretation"
+      ],
+      "properties": {
+        "machine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "role",
+            "cpu_model",
+            "physical_cores",
+            "logical_processors",
+            "memory_bytes",
+            "system",
+            "python",
+            "numpy",
+            "host_fingerprint_sha256"
+          ],
+          "properties": {
+            "role": {
+              "const": "LOCAL_NON_TARGET_PERFORMANCE_EVIDENCE_ONLY"
+            },
+            "cpu_model": {
+              "const": "13th Gen Intel(R) Core(TM) i7-13700HX"
+            },
+            "physical_cores": {
+              "const": 16
+            },
+            "logical_processors": {
+              "const": 24
+            },
+            "memory_bytes": {
+              "const": 34038341632
+            },
+            "system": {
+              "const": "Windows 11"
+            },
+            "python": {
+              "const": "CPython 3.12.4"
+            },
+            "numpy": {
+              "const": "1.26.4"
+            },
+            "host_fingerprint_sha256": {
+              "const": "43ab5d6feb0c4d6b237d0389686c7722148501dbcba454a29f2e2761fa2919b1"
+            }
+          }
+        },
+        "design": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "population_size",
+            "archive_capacity",
+            "cfe_per_event",
+            "events_per_sample",
+            "process_worker_count",
+            "seed",
+            "warmup_runs_per_case",
+            "timing_metric",
+            "production_checkpoint_writer_used",
+            "real_effect_values_persisted"
+          ],
+          "properties": {
+            "population_size": {
+              "const": 100
+            },
+            "archive_capacity": {
+              "const": 100
+            },
+            "cfe_per_event": {
+              "const": 5000
+            },
+            "events_per_sample": {
+              "const": 1
+            },
+            "process_worker_count": {
+              "const": 1
+            },
+            "seed": {
+              "const": 8202607260
+            },
+            "warmup_runs_per_case": {
+              "const": 1
+            },
+            "timing_metric": {
+              "const": "WALL_SECONDS_PER_PRODUCTION_QUALIFICATION_TASK"
+            },
+            "production_checkpoint_writer_used": {
+              "const": true
+            },
+            "real_effect_values_persisted": {
+              "const": false
+            }
+          }
+        },
+        "samples": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "CDF",
+            "ROLLING"
+          ],
+          "properties": {
+            "CDF": {
+              "$ref": "#/$defs/cdf_benchmark_sample"
+            },
+            "ROLLING": {
+              "$ref": "#/$defs/rolling_benchmark_sample"
+            }
+          }
+        },
+        "component_interpretation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "optimization_a_cdf_speedup_percent",
+            "optimization_a_rolling_speedup_percent",
+            "optimization_b_cdf_speedup_percent",
+            "optimization_b_rolling_speedup_percent",
+            "optimization_b_alone_has_timing_noise",
+            "combined_optimization_retained_because_scientific_equivalence_is_exact_and_combined_gain_is_clear"
+          ],
+          "properties": {
+            "optimization_a_cdf_speedup_percent": {
+              "const": 20.6
+            },
+            "optimization_a_rolling_speedup_percent": {
+              "const": 13.5
+            },
+            "optimization_b_cdf_speedup_percent": {
+              "const": -2.79
+            },
+            "optimization_b_rolling_speedup_percent": {
+              "const": 2.19
+            },
+            "optimization_b_alone_has_timing_noise": {
+              "const": true
+            },
+            "combined_optimization_retained_because_scientific_equivalence_is_exact_and_combined_gain_is_clear": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "full_batch_projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formal_cfe_weights",
+        "median_cfe_weighted_speedup_percent",
+        "conservative_observed_envelope",
+        "decision_gate_percent",
+        "decision_gate_passed",
+        "interpretation",
+        "is_target_host_wall_time_eta",
+        "may_replace_target_host_qualification"
+      ],
+      "properties": {
+        "formal_cfe_weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dynamic_dt_ramde",
+            "rolling_dt_ramde",
+            "static_dt_ramde_assigned_zero_gain",
+            "comparators_assigned_zero_gain",
+            "total_e1_e2"
+          ],
+          "properties": {
+            "dynamic_dt_ramde": {
+              "const": 360000000
+            },
+            "rolling_dt_ramde": {
+              "const": 144000000
+            },
+            "static_dt_ramde_assigned_zero_gain": {
+              "const": 7000000
+            },
+            "comparators_assigned_zero_gain": {
+              "const": 340000000
+            },
+            "total_e1_e2": {
+              "const": 851000000
+            }
+          }
+        },
+        "median_cfe_weighted_speedup_percent": {
+          "const": 9.99
+        },
+        "conservative_observed_envelope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cdf_baseline_min_vs_combined_max_speedup_percent",
+            "rolling_baseline_min_vs_combined_max_speedup_percent",
+            "full_batch_cfe_weighted_speedup_percent"
+          ],
+          "properties": {
+            "cdf_baseline_min_vs_combined_max_speedup_percent": {
+              "const": 8.03
+            },
+            "rolling_baseline_min_vs_combined_max_speedup_percent": {
+              "const": 17.32
+            },
+            "full_batch_cfe_weighted_speedup_percent": {
+              "const": 6.33
+            }
+          }
+        },
+        "decision_gate_percent": {
+          "const": 5.0
+        },
+        "decision_gate_passed": {
+          "const": true
+        },
+        "interpretation": {
+          "const": "RESULT_BLIND_LOCAL_ENGINEERING_CFE_WEIGHTED_DECISION_ESTIMATE"
+        },
+        "is_target_host_wall_time_eta": {
+          "const": false
+        },
+        "may_replace_target_host_qualification": {
+          "const": false
+        }
+      }
+    },
+    "result_blindness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect_outputs_inspected_for_this_evidence",
+        "effect_values_recorded",
+        "effect_values_used_in_runtime_or_resource_decision",
+        "control_metrics_used"
+      ],
+      "properties": {
+        "effect_outputs_inspected_for_this_evidence": {
+          "const": false
+        },
+        "effect_values_recorded": {
+          "const": false
+        },
+        "effect_values_used_in_runtime_or_resource_decision": {
+          "const": false
+        },
+        "control_metrics_used": {
+          "const": [
+            "WALL_SECONDS",
+            "CPU_SECONDS",
+            "CHECKPOINT_WRITE_SECONDS",
+            "TEST_PASS_COUNTS",
+            "BYTE_AND_STRUCTURE_EQUALITY"
+          ]
+        }
+      }
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorizes_formal_effect_execution",
+        "authorizes_effect_analysis",
+        "authorizes_results_writing",
+        "authorizes_target_host_rental_or_provisioning",
+        "changes_research_question_or_confirmatory_claim",
+        "requires_clean_source_identity_and_exact_target_host_qualification",
+        "requires_separate_source_bound_verbatim_author_request"
+      ],
+      "properties": {
+        "authorizes_formal_effect_execution": {
+          "const": false
+        },
+        "authorizes_effect_analysis": {
+          "const": false
+        },
+        "authorizes_results_writing": {
+          "const": false
+        },
+        "authorizes_target_host_rental_or_provisioning": {
+          "const": false
+        },
+        "changes_research_question_or_confirmatory_claim": {
+          "const": false
+        },
+        "requires_clean_source_identity_and_exact_target_host_qualification": {
+          "const": true
+        },
+        "requires_separate_source_bound_verbatim_author_request": {
+          "const": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "static_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_class",
+        "workload_id",
+        "unit_id",
+        "method_id",
+        "events",
+        "cfe_per_event"
+      ],
+      "properties": {
+        "case_class": {
+          "const": "STATIC"
+        },
+        "workload_id": {
+          "const": "E1_STATIC"
+        },
+        "unit_id": {
+          "const": "LIRCMOP1"
+        },
+        "method_id": {
+          "const": "F22_MG_STATIC"
+        },
+        "events": {
+          "const": 1
+        },
+        "cfe_per_event": {
+          "const": 200
+        }
+      }
+    },
+    "cdf_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_class",
+        "workload_id",
+        "unit_id",
+        "method_id",
+        "events",
+        "cfe_per_event"
+      ],
+      "properties": {
+        "case_class": {
+          "const": "CDF"
+        },
+        "workload_id": {
+          "const": "E1_DYNAMIC"
+        },
+        "unit_id": {
+          "const": "CDF9/CDF-HARSH"
+        },
+        "method_id": {
+          "const": "DT-RAMDE_TS2_FULL"
+        },
+        "events": {
+          "const": 2
+        },
+        "cfe_per_event": {
+          "const": 200
+        }
+      }
+    },
+    "rolling_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_class",
+        "workload_id",
+        "unit_id",
+        "method_id",
+        "events",
+        "cfe_per_event"
+      ],
+      "properties": {
+        "case_class": {
+          "const": "ROLLING"
+        },
+        "workload_id": {
+          "const": "E1_ROLLING"
+        },
+        "unit_id": {
+          "const": "RR-SMOOTH/0"
+        },
+        "method_id": {
+          "const": "DT-RAMDE_TS2_FULL"
+        },
+        "events": {
+          "const": 2
+        },
+        "cfe_per_event": {
+          "const": 200
+        }
+      }
+    },
+    "cdf_benchmark_sample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "repetitions",
+        "full_old_scales_wall_seconds",
+        "compact_old_scales_wall_seconds",
+        "full_new_scales_wall_seconds",
+        "compact_new_scales_wall_seconds",
+        "baseline_median_wall_seconds",
+        "combined_median_wall_seconds",
+        "combined_speedup_percent"
+      ],
+      "properties": {
+        "case_id": {
+          "const": "CDF1_HARSH_BASE"
+        },
+        "repetitions": {
+          "const": 3
+        },
+        "full_old_scales_wall_seconds": {
+          "$ref": "#/$defs/three_timings"
+        },
+        "compact_old_scales_wall_seconds": {
+          "$ref": "#/$defs/three_timings"
+        },
+        "full_new_scales_wall_seconds": {
+          "$ref": "#/$defs/three_timings"
+        },
+        "compact_new_scales_wall_seconds": {
+          "$ref": "#/$defs/three_timings"
+        },
+        "baseline_median_wall_seconds": {
+          "const": 1.361146
+        },
+        "combined_median_wall_seconds": {
+          "const": 1.149646
+        },
+        "combined_speedup_percent": {
+          "const": 15.54
+        }
+      }
+    },
+    "rolling_benchmark_sample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "repetitions",
+        "full_old_scales_wall_seconds",
+        "compact_old_scales_wall_seconds",
+        "full_new_scales_wall_seconds",
+        "compact_new_scales_wall_seconds",
+        "baseline_median_wall_seconds",
+        "combined_median_wall_seconds",
+        "combined_speedup_percent"
+      ],
+      "properties": {
+        "case_id": {
+          "const": "WGT_RR_KNOWN_ANSWER"
+        },
+        "repetitions": {
+          "const": 2
+        },
+        "full_old_scales_wall_seconds": {
+          "$ref": "#/$defs/two_timings"
+        },
+        "compact_old_scales_wall_seconds": {
+          "$ref": "#/$defs/two_timings"
+        },
+        "full_new_scales_wall_seconds": {
+          "$ref": "#/$defs/two_timings"
+        },
+        "compact_new_scales_wall_seconds": {
+          "$ref": "#/$defs/two_timings"
+        },
+        "baseline_median_wall_seconds": {
+          "const": 2.751966
+        },
+        "combined_median_wall_seconds": {
+          "const": 2.196474
+        },
+        "combined_speedup_percent": {
+          "const": 20.19
+        }
+      }
+    },
+    "two_timings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    },
+    "three_timings": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    }
+  }
+}

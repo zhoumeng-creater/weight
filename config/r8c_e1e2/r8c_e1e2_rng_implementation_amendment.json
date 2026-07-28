@@ -1,0 +1,104 @@
+{
+  "amendment_id": "WGT-V11-R8C-E1E2-RNG-IMPLEMENTATION-AMENDMENT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_RESULT_BLIND_RNG_IMPLEMENTATION_EQUIVALENCE",
+  "status": "FROZEN_RESULT_BLIND_EQUIVALENCE_NOT_EXECUTION_AUTHORITY",
+  "created_date": "2026-07-26",
+  "authorization": {
+    "author_text": "R8C_E1E2_RNG_IMPLEMENTATION_FROZEN",
+    "authorized_scope": "RESULT_BLIND_IMPLEMENTATION_OPTIMIZATION_AND_BYTE_EXACT_EQUIVALENCE_ONLY",
+    "effect_outputs_inspected": false,
+    "formal_effect_execution_authorized": false,
+    "effect_analysis_authorized": false,
+    "results_writing_authorized": false
+  },
+  "historical_r5_binding": {
+    "r5_contract_id": "WGT-V11-R5-ENDPOINT-STATISTICS-SAMPLE-SEED-RESOURCE-01",
+    "r5_contract_path": "config/r5/r5_freeze_contract.json",
+    "r5_contract_sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554",
+    "r4_base_commit": "c40da5960b129a4dcec0b426e556a42272f4a028",
+    "r4_base_tree": "2dff77a621e8077eb52f2837eae19deaebb446b3",
+    "randomness_path": "src/evaluation/randomness.py",
+    "randomness_git_blob": "a97c06ed22cc32e85c3c6c6b2284ec734bd2b741",
+    "randomness_sha256": "1ad83dc550d283a841a69f396878487c803d5283320fbede3a7357f8bb540c5c",
+    "randomness_bytes": 3513,
+    "derivation_domain": "WGT-V11-RNG-v1"
+  },
+  "current_equivalent_implementation": {
+    "path": "src/evaluation/randomness.py",
+    "sha256": "35addcdfa1dc4053fdf787925138f264c4e5c4eaf0a72c377144cb987619a29f",
+    "bytes": 6123,
+    "derivation_domain": "WGT-V11-RNG-v1",
+    "change_class": "CANONICAL_PAYLOAD_SEGMENT_CACHE_SERIALIZATION_REUSE_AND_OPT_IN_AUDIT_MANIFEST_SUPPRESSION",
+    "payload_semantics_changed": false,
+    "seed_entropy_changed": false,
+    "random_bitstream_changed": false,
+    "engine_output_changed": false,
+    "selection_output_changed": false,
+    "compact_checkpoint_unconsumed_manifest_materialization_changed": true
+  },
+  "byte_exact_evidence": {
+    "test_file": "tests/test_v11_rng_hash_fastpath.py",
+    "test_file_sha256": "f48deed87a141ac3514b303773d2164865c2e6dcc018644f8682b5ad57acb445",
+    "payload": {
+      "claim": "CANONICAL_DERIVATION_PAYLOAD_AND_MANIFEST_BYTE_EXACT",
+      "tests": [
+        "test_cached_rng_payload_matches_reference_byte_for_byte",
+        "test_algorithm_fast_path_matches_reference_for_random_counters",
+        "test_algorithm_payload_segments_are_reused_with_exact_dynamic_hashes"
+      ]
+    },
+    "bitstream": {
+      "claim": "NUMPY_BIT_GENERATOR_RANDOM_RAW_BYTE_EXACT",
+      "tests": [
+        "test_cached_rng_payload_matches_reference_byte_for_byte",
+        "test_algorithm_fast_path_matches_reference_for_random_counters",
+        "test_algorithm_payload_segments_are_reused_with_exact_dynamic_hashes"
+      ]
+    },
+    "engine": {
+      "claim": "FULL_ENGINE_MANIFEST_AND_OUTPUT_STRUCTURALLY_EXACT",
+      "tests": [
+        "test_engine_rng_manifests_and_outputs_match_reference_derivation"
+      ]
+    },
+    "selection": {
+      "claim": "BATCHED_AND_SCALAR_GENERATION_SELECTION_CANONICAL_JSON_BYTE_EXACT",
+      "tests": [
+        "test_generation_selection_cache_is_byte_exact_to_old_reference"
+      ]
+    }
+  },
+  "unchanged_rng_contract": {
+    "derivation_domain": "WGT-V11-RNG-v1",
+    "canonical_json_utf8_sort_keys_compact_separators": true,
+    "digest": "SHA-256",
+    "entropy_decode": "LITTLE_ENDIAN_UINT32_WORDS",
+    "seed_sequence": "numpy.random.SeedSequence",
+    "generator": "numpy.random.default_rng",
+    "paired_environment_stream_identity": true,
+    "method_stream_identity": true,
+    "token_names_and_omission_rules": true
+  },
+  "validation_rule": {
+    "historical_r5_contract_must_remain_unmodified": true,
+    "historical_blob_must_match_r5_hash_at_r4_base_commit": true,
+    "current_file_may_differ_from_historical_blob_only_by_this_amendment": true,
+    "current_file_must_match_amended_sha256_exactly": true,
+    "any_subsequent_current_file_drift": "FAIL_CLOSED",
+    "amendment_and_schema_must_validate_before_current_drift_is_accepted": true,
+    "evidence_test_file_must_match_sha256_exactly": true
+  },
+  "authority_boundary": {
+    "changes_seed_contract": false,
+    "changes_derivation_domain": false,
+    "changes_random_draws": false,
+    "changes_algorithm": false,
+    "changes_endpoints_samples_or_CFE": false,
+    "authorizes_formal_effect_execution": false,
+    "authorizes_effect_analysis": false,
+    "requires_separate_target_qualification": true,
+    "requires_separate_source_bound_verbatim_request": true
+  }
+}

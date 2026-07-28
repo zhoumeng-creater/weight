@@ -1,0 +1,279 @@
+{
+  "amendment_id": "WGT-V11-R8C-E1E2-CDF-OPERATIONAL-AUTHORITY-AMENDMENT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "protocol_stage": "R8C_E1E2_RESULT_BLIND_CDF_OPERATIONAL_AUTHORITY_CORRECTION",
+  "status": "FROZEN_RESULT_BLIND_CORRECTIVE_IMPLEMENTATION_NOT_EXECUTION_AUTHORITY",
+  "created_date": "2026-07-26",
+  "trigger": {
+    "finding": "CDF_VERSION_OF_RECORD_AUTHOR_ORACLE_AND_HISTORICAL_PYTHON_ARE_NOT_GLOBALLY_IDENTICAL",
+    "resolution": "USE_NAMED_AUTHOR_COMMIT_AS_OPERATIONAL_AUTHORITY_PRESERVE_HISTORICAL_R4_AND_ENUMERATE_ALL_CONFLICTS",
+    "effect_outputs_inspected": false,
+    "observed_method_outputs_used": false,
+    "changes_research_question": false
+  },
+  "authority_binding": {
+    "paper": {
+      "citation": "Grudniewski and Sobey, Natural Computing 21, 109-125 (2022)",
+      "doi": "10.1007/s11047-020-09799-y",
+      "version_of_record_date": "2020-07-22",
+      "version_of_record_url": "https://link.springer.com/article/10.1007/s11047-020-09799-y"
+    },
+    "author_oracle": {
+      "repository": "https://bitbucket.org/Pag1c18/cmlsga",
+      "commit": "1926a5a1c89adf0a5e5e70449adbec62750a108a",
+      "path": "MLSGA/Fit_Functions.cpp",
+      "bytes": 461394,
+      "sha256": "48b2c256f4bdec6ed4f81f8edd82a03753bc51550776e1ae84b2d6fcbc18fa7a"
+    },
+    "authority_precedence": "NAMED_AUTHOR_COMMIT_IS_OPERATIONAL_EQUATION_AUTHORITY_PAPER_IS_SCIENTIFIC_DESCRIPTION_CONFLICTS_ARE_EXPLICIT",
+    "audit_document": {
+      "path": "config/r8c_e1e2/cdf_operational_authority_audit.md",
+      "bytes": 10139,
+      "sha256": "510fea74f825b1000548de1fc8993ae08d879c7144c4584a360096df479d1300"
+    },
+    "covered_problem_ids": [
+      "CDF1",
+      "CDF2",
+      "CDF3",
+      "CDF4",
+      "CDF5",
+      "CDF6",
+      "CDF7",
+      "CDF8",
+      "CDF9",
+      "CDF10",
+      "CDF11",
+      "CDF12",
+      "CDF13",
+      "CDF14",
+      "CDF15"
+    ]
+  },
+  "historical_freeze": {
+    "r5_contract": {
+      "path": "config/r5/r5_freeze_contract.json",
+      "bytes": 24569,
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554"
+    },
+    "r4_benchmark_registry": {
+      "path": "config/r4/benchmark_registry.json",
+      "bytes": 6671,
+      "sha256": "e912e62d05c0ffc4ca73feb0ac99669a0d8bf6fafdb257c0138d4803c4ec77b6"
+    },
+    "historical_suite_id": "CDF-1-15-CMLSGA-1926A5A1",
+    "historical_evaluator_class": "benchmark_adapters.r4_evaluators.CDFEvaluator",
+    "historical_binding_preserved": true,
+    "config_r4_modified_by_this_amendment": false,
+    "config_r5_modified_by_this_amendment": false
+  },
+  "operational_binding": {
+    "corrective_suite_id": "CDF-1-15-CMLSGA-1926A5A1-OPERATIONAL",
+    "authority_id": "WGT-V11-R8C-CDF-OPERATIONAL-AUTHORITY-1.0.0",
+    "evaluator_version": "1.0.0",
+    "corrective_evaluator_class": "benchmark_adapters.cdf_operational.CDFOperationalEvaluator",
+    "paper_feasible_constraint_convention": "G_PAPER_GTE_0",
+    "project_feasible_constraint_convention": "C_PROJECT_LTE_0",
+    "boundary_transform": "C_PROJECT_EQUALS_NEGATIVE_G_OPERATIONAL",
+    "decision_bounds": "FROZEN_PER_PROBLEM_R4_BOUNDS",
+    "scalar_batch_operation_order": "ORDERED_SCALAR_REFERENCE_KERNEL",
+    "corrective_python_changes": [
+      "CDF1_ORACLE_EXPONENT_PLACEMENT",
+      "CDF9_TYPED_UNDEFINED_REAL_DOMAIN_FAILURE"
+    ],
+    "oracle_paper_conflicts_preserved": [
+      "CDF6",
+      "CDF9",
+      "CDF10",
+      "CDF11",
+      "CDF12",
+      "CDF13",
+      "CDF15"
+    ]
+  },
+  "per_problem_resolution": {
+    "CDF1": "CORRECT_PYTHON_TO_PAPER_AND_ORACLE_EXPONENT_PLACEMENT",
+    "CDF2": "INHERIT_ORACLE_MATCH",
+    "CDF3": "INHERIT_ORACLE_MATCH",
+    "CDF4": "INHERIT_ORACLE_MATCH",
+    "CDF5": "INHERIT_ORACLE_EQUATIONS_AND_CORRECT_REFERENCE_FOR_DECISION_BOUND_REACHABILITY",
+    "CDF6": "FREEZE_ORACLE_OMISSION_OF_PAPER_ABS_G_CONSTRAINT_SHIFTS",
+    "CDF7": "INHERIT_ORACLE_MATCH",
+    "CDF8": "INHERIT_ORACLE_EQUATIONS_AND_RETAIN_ONLY_FEASIBLE_IDEAL_CURVE_SUBSET",
+    "CDF9": "FREEZE_ORACLE_EQUATIONS_AND_TYPE_NONREAL_SQRT_DOMAIN",
+    "CDF10": "FREEZE_ORACLE_UNSQUARED_W_SUM_AND_TWO_CF6_CONSTRAINTS",
+    "CDF11": "FREEZE_ORACLE_NO_OBJECTIVE_SHIFT_AND_Y_SQUARED_RIPPLE_WITH_BOUND_REACHABLE_FINITE_FRONT",
+    "CDF12": "FREEZE_ORACLE_ODD_SIN_EVEN_COS_ORDER",
+    "CDF13": "FREEZE_ORACLE_K_EQUALS_CEIL_10G_AND_BIND_SEED_FULL_TIME_VECTOR",
+    "CDF14": "INHERIT_ORACLE_MATCH_AND_CLASSIFY_ZERO_EVENTS_BY_EXACT_EVENT_ARITHMETIC",
+    "CDF15": "FREEZE_ORACLE_SIN_2PI_TIMES_A_PLUS_G_PARENTHESIZATION"
+  },
+  "cdf13_schedule_binding": {
+    "profiles": [
+      "CDF-HARSH",
+      "CDF-MILD"
+    ],
+    "event_ids": "0..59",
+    "events_per_sequence": 60,
+    "time_components": 5,
+    "one_component_increment_per_event": true,
+    "master_seeds_u64": [
+      "1814705672717120344",
+      "11510044127855585889",
+      "2013063862857590834",
+      "9940308221477475016",
+      "10545341458691982268"
+    ],
+    "environment_schedule_commitments_sha256": {
+      "CDF-HARSH": [
+        "be9d3b19fedb1edaf1b7bc858b74f155227a206a1953b604945096d6d4f14a14",
+        "1a11f4c5122c42b80b1f82f0f3e3e947232e5f364533c93d4365f2d43649cca7",
+        "93c5197e1c8005f7b4b47f8c06d1a2337855a28387fd7200f469b1c2a5127429",
+        "93612bee4abfbbf083ef22c897448646e18814223040496efbfd666152ec0410",
+        "f49c73fe2eca597f7484d44e35bc0c6dce127bfa6d0f9bab47e460847ab9cc6c"
+      ],
+      "CDF-MILD": [
+        "3ba14455f1318bca905a9befa20e60948cce3f1f1674b73e41a0c37f3d8989ee",
+        "db6f043b1e16a9d0a9158885968c287252b8d6d037823aaaa5b0e6cfe2797c18",
+        "b397cfc16fc567e58edd4a7eaead3a80422c7e137492d53ea37b50ff522991db",
+        "a6b0d822dea7580b71d93e778e43a394d4dd43783dd8d9af390c38f7401066eb",
+        "a83c86ac488d21c4d99e5f806ba064b415847c6cd40b591a61780f93242c9f70"
+      ]
+    },
+    "reference_identity_required_fields": [
+      "profile",
+      "event_id",
+      "master_seed_u64",
+      "time_vector",
+      "evaluator_binding_sha256"
+    ]
+  },
+  "cdf9_failure_policy": {
+    "source_domain": "Q_EQUALS_1_MINUS_M_X1_TO_THE_H_MUST_BE_GTE_0",
+    "undefined_real_domain_action": "CHARGE_ONCE_AND_RAISE_CDFDomainUndefinedError",
+    "ledger_failure_type": "CDFDomainUndefinedError",
+    "external_terminal": "REJECT_NUMERICAL",
+    "batch_preentry_action": "RAISE_BatchEvaluationUnavailableBeforeEntry_WITH_ZERO_LEDGER_SIDE_EFFECTS_THEN_ORDERED_SCALAR_FALLBACK",
+    "domain_extension_allowed": false,
+    "clamp_allowed": false,
+    "sign_extension_allowed": false,
+    "bound_narrowing_allowed": false,
+    "resampling_allowed": false,
+    "automatic_retry_allowed": false
+  },
+  "reference_catalog_binding": {
+    "catalog_id": "WGT-V11-R8C-E1E2-REFERENCE-CATALOG-01",
+    "manifest": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.json",
+      "bytes": 4893,
+      "sha256": "ee58c00544a4f0d069c7407dd03dc40d26bdd71e3b5b9e6b87f0322d44f66b8a"
+    },
+    "manifest_schema": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_catalog_manifest.schema.json",
+      "bytes": 7252,
+      "sha256": "a8768c8dbd53c71a89899bc8860fd1eab7163bf0840618991950f59e1a88298e"
+    },
+    "artifact": {
+      "path": "config/r8c_e1e2/reference_catalog/reference_artifacts.jsonl",
+      "bytes": 3507565,
+      "lines": 2294,
+      "sha256": "c0754e503aa80fa577e3764d2cd3fe3b9ed9814efaa76b2abc55156c615ba98f"
+    },
+    "identity_scope": {
+      "expected_total": 2294,
+      "actual_total": 2294,
+      "lircmop_static": 14,
+      "cdf_non_cdf13": 1680,
+      "cdf13_seed_time": 600,
+      "finite_front_records": 369,
+      "continuous_front_records": 1925,
+      "unique_evaluator_bindings": 44,
+      "evaluator_binding_set_sha256": "07858376417dee3bfc1f366c229c1ad50b2e75398fb58eb484a1a48432c1d949"
+    },
+    "representation": "CONTINUOUS_EXTREMA_PLUS_CERTIFICATE_OR_COMPLETE_FINITE_FRONT",
+    "arbitrary_dense_pf_samples_stored": false,
+    "observed_method_outputs_used": false
+  },
+  "implementation_bindings": {
+    "corrective_evaluator": {
+      "path": "src/benchmark_adapters/cdf_operational.py",
+      "bytes": 4229,
+      "sha256": "c416598a2dd2a0eb3fc911fd7e9fbc6b543b882afd1e24ba65060024982a36a1"
+    },
+    "historical_evaluator": {
+      "path": "src/benchmark_adapters/r4_evaluators.py",
+      "bytes": 24754,
+      "sha256": "dd88d155d90747d21118ce5ae0130a7ea778d09f4b7db0a1806994280e4757ba"
+    },
+    "suite_registry": {
+      "path": "src/benchmark_adapters/public_cmop.py",
+      "bytes": 19186,
+      "sha256": "ff2c1c9083d9fc79065fe929435c2c7311f5254b3ba643ca996a7c1989d08035"
+    },
+    "corrective_factory": {
+      "path": "src/formal_execution/adapters.py",
+      "bytes": 8258,
+      "sha256": "c21bf8ffb3298c78e6b2f5e7e452442102dbfc49a89dd72605a5cfd48054f953"
+    },
+    "reference_derivation": {
+      "path": "src/analysis/reference_catalog.py",
+      "bytes": 50877,
+      "sha256": "5ae6e64a43c494f2ade144a10ddc57506be48d69ccc5aa22bf320b1dac65e6f0"
+    },
+    "reference_identity_model": {
+      "path": "src/analysis/reference_fronts.py",
+      "bytes": 13318,
+      "sha256": "c76b0bdbe0180219bb062fc726d5edc2e72ecdaeb26a335239586ac196d00254"
+    },
+    "analytic_scale": {
+      "path": "src/analysis/checkpoint_metrics.py",
+      "bytes": 13121,
+      "sha256": "713c6f1341a97ed9e572074916b8e8df8df1897aec6a9091e2d622cdda60d70a"
+    }
+  },
+  "verification": {
+    "test_files": [
+      {
+        "path": "tests/test_v11_cdf_operational_amendment.py",
+        "sha256": "2e1b3b70b3190ef74b61b6a688d1d9a992db324bcc57b57898a625028b483a86"
+      },
+      {
+        "path": "tests/test_v11_reference_catalog.py",
+        "sha256": "34866f92501fd81a47a7e0ea82537fa0e126bc64be0a48f62ca0a061c0963e48"
+      }
+    ],
+    "all_15_problem_known_answers": true,
+    "both_profiles_all_60_events_scalar_batch_equality": true,
+    "cdf13_first_five_seed_schedule_commitments": true,
+    "cdf9_scalar_charge_and_original_type": true,
+    "cdf9_batch_zero_side_effect_fallback": true,
+    "cdf9_external_reject_numerical": true,
+    "cdf5_decision_bound_global_crosscheck": true,
+    "cdf11_complete_finite_front_dense_domination_crosscheck": true,
+    "cdf8_cdf13_cdf15_evaluator_endpoint_witnesses": true,
+    "manifest_schema_and_source_binding_checks": true
+  },
+  "validation_rule": {
+    "amendment_and_schema_must_validate": true,
+    "audit_document_or_oracle_identity_drift": "FAIL_CLOSED",
+    "all_project_file_bindings_must_match_bytes_and_sha256": true,
+    "catalog_file_hash_bytes_lines_must_match": true,
+    "all_2294_reference_identities_must_be_present_once": true,
+    "corrective_factory_must_use_operational_suite": true,
+    "historical_factory_identity_must_remain_available": true,
+    "cdf9_undefined_domain_must_not_be_extended": true,
+    "any_bound_source_or_test_drift": "FAIL_CLOSED",
+    "qualified_execution_contract_must_bind_this_amendment_before_launch": true
+  },
+  "effect_boundary": {
+    "effect_outputs_inspected": false,
+    "effect_outputs_written": false,
+    "observed_method_outputs_used": false,
+    "changes_algorithms_seeds_samples_endpoints_or_cfe": false,
+    "authorizes_formal_effect_execution": false,
+    "authorizes_effect_analysis": false,
+    "authorizes_results_writing": false,
+    "requires_separate_target_qualification": true,
+    "requires_separate_source_bound_verbatim_request": true
+  }
+}

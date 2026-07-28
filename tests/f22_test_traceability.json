@@ -1,0 +1,145 @@
+{
+  "contract_id": "F22",
+  "contract_source": "01_协议与门禁/DT-RAMDE算法规范.md#162-f22-单元属性测试清单",
+  "overall_status": "PASS",
+  "completion_claim": "F22_15_OF_15_VERIFIED",
+  "required_test_ids": [
+    "F22-T01",
+    "F22-T02",
+    "F22-T03",
+    "F22-T04",
+    "F22-T05",
+    "F22-T06",
+    "F22-T07",
+    "F22-T08",
+    "F22-T09",
+    "F22-T10",
+    "F22-T11",
+    "F22-T12",
+    "F22-T13",
+    "F22-T14",
+    "F22-T15"
+  ],
+  "mappings": {
+    "F22-T01": {
+      "contract_assertion": "每个事件重建十个 0.5 槽的 M_g，M_k 只提供采样中心且不覆盖 M_g。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_mg_is_recreated_with_ten_half_slots",
+        "tests/test_v11_engine.py::test_event_mg_is_fresh_and_mk_sampling_does_not_overwrite_it"
+      ]
+    },
+    "F22-T02": {
+      "contract_assertion": "F/CR 的 Cauchy/Normal 采样、边界、重采样上限和 fallback 均为冻结语义。",
+      "tests": [
+        "tests/test_v11_pareto_core.py::test_parameter_sampling_bounds_and_fallback_are_known_answer"
+      ]
+    },
+    "F22-T03": {
+      "contract_assertion": "成功权重按冻结公式更新当前槽；空成功集不改变槽或指针。",
+      "tests": [
+        "tests/test_v11_pareto_core.py::test_weighted_mg_update_matches_frozen_formula"
+      ]
+    },
+    "F22-T04": {
+      "contract_assertion": "pending credit 只在下一事件开头消费一次，当前事件搜索不读取当前执行结果。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_pending_credit_is_consumed_once_at_the_next_event",
+        "tests/test_v11_engine.py::test_engine_is_deterministic_budget_exact_and_outer_state_is_immutable",
+        "tests/test_v11_weight_adapter.py::test_zero_action_uses_prefrozen_positive_scale_at_next_event",
+        "tests/test_v11_weight_adapter.py::test_tiny_action_keeps_prefrozen_scale_after_pending_restore"
+      ]
+    },
+    "F22-T05": {
+      "contract_assertion": "lineage 仅沿最近五个 target predecessor，以 2^-d 归一化；消融使用均匀替代。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_lineage_credit_uses_last_five_target_predecessors"
+      ]
+    },
+    "F22-T06": {
+      "contract_assertion": "每种拒绝保留唯一终端代码、固定信用分数及可用 witness；NO_REJECTION_CREDIT 只关闭信用。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_rejection_credit_is_typed_and_ablatable",
+        "tests/test_v11_engine.py::test_no_feasible_and_safety_paths_are_typed_and_not_deleted",
+        "tests/test_v11_engine.py::test_numerical_failure_is_charged_and_typed",
+        "tests/test_v11_engine.py::test_common_event_resource_limit_produces_typed_timeout"
+      ]
+    },
+    "F22-T07": {
+      "contract_assertion": "三连负信用、tau 严格阈值、硬 reset、消融边界和两事件 cooldown 均按固定顺序执行。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_reset_gate_and_two_closed_event_cooldown",
+        "tests/test_v11_state_memory.py::test_reset_gate_covers_tau_boundary_hard_reset_and_ablation"
+      ]
+    },
+    "F22-T08": {
+      "contract_assertion": "solution warm-start 与 parameter memory 独立，warm-start seed 必须重新评价并计入共同 CFE。",
+      "tests": [
+        "tests/test_v11_engine.py::test_engine_is_deterministic_budget_exact_and_outer_state_is_immutable",
+        "tests/test_v11_evaluation_firewall.py::test_joint_evaluator_charges_cached_failed_and_warm_start_calls"
+      ]
+    },
+    "F22-T09": {
+      "contract_assertion": "TS1 与静态问题不创建或更新任何跨事件状态。",
+      "tests": [
+        "tests/test_v11_engine.py::test_ts1_has_one_event_and_no_cross_event_state",
+        "tests/test_v11_public_benchmark_adapter.py::test_static_public_bridge_is_ts1_and_has_no_execution_feedback"
+      ]
+    },
+    "F22-T10": {
+      "contract_assertion": "信息时间白名单拒绝未来字段、其他方法结果、嵌套禁用字段和迟发反馈。",
+      "tests": [
+        "tests/test_v11_evaluation_firewall.py::test_information_firewall_is_deterministic_immutable_and_time_bounded",
+        "tests/test_v11_public_benchmark_adapter.py::test_cdf_bridge_rejects_future_or_prohibited_release_fields",
+        "tests/test_v11_public_benchmark_adapter.py::test_cdf_bridge_rejects_prohibited_keys_inside_prior_feedback"
+      ]
+    },
+    "F22-T11": {
+      "contract_assertion": "初始化、重复点、失败、超时、warm-start、repair 与执行转移按联合账本合同计数。",
+      "tests": [
+        "tests/test_v11_evaluation_firewall.py::test_joint_evaluator_charges_cached_failed_and_warm_start_calls",
+        "tests/test_v11_evaluation_firewall.py::test_repair_failure_is_a_typed_zero_cfe_validation_failure",
+        "tests/test_v11_engine.py::test_engine_is_deterministic_budget_exact_and_outer_state_is_immutable",
+        "tests/test_v11_engine.py::test_numerical_failure_is_charged_and_typed",
+        "tests/test_v11_engine.py::test_common_event_resource_limit_produces_typed_timeout"
+      ]
+    },
+    "F22-T12": {
+      "contract_assertion": "固定种子的中断恢复与不中断运行在事件、参数、状态和日志上完全一致，漂移被拒绝。",
+      "tests": [
+        "tests/test_v11_engine.py::test_interrupted_resume_matches_uninterrupted_and_rejects_config_drift",
+        "tests/test_v11_state_memory.py::test_state_serialization_and_checksum_detect_resume_drift"
+      ]
+    },
+    "F22-T13": {
+      "contract_assertion": "九个注册变体的组件矩阵逐行登记；SHADE_ONLY 使用 result-blind 冻结的 WGT-SHADE-CMO-SUCCESS-01 paired success 与三类唯一改进量。",
+      "component_matrix_registration_status": "PASS",
+      "shade_only_multiobjective_constrained_success_metric_binding": "FROZEN_AND_IMPLEMENTED_WGT_SHADE_CMO_SUCCESS_01",
+      "status": "PASS",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_registered_component_matrix_is_exact_and_single_factor_named",
+        "tests/test_v11_engine.py::test_config_snapshot_contains_frozen_component_semantics",
+        "tests/test_v11_engine.py::test_shade_only_runs_with_result_blind_success_audit_and_no_cross_memory",
+        "tests/test_v11_pareto_core.py::test_shade_success_metric_known_answers_cover_all_three_cases",
+        "tests/test_v11_pareto_core.py::test_shade_success_metric_is_scale_invariant_and_rejects_nonimprovements",
+        "tests/test_v11_pareto_core.py::test_shade_success_weights_drive_existing_history_update_without_repair_penalty",
+        "tests/test_v11_engine.py::test_no_execution_feedback_never_observes_or_serializes_adapter_return",
+        "tests/test_v11_runner_analysis_guard.py::test_raw_execution_feedback_nullability_is_bound_to_variant"
+      ]
+    },
+    "F22-T14": {
+      "contract_assertion": "非法转移、checksum 漂移及重复 pending 消费使状态无效并停止继续学习。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_illegal_transition_invalidates_state_and_ts1_rejects_memory",
+        "tests/test_v11_state_memory.py::test_state_serialization_and_checksum_detect_resume_drift",
+        "tests/test_v11_state_memory.py::test_resume_validation_rejects_a_pending_id_already_marked_consumed"
+      ]
+    },
+    "F22-T15": {
+      "contract_assertion": "M_k 的年龄、容量、淘汰、正信用资格及 credit*0.9^age 抽样权重均可复核。",
+      "tests": [
+        "tests/test_v11_state_memory.py::test_bank_age_capacity_and_positive_sampling",
+        "tests/test_v11_state_memory.py::test_bank_sampling_uses_positive_credit_times_age_decay"
+      ]
+    }
+  }
+}

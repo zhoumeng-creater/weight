@@ -1,0 +1,80 @@
+{
+  "amendment_id": "WGT-V11-R8C-E1E2-TIMEOUT-SEMANTICS-AMENDMENT-01",
+  "schema_version": "1.0.0",
+  "protocol_id": "WGT-JOURNAL-2026-01",
+  "created_date": "2026-07-26",
+  "status": "RESULT_BLIND_TIMEOUT_SEMANTICS_IMPLEMENTED_AND_VERIFIED",
+  "scope": "E1_E2_PUBLIC_BENCHMARKS_ONLY",
+  "result_blindness": {
+    "effect_values_read": false,
+    "method_outputs_read": false,
+    "purpose": "Close a pre-execution ambiguity between scientific event deadlines and technical process supervision."
+  },
+  "source_authorities": {
+    "f23_human_contract": {
+      "path": "provenance://timeout-authority/F23",
+      "bytes": 8479,
+      "sha256": "af16ee62bdd8f0eb412442ed25bbe12cb79c8ab8ec160d3f528e450d124d3729",
+      "frozen_rule": "Static 1800 seconds per run; CDF 300 seconds per event; rolling 120 seconds per event and the historical 2400-second instance ceiling."
+    },
+    "r5_machine_contract": {
+      "path": "config/r5/r5_freeze_contract.json",
+      "bytes": 24569,
+      "sha256": "4e2dd0a0f4a97b57d71dd13eb60aa8a3c3eb34f0708aae609d50a31d155f6554",
+      "frozen_rule": "Static, dynamic and rolling technical sequence hard ceilings are 3600, 21600 and 10800 seconds."
+    },
+    "methods_semantic_corroboration": {
+      "path": "provenance://timeout-authority/method-semantics",
+      "bytes": 94706,
+      "sha256": "67e02f6d9c47d950594300e54d45da24abc1a397fdfeff4a5f69a8f51f2d4ea1",
+      "frozen_rule": "Event REJECT_TIMEOUT is distinct from supervisor process, scheduling or infrastructure timeout."
+    }
+  },
+  "scientific_event_deadlines_seconds": {
+    "E1_STATIC": 1800,
+    "E1_DYNAMIC_CDF": 300,
+    "E1_E2_ROLLING": 120
+  },
+  "technical_sequence_hard_ceilings_seconds": {
+    "E1_STATIC": 3600,
+    "E1_E2_DYNAMIC": 21600,
+    "E1_E2_ROLLING": 10800,
+    "GLOBAL_FORMAL_WALL": 172800
+  },
+  "classification": {
+    "scientific_event_deadline": {
+      "scope": "ONE_OPTIMIZATION_EVENT",
+      "applies_equally_to_all_methods": true,
+      "terminal_code": "REJECT_TIMEOUT",
+      "continuous_endpoint": "Use the last valid event archive at the common event cutoff and record a timeout indicator.",
+      "unused_budget_transferred": false
+    },
+    "technical_sequence_or_global_timeout": {
+      "scope": "SUPERVISOR_PROCESS_OR_SCHEDULE",
+      "applies_equally_to_all_methods": true,
+      "task_outcome_classes": [
+        "TECHNICAL_SEQUENCE_TIMEOUT",
+        "TECHNICAL_GLOBAL_TIMEOUT"
+      ],
+      "algorithm_terminal_code": null,
+      "partial_checkpoint_policy": "Preserve the last safely committed partial checkpoint and all logs without fabricating later events.",
+      "retry_policy": "No automatic retry; any rerun requires the frozen result-blind deviation procedure."
+    }
+  },
+  "supersession": {
+    "f23_rolling_2400_second_instance_ceiling": "Superseded for technical process supervision by the later R5 10800-second rolling sequence hard ceiling.",
+    "f23_event_deadlines": "Retained as scientific event-level method-common ceilings because R5 did not replace them with event-level values.",
+    "r5_sequence_hard_ceilings": "Retained only as supervisor technical sequence ceilings and must never be written as REJECT_TIMEOUT."
+  },
+  "implementation_gate": {
+    "timeout_semantics_gate_passed": true,
+    "required_runtime_behavior": [
+      "All DT-RAMDE variants and every comparator use the same suite-specific scientific event deadline.",
+      "The supervisor sequence marker remains independent of algorithm terminal selection.",
+      "A supervisor timeout produces a typed technical task outcome with no REJECT_TIMEOUT terminal.",
+      "Focused tests prove method symmetry, last-valid partial checkpoint preservation, exact charged-work accounting when cooperative shutdown succeeds, and fail-closed unknown accounting after hard kill."
+    ],
+    "historical_drift_closed": "The former per-sequence-to-DT-RAMDE-event misbinding is removed. DT-RAMDE and every comparator now use the suite-specific scientific event ceiling, while the supervisor retains separate sequence hard ceilings.",
+    "verification": "Focused timeout, partial-checkpoint, technical-failure, full-schedule-manifest and failure-cost validation tests pass; formal launch remains subject to independent target-host, source-identity and one-time authorization gates."
+  }
+}
